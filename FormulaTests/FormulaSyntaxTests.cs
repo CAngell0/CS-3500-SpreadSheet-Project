@@ -71,13 +71,26 @@ public class FormulaSyntaxTests {
     }
 
     [TestMethod]
-    public void FormulaConstructor_TestOneToken_Valid() {
+    public void FormulaConstructor_TestSingleNumberToken_Valid() {
         _ = new Formula("5");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_TestSingleVariableToken_Valid() {
+        _ = new Formula("a5");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_TestSingleArithmeticTokens_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("+"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("-"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("*"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("/"));
     }
 
     // --- Tests for Valid Token Rule ---
     [TestMethod]
-    public void FormulaConstructor_TestBasicArithmeticTokens_Valid() {
+    public void FormulaConstructor_TestBasicArithmeticTokensInPairwiseFormula_Valid() {
         _ = new Formula("1 + 1");
         _ = new Formula("1 - 1");
         _ = new Formula("1 * 1");
