@@ -90,7 +90,7 @@ public class FormulaSyntaxTests {
 
     // --- Tests for Valid Token Rule ---
     [TestMethod]
-    public void FormulaConstructor_TestBasicArithmeticTokensInPairwiseFormula_Valid() {
+    public void FormulaConstructor_TestBasicArithmeticTokens_InPairwiseFormula_Valid() {
         _ = new Formula("1 + 1");
         _ = new Formula("1 - 1");
         _ = new Formula("1 * 1");
@@ -98,12 +98,12 @@ public class FormulaSyntaxTests {
     }
 
     [TestMethod]
-    public void FormulaConstructor_TestModulusToken_Invalid() {
+    public void FormulaConstructor_TestModulusToken_InPairwiseFormula_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("5 % 2"));
     }
     
     [TestMethod]
-    public void FormulaConstructor_TestAllASCIITokensExcludingArithmetic_Invalid() {
+    public void FormulaConstructor_TestAllASCIITokensExcludingArithmetic_InPairwiseFormula_Invalid() {
         char[] validCharacters = ['+', '-', '*', '/', ')', '('];
 
         for (int i = 0; i <= 127; i++) {
