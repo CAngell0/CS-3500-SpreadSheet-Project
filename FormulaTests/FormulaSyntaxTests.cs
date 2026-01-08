@@ -6,6 +6,7 @@
 
 namespace FormulaTests;
 
+using System.Text;
 using CS3500.Formula1; // Change this using statement to use different formula implementations.
 
 /// <summary>
@@ -19,8 +20,7 @@ using CS3500.Formula1; // Change this using statement to use different formula i
 ///   </list>
 /// </summary>
 [TestClass]
-public class FormulaSyntaxTests
-{
+public class FormulaSyntaxTests {
     // --- Tests for One Token Rule ---
 
     /// <summary>
@@ -66,13 +66,44 @@ public class FormulaSyntaxTests
     ///   </example>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestNoTokens_Invalid( )
-    {
-        Assert.Throws<FormulaFormatException>( () => _ = new Formula( "" ) );
-        // note: it is arguable that you should replace "" with string.Empty for readability and clarity of intent (e.g., not a cut-and-paste error or a "I forgot to put something there" error).
+    public void FormulaConstructor_TestNoTokens_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula(string.Empty));
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_TestOneToken_Valid() {
+        _ = new Formula("5");
     }
 
     // --- Tests for Valid Token Rule ---
+    [TestMethod]
+    public void FormulaConstructor_TestBasicArithmeticTokens_Valid() {
+        _ = new Formula("1 + 1");
+        _ = new Formula("1 - 1");
+        _ = new Formula("1 * 1");
+        _ = new Formula("1 / 1");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_TestModulusToken_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("5 % 2"));
+    }
+    
+    [TestMethod]
+    public void FormulaConstructor_TestAllASCIITokensExcludingArithmetic_Invalid() {
+        char[] validCharacters = ['+', '-', '*', '/', ')', '('];
+
+        for (int i = 0; i <= 127; i++) {
+            
+            byte[] charBytes = BitConverter.GetBytes(i);
+            char ch = Encoding.ASCII.GetChars(charBytes)[0];
+
+            if (!validCharacters.Contains(ch)) {
+                Assert.Throws<FormulaFormatException>(() => _ = new Formula($"5 {ch} 2"));
+            }
+        }
+    }
+
 
     // --- Tests for Closing Parenthesis Rule
 
@@ -91,9 +122,8 @@ public class FormulaSyntaxTests
     ///   </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_TestFirstTokenNumber_Valid( )
-    {
-        _ = new Formula( "1+1" );
+    public void FormulaConstructor_TestFirstTokenNumber_Valid() {
+        _ = new Formula("1+1");
     }
 
     // --- Tests for  Last Token Rule ---
