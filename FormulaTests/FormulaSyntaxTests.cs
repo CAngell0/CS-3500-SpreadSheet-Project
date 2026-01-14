@@ -251,7 +251,11 @@ public class FormulaSyntaxTests {
 
 
     // --- Tests for Valid Token Rule ---
-    
+
+    /// <summary>
+    ///     <para> Tests equations with two terms (pairwise) with the basic arithmetic operators (+, -, *, /) </para>
+    ///     <remarks> This test inputs integers, decimals, and scientific notation numbers into pairwise equations </remarks>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_ArithmeticTokensInPairwiseFormula_Valid() {
         _ = new Formula("8 + 10");
