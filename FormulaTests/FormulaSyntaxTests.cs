@@ -87,7 +87,7 @@ public class FormulaSyntaxTests {
     }
 
     [TestMethod]
-    public void FormulaConstructor_SingleDecimalToken_Invalid() {
+    public void FormulaConstructor_IncorrectSingleDecimalToken_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("5721.59572.39481"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("008812.456.1"));
     }
@@ -95,21 +95,26 @@ public class FormulaSyntaxTests {
     [TestMethod]
     public void FormulaConstructor_SingleScientificNotationToken_Valid() {
         _ = new Formula("8E10");
-        _ = new Formula("166E100000");
+        _ = new Formula("166e100000");
         _ = new Formula("8721E-10");
-        _ = new Formula("00386E100");
+        _ = new Formula("00386e100");
     }
 
     [TestMethod]
     public void FormulaConstructor_SingleDecimalScientificNotationToken_Valid() {
-        _ = new Formula("7.42E10");
+        _ = new Formula("7.42e10");
         _ = new Formula("961.9572E1004550");
         _ = new Formula("21146.88321E-20");
-        _ = new Formula("00942.4551E1000");
+        _ = new Formula("00942.4551e1000");
+
+        _ = new Formula("8.31e76.7");
+        _ = new Formula("28571.48421E855631.5752");
+        _ = new Formula("495782.45822e-43.214");
+        _ = new Formula("002143.9482E100.00");
     }
 
     [TestMethod]
-    public void FormulaConstructor_SingleScientificNotationToken_Invalid() {
+    public void FormulaConstructor_IncorrectSingleScientificNotationToken_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("8E10E10"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("102E362E10"));
     }
@@ -126,6 +131,18 @@ public class FormulaSyntaxTests {
     }
 
     [TestMethod]
+    public void FormulaConstructor_IncorrectSingleVariableToken_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("a"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("auegfiuwo"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("a8i"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("cugqiuwd5371haefudaw"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("7u"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("83926jagdwsc"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("J"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("9K4"));
+    }
+
+    [TestMethod]
     public void FormulaConstructor_SingleArithmeticTokens_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("+"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("-"));
@@ -135,14 +152,16 @@ public class FormulaSyntaxTests {
 
     [TestMethod]
     public void FormulaConstructor_ASCIISingleCharacterTokensExcludingNumbers_Invalid() {
-        char[] validTokens = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
+        char[] excludedTokens = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
 
-        for (int i = 0; i <= 127; i++) {
+        for (int i = 66; i <= 127; i++) {
             byte[] charBytes = BitConverter.GetBytes(i);
-            char ch = Encoding.ASCII.GetChars(charBytes)[0];
+            char asciiChar = Encoding.ASCII.GetChars(charBytes)[0];
 
-            if (!validTokens.Contains(ch)) {
-                Assert.Throws<FormulaFormatException>(() => _ = new Formula(new string(ch, 1)));
+            if (!excludedTokens.Contains(asciiChar)) {
+                System.Diagnostics.Trace.WriteLine($"Tested Character (ASCII #{i}) : '{asciiChar}'");
+                System.Diagnostics.Trace.WriteLine($"Raw Tested String : \"{new string(asciiChar, 1)}\"");
+                Assert.Throws<FormulaFormatException>(() => _ = new Formula(new string(asciiChar, 1)));
             }
         }
     }
@@ -171,47 +190,47 @@ public class FormulaSyntaxTests {
         _ = new Formula("3453687123E564739014 / 87464731245E5864371985");
     }
 
+    [TestMethod]
+    public void FormulaConstructor_ModulusAndExponentTokenInPairwiseFormula_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("5 % 2"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("5 ^ 2"));
+    }
+
     public void FormulaConstructor_ArithmeticTokensInLongerFormula_Valid() {
         _ = new Formula("7 + 28 - 64 * 253 / 80");
-        _ = new Formula("581 - 498 + 573 / 2543 / 532 * 478");
+        _ = new Formula("581 - 498 + j7 / 2543 / 532 * 478");
         _ = new Formula("5739010 * 00946317 / 474631 * 4536821 - 00466743");
-        _ = new Formula("83725748192971 * 64372981 * 5639128874 * 436189092");
+        _ = new Formula("83725748192971 * 64372981 * awy4362 * 436189092");
 
         _ = new Formula("2.7 + 68.63 - 72.25 * 34.63 / 53.12");
-        _ = new Formula("4981.3848 * 291.4561 + 592.6653 - 812.6621 / 451.2514");
+        _ = new Formula("4981.3848 * kjvcSzh623478 + 592.6653 - 812.6621 / 451.2514");
         _ = new Formula("4792123.48314 / 00547381.0057481 - 003435617.54315 + 3875843.43124 / 4567831.5764536");
         _ = new Formula("461907651024.547185 / 8748381245.56487125 / 563712455.6546372 / 000000045367814.0000005463712");
 
-        _ = new Formula("78E56 + 97E13 - 64E10 / 561E-284 * 12E-0042");
+        _ = new Formula("78E56 + 97E13 - OPJDUY3245878 / 561E-284 * 12E-0042");
         _ = new Formula("482E1234 - 3984.53E-0004881 / 00673E2140");
         _ = new Formula("43914E9182 * 49582E-48731.5643 + 374831.004318E-000.01256");
         _ = new Formula("3453687123E564739014 / 7464731245E5864371985 + 5748391097E18295841 * 00000567182.5743516E-0047561");
     }
 
     [TestMethod]
-    public void FormulaConstructor_SpecialCharsInManyTokenFormula_Invalid() {
+    public void FormulaConstructor_SpecialCharsInLongerFormula_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("fugbw57+541&*45E-1024*3"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("0.31/4521*12Ea32.54+2465;1"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("38#4.42-1244.21*KWsw54E-k12"));
     }
-
-    [TestMethod]
-    public void FormulaConstructor_ModulusAndExponentTokenInPairwiseFormula_Invalid() {
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("5 % 2"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("5 ^ 2"));
-    }
     
     [TestMethod]
     public void FormulaConstructor_ASCIITokensExcludingArithmeticTokensInPairwiseFormula_Invalid() {
-        char[] validCharacters = ['+', '-', '*', '/', ')', '('];
+        char[] excludedChars = ['+', '-', '*', '/', ')', '('];
 
         for (int i = 0; i <= 127; i++) {
             
             byte[] charBytes = BitConverter.GetBytes(i);
-            char ch = Encoding.ASCII.GetChars(charBytes)[0];
+            char asciiChar = Encoding.ASCII.GetChars(charBytes)[0];
 
-            if (!validCharacters.Contains(ch)) {
-                Assert.Throws<FormulaFormatException>(() => _ = new Formula($"5 {ch} 2"));
+            if (!excludedChars.Contains(asciiChar)) {
+                Assert.Throws<FormulaFormatException>(() => _ = new Formula($"5 {asciiChar} 2"));
             }
         }
     }
@@ -227,13 +246,6 @@ public class FormulaSyntaxTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(8 + 4))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(742434678 + 34.8)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((2E8 + djAnw54))))"));
-    }
-
-    [TestMethod]
-    public void FormulaConstructor_BalancedParensInPariwiseFormula_Valid() {
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(a8 + 2)"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((49.53E-1243.75 + 72E19284))"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((((83564738219 + aFC485671))))"));
     }
 
     [TestMethod]
@@ -265,8 +277,9 @@ public class FormulaSyntaxTests {
 
 
     // --- Tests for Balanced Parentheses Rule ---
+
     [TestMethod]
-    public void FormulaConstructor_SingleTokenBalancedParens_Valid() {
+    public void FormulaConstructor_BalancedParensWithSingleToken_Valid() {
         _ = new Formula("(ajwE643)");
         _ = new Formula("((((45772.4322))))");
         _ = new Formula("((2918))");
@@ -278,9 +291,9 @@ public class FormulaSyntaxTests {
 
 
     [TestMethod]
-    public void FormulaConstructor_SingleTokenManyBalancedParens_Valid() {
+    public void FormulaConstructor_ManyBalancedParensLayersWithSingleToken_Valid() {
         int maxParenCount = 100;
-        string insideToken = "ajdbEjdE03846278E-00047261.3821";
+        string insideToken = "ajdbEjd03846278E-00047261.3821";
         StringBuilder builder = new();
 
         for (int i = 1; i <= maxParenCount; i++) {
@@ -296,8 +309,8 @@ public class FormulaSyntaxTests {
 
     [TestMethod]
     public void FormulaConstructor_BalancedParensInPairwiseFormula_Valid() {
-        _ = new Formula("(ajsn36281 + 482E-75.6)"); //!
-        _ = new Formula("((297.53 + 6E82.6))"); //!
+        _ = new Formula("(ajsn36281 + 482E-75.6)");
+        _ = new Formula("((297.53 + 6E82.6))");
         _ = new Formula("((5782 + 137))");
         _ = new Formula("(((krSJNei3957 + 144617.341)))");
         _ = new Formula("((((JBEF347 + 1E10))))");
