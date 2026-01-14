@@ -70,6 +70,14 @@ public class FormulaSyntaxTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula(string.Empty));
     }
 
+    /// <summary>
+    ///     <para> This test makes sure the constructor can handle single integer tokens. </para>
+    ///     <remarks> Short integers, long integers and inegers with leading zeroes arae tested. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: 5, 598582, 00028532, etc. </item>
+    ///         <item> Expected Output: None </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleIntegerToken_Valid() {
         _ = new Formula("5");
@@ -78,6 +86,14 @@ public class FormulaSyntaxTests {
         _ = new Formula("00028532");
     }
 
+    /// <summary>
+    ///     <para> This test makes sure teh constructor can handle single decimal tokens. </para>
+    ///     <remarks> Small decimals, long decimals and decimal numbers with leading zeroes are tested. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: 7.1, 545.02744192, 0072.2861, etc. </item>
+    ///         <item> Expected Output: None </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleDecimalToken_Valid() {
         _ = new Formula("7.1");
@@ -86,12 +102,28 @@ public class FormulaSyntaxTests {
         _ = new Formula("0072.2861");
     }
 
+    /// <summary>
+    ///     <para> This test makes sure that malformed decimal numbers throw an exception. </para>
+    ///     <remarks> Decimals with two decimal points are inputted. Leading zeroes are also tested. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: 5721.59572.39481, 08812.456.1 </item>
+    ///         <item> Expected Output: FormulaFormatException </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_IncorrectSingleDecimalToken_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("5721.59572.39481"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("008812.456.1"));
     }
 
+    /// <summary>
+    ///     <para> Makes sure the constructor can handle numbers with scientific notation. </para>
+    ///     <remarks> Tests numbers with capital notation (3E10) and lowercase notation (3e10). Numbers with leading zeroes are also tested. </para>
+    ///     <list type="bullet">
+    ///         <item> Input: 8E10, 166e100000, 8721E-10, 00386e100 </item>
+    ///        <item> Expected Output: None </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleScientificNotationToken_Valid() {
         _ = new Formula("8E10");
@@ -100,25 +132,46 @@ public class FormulaSyntaxTests {
         _ = new Formula("00386e100");
     }
 
+    /// <summary>
+    ///     <para> Makes sure the constructor can handle decimal numbers that have scientific notation. </para>
+    ///     <remarks> Tests numbers with capital notation (3.7E10) and lowercase notation (3.7e10). Numbers with leading zeroes, and negative exponents are also tested. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: 7.42e10, 961.9572E1004550, 21146.88321E-20, 00942.4551e1000 </item>
+    ///         <item> Expected Output: None </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleDecimalScientificNotationToken_Valid() {
         _ = new Formula("7.42e10");
         _ = new Formula("961.9572E1004550");
         _ = new Formula("21146.88321E-20");
         _ = new Formula("00942.4551e1000");
-
-        _ = new Formula("8.31e76.7");
-        _ = new Formula("28571.48421E855631.5752");
-        _ = new Formula("495782.45822e-43.214");
-        _ = new Formula("002143.9482E100.00");
     }
 
+    /// <summary>
+    ///     <para> Tests malformed scientific notation numbers in the formula constructor. </para>
+    ///     <remarks> Tests numbers with multiple exponent terms. Tests numbers with capital notation (3e10E20) and lowercase notation (3E10e20). Decimal and numbers with leading zeroes are tested. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: 8E10E10, 8e10e10, 102.44E362310, 0000481e7E20E428 </item>
+    ///         <item> Expected Output: FormulaFormatException </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_IncorrectSingleScientificNotationToken_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("8E10E10"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("102E362E10"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("8e10e10"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("102.44E362310"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("0000481e7E20E428"));
     }
 
+    /// <summary>
+    ///     <para> Tests single variable tokens in the formula constructor </para>
+    ///     <remarks> Tests short and long variable names. With both lowercase, and uppercase letters. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: a5, axs55976478, KDBFYUE100, KDBFHkebsis81264671246781729, etc. </item>
+    ///         <item> Expected Output: None </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleVariableToken_Valid() {
         _ = new Formula("a5");
@@ -130,6 +183,14 @@ public class FormulaSyntaxTests {
         _ = new Formula("uwgudiheOBVUE8");
     }
 
+    /// <summary>
+    ///     <para> Tests malformed single variable tokens in the formula constructor. </para>
+    ///     <remarks> Variables that don't match the expected naming scheme are tests. Captital and lowercase letters are tested in the variable names. </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: a, auegfiuwo, a8i, J, 9K4, 83926jagdws, 7u </item>
+    ///         <item> Expected Output: FormulaFormatException </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_IncorrectSingleVariableToken_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("a"));
@@ -142,6 +203,14 @@ public class FormulaSyntaxTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("9K4"));
     }
 
+    /// <summary>
+    ///     <para> Tests arithmetic tokens (+, -, *, /) as the only tokens in a formula provided to the constructor. </par>
+    ///     <remarks> The four basic arithmetic operators are tested on their own (+, -, *, /) </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: +, -, *, / </item>
+    ///         <item> Expected Output: FormulaFormatException </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleArithmeticTokens_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("+"));
@@ -150,6 +219,17 @@ public class FormulaSyntaxTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("/"));
     }
 
+    /// <summary>
+    ///     <para> Tests every ASCII character as single tokens in the formula constructor. Excluding valid tokens like number characters. </para>
+    ///     <remarks> 
+    ///         This test iterates through the ASCII table and tests every character as a single token in the formula constructor.
+    ///         Skips the characters 0 throguh 9, since they are valid integer tokens when used in the constructor in this way.
+    ///      </remarks>
+    ///     <list type="bullet">
+    ///         <item> Input: +, A, &, #, etc. </item>
+    ///         <item> Expected Output: FormulaFormatException </item>
+    ///     </list>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_ASCIISingleCharacterTokensExcludingNumbers_Invalid() {
         char[] excludedTokens = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
@@ -171,7 +251,7 @@ public class FormulaSyntaxTests {
 
 
     // --- Tests for Valid Token Rule ---
-
+    
     [TestMethod]
     public void FormulaConstructor_ArithmeticTokensInPairwiseFormula_Valid() {
         _ = new Formula("8 + 10");
