@@ -770,8 +770,141 @@ public class FormulaSyntaxTests {
 
     // --- Tests for Parentheses/Operator Following Rule ---
 
+    [TestMethod]
+    public void FormulaConstructor_NumberFollowingOpenParen_Valid() {
+        _ = new Formula("(573)");
+        _ = new Formula("(53321.4321)");
+        _ = new Formula("(4312E123)");
+        _ = new Formula("(32e12)");
+        _ = new Formula("(54.32E0013)");
+        _ = new Formula("(00053.41E-10)");
+    }
 
+    [TestMethod]
+    public void FormulaConstructor_VariableFollowingOpenParen_Valid() {
+        _ = new Formula("(j4)");
+        _ = new Formula("(JGH23)");
+        _ = new Formula("(ayuwgdug456712)");
+        _ = new Formula("(HHGUDSghadi3)");
+    }
 
+    [TestMethod]
+    public void FormulaConstructor_OpenParenFollowingOpenParen_Valid() {
+        _ = new Formula("(((5)))");
+        _ = new Formula("((((((a6))))))");
+        _ = new Formula("((5E1))");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_OperatorFollowingOpenParen_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(+)"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((*654))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((/sdf34)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(-54E10)"));
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_SpecialCharFollowingOpenParen_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(&)"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((^5431))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((($a7)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(#6e1)"));
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_ClosingParenFollowingOpenParen_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("()"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((()))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("()()"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((())))(())"));
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_ASCIICharsFollowingOpenParen_Invalid() {
+        // Characters that are excluded from the test
+        char[] excludedTokens = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(' ];
+
+        // Iterates through the integers on the ASCII table
+        for (int i = 0; i <= 127; i++) {
+            // Gets the ASCII character from that integer
+            byte[] charBytes = BitConverter.GetBytes(i);
+            char asciiChar = Encoding.ASCII.GetChars(charBytes)[0];
+
+            string formula = $"(${asciiChar})";
+
+            // If the character is not excluded, document and run the test
+            if (!excludedTokens.Contains(asciiChar)) {
+                System.Diagnostics.Trace.WriteLine($"Tested Character (ASCII #{i}) : '{asciiChar}'");
+                System.Diagnostics.Trace.WriteLine($"Raw Tested String : \"{formula}\"");
+                Assert.Throws<FormulaFormatException>(() => _ = new Formula(formula));
+            }
+        }
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_NumberFollowingOperator_Valid() {
+        _ = new Formula("8 + 32");
+        _ = new Formula("3e2 *43");
+        _ = new Formula("1254321/65.564");
+        _ = new Formula("4.54E-10-2124");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_VariableFollowingOperator_Valid() {
+        _ = new Formula("533 + j34");
+        _ = new Formula("452E2* gasfa12512");
+        _ = new Formula("aFSD341/K45638236");
+        _ = new Formula("4321.423 -FEFEW4332");
+        _ = new Formula("6429.124e-134-ahg343");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_OpenParenFollowingOperator_Valid() {
+        _ = new Formula("64 + (541)");
+        _ = new Formula("(((6234.65)))* (agfe354)");
+        _ = new Formula("984/(534.54e10)");
+        _ = new Formula("anfd7346-(((431.453)))");
+        _ = new Formula("6587.531E-2178-((((((aiewhd67387))))))");
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_OperatorFollowingOperator_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("54 +/ afd32"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(48632.4673** 123)"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((djd6347--3932)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(5421E10*//3412)"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(4782E-348--566)"));
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_SpecialCharFollowingOperator_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("6542 +& af324"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(64321.654 -^453245E12)"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("ajisdh3341+= 565.432"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((a442+$af324)))"));
+    }
+
+    [TestMethod]
+    public void FormulaConstructor_ASCIICharsFollowingOperator_Invalid() {
+        // Characters that are excluded from the test
+        char[] excludedTokens = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(' ];
+
+        // Iterates through the integers on the ASCII table
+        for (int i = 0; i <= 127; i++) {
+            // Gets the ASCII character from that integer
+            byte[] charBytes = BitConverter.GetBytes(i);
+            char asciiChar = Encoding.ASCII.GetChars(charBytes)[0];
+
+            string formula = $"456736 +${asciiChar} 31E10";
+
+            // If the character is not excluded, document and run the test
+            if (!excludedTokens.Contains(asciiChar)) {
+                System.Diagnostics.Trace.WriteLine($"Tested Character (ASCII #{i}) : '{asciiChar}'");
+                System.Diagnostics.Trace.WriteLine($"Raw Tested String : \"{formula}\"");
+                Assert.Throws<FormulaFormatException>(() => _ = new Formula(formula));
+            }
+        }
+    }
 
 
 
