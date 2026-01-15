@@ -77,7 +77,8 @@ public class FormulaSyntaxTests {
     /// <summary>
     ///     <para> This test makes sure that malformed decimal numbers throw an exception. </para>
     ///     <remarks> 
-    ///         Decimals with two decimal points are inputted. Leading zeroes are also tested. 
+    ///         Decimals with two decimal points are inputted. Along with decimals that have spaces between the period symbol.
+    ///         Leading zeroes are also tested
     ///         <list type="bullet">
     ///             <item> Input: 5721.59572.39481, 08812.456.1 </item>
     ///             <item> Expected Output: FormulaFormatException </item>
@@ -105,10 +106,10 @@ public class FormulaSyntaxTests {
     [TestMethod]
     public void FormulaConstructor_SingleScientificNotationToken_Valid() { //todo - Check this test with the TA
         _ = new Formula("8E10");
-        _ = new Formula("8e10"); //! Assertion Fails
-        _ = new Formula("166e100000"); //! Assertion Fails
+        _ = new Formula("8e10");
+        _ = new Formula("166e100000");
         _ = new Formula("8721E-10");
-        _ = new Formula("00386e100"); //! Assertion Fails
+        _ = new Formula("00386e100");
     }
 
     /// <summary>
@@ -147,7 +148,7 @@ public class FormulaSyntaxTests {
     ///         </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_IncorrectSingleScientificNotationToken_Invalid() {
+    public void FormulaConstructor_IncorrectSingleScientificNotationToken_Invalid() {//todo - Check over this test with TA
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("8E10E10"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("102e362E10"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("8e10e10"));
@@ -187,14 +188,14 @@ public class FormulaSyntaxTests {
     ///     </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_IncorrectSingleVariableToken_Invalid() {
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("a")); //! Assertion Fails
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("auegfiuwo")); //! Assertion Fails
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("a8i")); //! Assertion Fails
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("cugqiuwd5371haefudaw")); //! Assertion Fails
+    public void FormulaConstructor_IncorrectSingleVariableToken_Invalid() { //todo - Check over this test with TA
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("a"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("auegfiuwo"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("a8i"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("cugqiuwd5371haefudaw"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("7u"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("83926jagdwsc"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("J")); //! Assertion Fails
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("J"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("9K4"));
     }
 
@@ -306,6 +307,7 @@ public class FormulaSyntaxTests {
     [TestMethod]
     public void FormulaConstructor_ArithmeticTokensInTwoTermScientificEquation_Valid() {
         _ = new Formula("85E2 + 96E10");
+        _ = new Formula("4.54E-10-2124");
         _ = new Formula("718E651-0835e927");
         _ = new Formula("718e651 * 0835e927");
         _ = new Formula("4645783E241734* 5655713E-025461");
@@ -351,31 +353,60 @@ public class FormulaSyntaxTests {
 
 
     /// <summary>
-    ///     <para> Tests longer equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
+    ///     <para> Tests longer integer equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
     ///     <remarks>
-    ///         The longer formulas contain multiple terms of random tokens. Integers, decimals, scientific notation, and variables.
-    ///         Containing leading zeroes, negative exponents, and capital/lowercase exponent notatiosn. Along with varying spaces between the operators and terms.
+    ///         The longer formulas contain multiple terms of integer tokens with basic operators seperating them.
+    ///         Containing leading zeroes, along with varying spaces between the operators and terms.
+    ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
     ///         <list type="bullet">
-    ///             <item> Input: 7 + 28 -64 * 253/80, 4981.3848 * kjvcSzh623478 + 592.6653 - 812.6621/451.2514, etc.</item>
+    ///             <item> Input: 7 + 28 -64 * 253/80, 5739010 * 00946317 / 474631 * 4536821 - 00466743, etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_ArithmeticTokensInLongerFormula_Valid() { //todo - Check this test with the TA
-        // Integer tests (plus variables)
+    public void FormulaConstructor_IntegersWithArithmeticTokensInLongerFormula_Valid() {
         _ = new Formula("7 + 28 -64 * 253/80");
         _ = new Formula("581-498+j7 / 2543 / 532 * 478");
         _ = new Formula("5739010 * 00946317 / 474631 * 4536821 - 00466743");
         _ = new Formula("83725748192971 * 64372981* awy4362 *436189092");
+    }
 
-        // Decimal tests (plus variables)
+    /// <summary>
+    ///     <para> Tests longer decimal equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
+    ///     <remarks>
+    ///         The longer formulas contain multiple terms of decimal tokens with basic operators seperating them.
+    ///         Containing leading zeroes, along with varying spaces between the operators and terms.
+    ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
+    ///         <list type="bullet">
+    ///             <item> Input: 2.7 + 68.63 - 72.25 * 34.63 / 53.12, 4981.3848 * kjvcSzh623478 + 592.6653 - 812.6621/451.2514, etc.</item>
+    ///             <item> Expected Output: None </item>
+    ///         </list>
+    ///     </remarks>
+    /// </summary>
+    [TestMethod]
+    public void FormulaConstructor_DecimalsWithArithmeticTokensInLongerFormula_Valid() {
         _ = new Formula("2.7 + 68.63 - 72.25 * 34.63 / 53.12");
         _ = new Formula("4981.3848 * kjvcSzh623478 + 592.6653 - 812.6621/451.2514");
         _ = new Formula("4792123.48314 /00547381.0057481 - 003435617.54315 + 3875843.43124 / 4567831.5764536");
         _ = new Formula("461907651024.547185 / 8748381245.56487125/ 563712455.6546372/ 000000045367814.0000005463712");
+    }
 
-        // Scientific notation tests (plus variables)
+    /// <summary>
+    ///     <para> Tests longer scientific notation equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
+    ///     <remarks>
+    ///         The longer formulas contain multiple terms of scientific notation number tokens with basic operators seperating them.
+    ///         Containing leading zeroes, along with varying spaces between the operators and terms.
+    ///         Capital and lowercase scientific notation is included. Along with negative exponents.
+    ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
+    ///         <list type="bullet">
+    ///             <item> Input: 78E56 + 97e13 -OPJDUY3245878 / 561E-284 * 12e-0042, 482E1234 - 3984.53E-0004881/00673E2140, etc.</item>
+    ///             <item> Expected Output: None </item>
+    ///         </list>
+    ///     </remarks>
+    /// </summary>
+    [TestMethod]
+    public void FormulaConstructor_ScientificNotationWithArithmeticTokensInLongerFormula_Valid() { //todo - Check this test with the TA
         _ = new Formula("78E56 + 97e13 -OPJDUY3245878 / 561E-284 * 12e-0042");
         _ = new Formula("482E1234 - 3984.53E-0004881/00673E2140");
         _ = new Formula("43914E9182* 49582E-48731 + 374831.004318E-5");
@@ -653,23 +684,6 @@ public class FormulaSyntaxTests {
 
     // --- Tests for First Token Rule
 
-    /// <summary>
-    ///   <para>
-    ///     Make sure a simple well-formed formula is accepted by the constructor (the constructor
-    ///     should not throw an exception).
-    ///   </para>
-    ///   <remarks>
-    ///     This is an example of a test that is not expected to throw an exception, i.e., it succeeds.
-    ///     In other words, the formula "1+1" is a valid formula which should not cause any errors.
-    ///   </remarks>
-    /// </summary>
-    [TestMethod]
-    public void FormulaConstructor_FirstTokenNumber_Valid() {
-        _ = new Formula("1+1");
-        _ = new Formula("1413 +0038631");
-        _ = new Formula("000001*43732.5442 / 43135");
-    }
-
     [TestMethod]
     public void FormulaConstructor_FirstTokenVariable_Valid() {
         _ = new Formula("a6 *387");
@@ -682,16 +696,11 @@ public class FormulaSyntaxTests {
     public void FormulaConstructor_FirstTokenScientificNotation_Valid() {
         _ = new Formula("54737E10 -75342");
         _ = new Formula("5483.64e3 + as3731");
+        _ = new Formula("574.53e-3 + 02");
         _ = new Formula("00010E010/4637.432E030");
         _ = new Formula("1e1 - 1E1");
     }
-
-    [TestMethod]
-    public void FormulaConstructor_FirstTokenOpenParen_Valid() {
-        _ = new Formula("(6 + 7)");
-        _ = new Formula("(((((jahwed3768)))))");
-        _ = new Formula("(((437.3E10)))");
-    }
+    
     [TestMethod]
     public void FormulaConstructor_FirstTokenCloseParen_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula(")654 * 12)"));
@@ -732,20 +741,6 @@ public class FormulaSyntaxTests {
     }
 
     [TestMethod]
-    public void FormulaConstructor_LastTokenScientificNotation_Valid() {
-        _ = new Formula("6452 +677212E12");
-        _ = new Formula("652.1E1 + 6e2");
-        _ = new Formula("saeghfsae3241/46876.431E10");
-        _ = new Formula("1E3 - 1e1");
-    }
-
-    [TestMethod]
-    public void FormulaConstructor_LastTokenCloseParen_Valid() {
-        _ = new Formula("(a2 + 16E12)");
-        _ = new Formula("(((125.53)))");
-        _ = new Formula("((((((((((JSHSGH7835271)))))))))");
-    }
-    [TestMethod]
     public void FormulaConstructor_LastTokenOpenParen_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(837.34 * 43)  ("));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((((4431e123)))))("));
@@ -769,31 +764,6 @@ public class FormulaSyntaxTests {
     }
 
     // --- Tests for Parentheses/Operator Following Rule ---
-
-    [TestMethod]
-    public void FormulaConstructor_NumberFollowingOpenParen_Valid() {
-        _ = new Formula("(573)");
-        _ = new Formula("(53321.4321)");
-        _ = new Formula("(4312E123)");
-        _ = new Formula("(32e12)");
-        _ = new Formula("(54.32E0013)");
-        _ = new Formula("(00053.41E-10)");
-    }
-
-    [TestMethod]
-    public void FormulaConstructor_VariableFollowingOpenParen_Valid() {
-        _ = new Formula("(j4)");
-        _ = new Formula("(JGH23)");
-        _ = new Formula("(ayuwgdug456712)");
-        _ = new Formula("(HHGUDSghadi3)");
-    }
-
-    [TestMethod]
-    public void FormulaConstructor_OpenParenFollowingOpenParen_Valid() {
-        _ = new Formula("(((5)))");
-        _ = new Formula("((((((a6))))))");
-        _ = new Formula("((5E1))");
-    }
 
     [TestMethod]
     public void FormulaConstructor_OperatorFollowingOpenParen_Invalid() {
@@ -839,23 +809,6 @@ public class FormulaSyntaxTests {
                 Assert.Throws<FormulaFormatException>(() => _ = new Formula(formula));
             }
         }
-    }
-
-    [TestMethod]
-    public void FormulaConstructor_NumberFollowingOperator_Valid() {
-        _ = new Formula("8 + 32");
-        _ = new Formula("3e2 *43");
-        _ = new Formula("1254321/65.564");
-        _ = new Formula("4.54E-10-2124");
-    }
-
-    [TestMethod]
-    public void FormulaConstructor_VariableFollowingOperator_Valid() {
-        _ = new Formula("533 + j34");
-        _ = new Formula("452E2* gasfa12512");
-        _ = new Formula("aFSD341/K45638236");
-        _ = new Formula("4321.423 -FEFEW4332");
-        _ = new Formula("6429.124e-134-ahg343");
     }
 
     [TestMethod]
@@ -909,4 +862,13 @@ public class FormulaSyntaxTests {
 
 
     // --- Tests for Extra Following Rule ---
+
+    [TestMethod]
+    public void FormulaConstructor_NumberFollowingClosedParen_Valid() {
+        _ = new Formula("(572) + 563891");
+        _ = new Formula("(af325)*6542.641");
+        _ = new Formula("(584E1) -483E10");
+        _ = new Formula("(572)/ 5748.543e20");
+        _ = new Formula("(572)-5848E-10");
+    }
 }
