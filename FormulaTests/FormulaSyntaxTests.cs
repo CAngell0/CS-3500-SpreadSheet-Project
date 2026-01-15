@@ -1,13 +1,13 @@
 // <copyright file="FormulaSyntaxTests.cs" company="UofU-CS3500">
 //   Copyright 2024 UofU-CS3500. All rights reserved.
 // </copyright>
-// <authors> [Insert Your Name] </authors>
-// <date> [Insert the Date] </date>
+// <authors> Carson Angell </authors>
+// <date> 1/10/2025 </date>
 
 namespace FormulaTests;
 
 using System.Text;
-using CS3500.Formula3; // Change this using statement to use different formula implementations.
+using CS3500.Formula1; // Change this using statement to use different formula implementations.
 
 /// <summary>
 ///   <para>
@@ -21,7 +21,7 @@ using CS3500.Formula3; // Change this using statement to use different formula i
 /// </summary>
 [TestClass]
 public class FormulaSyntaxTests {
-    // --- Tests for One Token Rule --- DONE
+    // --- Tests for One Token Rule --- FINISHED
 
     /// <summary>
     ///     <para> Tests the formula constructor with an empty string </para>
@@ -103,7 +103,7 @@ public class FormulaSyntaxTests {
     ///     </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_SingleScientificNotationToken_Valid() {
+    public void FormulaConstructor_SingleScientificNotationToken_Valid() { //todo - Check this test with the TA
         _ = new Formula("8E10");
         _ = new Formula("8e10"); //! Assertion Fails
         _ = new Formula("166e100000"); //! Assertion Fails
@@ -144,7 +144,7 @@ public class FormulaSyntaxTests {
     ///             <item> Input: 8E10E10, 8e10e10, 102.44E362310, 0000481e7E20E428 </item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
-///         </remarks>
+    ///         </remarks>
     /// </summary>
     [TestMethod]
     public void FormulaConstructor_IncorrectSingleScientificNotationToken_Invalid() {
@@ -229,12 +229,16 @@ public class FormulaSyntaxTests {
     /// </summary>
     [TestMethod]
     public void FormulaConstructor_ASCIISingleCharacterTokensExcludingNumbers_Invalid() {
+        // Characters that are excluded from the test
         char[] excludedTokens = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
 
-        for (int i = 66; i <= 127; i++) {
+        // Iterates through the integers on the ASCII table
+        for (int i = 0; i <= 127; i++) {
+            // Gets the ASCII character from that integer
             byte[] charBytes = BitConverter.GetBytes(i);
             char asciiChar = Encoding.ASCII.GetChars(charBytes)[0];
 
+            // If the character is not excluded, document and run the test
             if (!excludedTokens.Contains(asciiChar)) {
                 System.Diagnostics.Trace.WriteLine($"Tested Character (ASCII #{i}) : '{asciiChar}'");
                 System.Diagnostics.Trace.WriteLine($"Raw Tested String : \"{new string(asciiChar, 1)}\"");
@@ -247,7 +251,7 @@ public class FormulaSyntaxTests {
 
 
 
-    // --- Tests for Valid Token Rule --- DONE
+    // --- Tests for Valid Token Rule --- FINISHED
 
     /// <summary>
     ///     <para> Tests integer equations with two terms (pairwise) with the basic arithmetic operators (+, -, *, /) </para>
@@ -358,17 +362,20 @@ public class FormulaSyntaxTests {
     ///     </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_ArithmeticTokensInLongerFormula_Valid() { //- Test marked for check
+    public void FormulaConstructor_ArithmeticTokensInLongerFormula_Valid() { //todo - Check this test with the TA
+        // Integer tests (plus variables)
         _ = new Formula("7 + 28 -64 * 253/80");
         _ = new Formula("581-498+j7 / 2543 / 532 * 478");
         _ = new Formula("5739010 * 00946317 / 474631 * 4536821 - 00466743");
         _ = new Formula("83725748192971 * 64372981* awy4362 *436189092");
 
+        // Decimal tests (plus variables)
         _ = new Formula("2.7 + 68.63 - 72.25 * 34.63 / 53.12");
         _ = new Formula("4981.3848 * kjvcSzh623478 + 592.6653 - 812.6621/451.2514");
         _ = new Formula("4792123.48314 /00547381.0057481 - 003435617.54315 + 3875843.43124 / 4567831.5764536");
         _ = new Formula("461907651024.547185 / 8748381245.56487125/ 563712455.6546372/ 000000045367814.0000005463712");
 
+        // Scientific notation tests (plus variables)
         _ = new Formula("78E56 + 97e13 -OPJDUY3245878 / 561E-284 * 12e-0042");
         _ = new Formula("482E1234 - 3984.53E-0004881/00673E2140");
         _ = new Formula("43914E9182* 49582E-48731 + 374831.004318E-5");
@@ -406,13 +413,17 @@ public class FormulaSyntaxTests {
     /// </summary>
     [TestMethod]
     public void FormulaConstructor_ASCIITokensExcludingArithmeticTokensInTwoTermEquation_Invalid() {
+        // Chars to not test for
         char[] excludedChars = ['+', '-', '*', '/', ')', '('];
 
+        // Iterates through the integer numbers of the ASCII table
         for (int i = 0; i <= 127; i++) {
             
+            // Gets the ASCII character
             byte[] charBytes = BitConverter.GetBytes(i);
             char asciiChar = Encoding.ASCII.GetChars(charBytes)[0];
 
+            // If the character is not excluded, document and run the test with that character.
             if (!excludedChars.Contains(asciiChar)) {
                 System.Diagnostics.Trace.WriteLine($"Tested Character (ASCII #{i}) : '{asciiChar}'");
                 System.Diagnostics.Trace.WriteLine($"Raw Tested String : \"{$"5 {asciiChar} 2"}\"");
@@ -430,40 +441,93 @@ public class FormulaSyntaxTests {
 
     // --- Tests for Closing Parenthesis Rule ---
 
+    /// <summary>
+    ///     <para> Tests single tokens wrapped in parenthesis that are right heavy. Meaning that there are more closing parens than opening ones. </para>
+    ///     <remarks>
+    ///         Integers, decimals, scientific notation, and variable tokens are tested inside the parenthesis.
+    ///         The difference in the amount of opening parens vs closing parens also varies.
+    ///         <list type="bullet">
+    ///             <item> Input: 6522), (65)), (65.742)), (4751E482.47))), ((wadDJG5653))))))))))</item>
+    ///             <item> Expected Output: FormulaFormatException </item>
+    ///         </list>
+    ///     </remarks>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_SingleTokenInRightHeavyParens_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("6522)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(65))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(65.742))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(4751E482.47)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((wadDJG5653))))))))))"));
     }
 
+    /// <summary>
+    ///     <para> Tests two term equations wrapped in right heavy parenthesis. </para>
+    ///     <remarks>
+    ///         Integers, decimals, scientific notation, and variable tokens are tested inside the parenthesis.
+    ///         The difference in the amount of opening parens vs closing parens also varies.
+    ///         <list type="bullet">
+    ///             <item> Input: 84e31 + a64), (8 + 4)), (742434678 + 34.8))), ((2E8+djAnw54))))</item>
+    ///             <item> Expected Output: FormulaFormatException </item>
+    ///         </list>
+    ///     </remarks>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_RightHeavyParensInTwoTermEquation_Invalid() {
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("84e31 + a64)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(8 + 4))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(742434678 + 34.8)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((2E8+djAnw54))))"));
     }
 
+    /// <summary>
+    ///     <para> Tests a two term equation inside right heavy parens with increasing amount of difference between the opening and closing parens </para>
+    ///     <remarks>
+    ///         Puts this two term equation in parenthesis, "2341 + 84614". Then iterates and puts opening and closing parenthesis on either side of the equation in different amount of differences.
+    ///         For example, it'll start with a difference of one, "(2341 + 84614))", then a difference of two, "(2341 + 84614)))", and three "(2341 + 84614))))", etc. until it reaches a max difference of 10.
+    ///         It will also do it with more opening parens in the varying differences. For example, it will test a difference of 5 with 10 parens "((((((((((2341 + 84614)))))))))))))))".
+    ///         It goes to a maximum of 20 opening parens. It tests every one of these combinations.
+    ///         <list type="bullet">
+    ///             <item> Input: (2341 + 84614)), (2341 + 84614))), (2341 + 84614)))), ((((((((((2341 + 84614))))))))))))))), etc.</item>
+    ///             <item> Expected Output: FormulaFormatException </item>
+    ///         </list>
+    ///     </remarks>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_RightHeeavyParensWithIncreasingDifference_Invalid() {
+        // Set some constants for the test and initialize a string builder
         int maxDifference = 10;
         int maxNumberOfParens = 20;
         string equation = "2341 + 84614";
         StringBuilder builder = new();
 
+        // Iterate through the difference values and the number of opening parens to use.
         for (int i = 1; i <= maxDifference; i++) {
-            for (int j = 1; j <= maxNumberOfParens; j++) {
+            for (int j = 0; j <= maxNumberOfParens; j++) {
+                //Add the opening parens, the two term equation, and the closing parens
                 builder.Append(new string('(', j));
                 builder.Append(equation);
                 builder.Append(new string(')', j + i));
 
+                // Run the test and clear the builder
                 Assert.Throws<FormulaFormatException>(() => _ = new Formula(builder.ToString()));
                 builder.Clear();
             }
         }
     }
 
+    /// <summary>
+    ///     <para> Tests more complicated formulas with right heavy parenthesis sets hidden in the formula. </para>
+    ///     <remarks>
+    ///         The equations are not nested around one set of parenthesis. The formulas contain multiple sets of parenthesis, some balanced, and some right heavy.
+    ///         This tests whether the constructor can detect those right heavy sets that are hard to spot.
+    ///         Uses all kinds of tokens like integers, decimals, scientific notation, variables and operators.
+    ///         <list type="bullet">
+    ///             <item> Input: ((541 +398) / (221- 4566))), (28.293 / 0582.43725E10)) / (6 - 903) * aHvw287 * 10))+ ((9.9))), etc.</item>
+    ///             <item> Expected Output: FormulaFormatException </item>
+    ///         </list>
+    ///     </remarks>
+    /// </summary>
     [TestMethod]
     public void FormulaConstructor_RightHeeavyParensWithMultipleTerms_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((541 +398) / (221- 4566)))"));
@@ -508,10 +572,10 @@ public class FormulaSyntaxTests {
     public void FormulaConstructor_BalancedParensInTwoTermEquation_Valid() {
         _ = new Formula("(473 + 76E10)");
         _ = new Formula("(ajsn36281 + 482E-75)");
-        _ = new Formula("((297.53 + 6E82.6))"); //! Assertion Fails
+        _ = new Formula("((297.53 + 6E82))");
         _ = new Formula("((5782 + 137))");
         _ = new Formula("(((krSJNei3957 + 144617.341)))");
-        _ = new Formula("((((JBEF347 + 1E10))))"); //! Assertion Fails
+        _ = new Formula("((((JBEF347 + 1E10))))");
         _ = new Formula("(((58941 + 58931.44)))");
         _ = new Formula("(((((((0.551 + 0001)))))))");
     }
