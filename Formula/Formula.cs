@@ -89,7 +89,7 @@ public partial class Formula {
         int openParenCount = 0;
         int closeParenCount = 0;
 
-        _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generatede RegEx is better
+        _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generated RegEx is better
         _validCharsRegex = new Regex(ValidCharsRegExPattern);
         _operatorRegex = new Regex(OperatorRegExPattern);
 
@@ -110,19 +110,39 @@ public partial class Formula {
 
         for (int i = 0; i < _tokens.Count; i++) {
             string token = _tokens.ElementAt(i);
+            string? nextToken = (i != _tokens.Count - 1) ? _tokens.ElementAt(i + 1) : null;
 
             // Checks the valid tokens rule (Rule #2)
             if (!TokenHasValidChars(token)) throw new FormulaFormatException("Formula must contain valid tokens, no special characters allowed.");
 
             if (token == "(") {
                 openParenCount++;
+                if (nextToken == "(") continue;
+
+                // Checks the parenthesis following rule (Rule #7). Only checks for operators following parens, not operators
+                if (!(TokenIsNumber(nextToken) || TokenIsVariable(nextToken) || TokenIsOperator(nextToken))) throw new FormulaFormatException("Invalid token following open parenthesis.");
             }
             else if (token == ")") {
                 closeParenCount++;
+                if (nextToken == null || nextToken == ")") continue;
 
                 // Checks the closing parentheses rule (Rule #3)
                 if (closeParenCount > openParenCount) throw new FormulaFormatException("Number of closing parenthesis has exceeded the number of open parenthesis."); //TODO - Check if this is a good error message
+                //Checks for extra following rule for parentheses (Rule #8)
+                if (!TokenIsOperator(nextToken)) throw new FormulaFormatException("Invalid token following closed parenthesis.");
             }
+            // else if (TokenIsOperator(token)) {
+                // TODO - Where I left off...
+                // - TokenIsVariable helper is getting null value from nextoken
+                // - This is puzzling since it should not be null if the last token is an operator (last token check should have caught it)
+                // - Kind of working on rules 7-8
+            //     if (!(TokenIsNumber(nextToken) || TokenIsVariable(nextToken) || nextToken == "(")) throw new FormulaFormatException("Invalid token following operator.");
+            // }
+            // else {
+            //     if (nextToken == null) continue;
+
+            //     if (!(TokenIsOperator(nextToken) || nextToken == ")")) throw new FormulaFormatException("Invalid token following a number or variable.");
+            // }
 
 
             Console.WriteLine(token); //TODO - remove this
