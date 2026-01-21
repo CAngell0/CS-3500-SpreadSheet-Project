@@ -92,17 +92,17 @@ public partial class Formula {
         _validCharsRegex = new Regex(ValidCharsRegExPattern);
 
 
-        // Test for one token rule (Rule #1)
+        // Checks the one token rule (Rule #1)
         if (_tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula.");
 
 
-        // Test for first token rule (Rule #5)
+        // Checks the first token rule (Rule #5)
         string firstToken = _tokens.First();
         if (firstToken != "(" && !TokenHasValidChars(firstToken) && !TokenIsVariable(firstToken) && !TokenIsNumber(firstToken)) 
                 throw new FormulaFormatException("The first token must be either a number, variable or opening parenthesis");
 
 
-        // Test for last token rule (Rule #6)
+        // Checks the last token rule (Rule #6)
         string lastToken = _tokens.Last();
         if (lastToken != ")" && !TokenHasValidChars(lastToken) && !TokenIsVariable(lastToken) && !TokenIsNumber(lastToken)) 
                 throw new FormulaFormatException("The last token must be either a number, variable or closing parenthesis");
@@ -111,7 +111,7 @@ public partial class Formula {
         for (int i = 0; i < _tokens.Count; i++) {
             string token = _tokens.ElementAt(i);
 
-            // Tests for valid tokens rule (Rule #2)
+            // Checks the valid tokens rule (Rule #2)
             if (!TokenHasValidChars(token)) throw new FormulaFormatException("Formula must contain valid tokens, no special characters allowed.");
 
             if (token == "(") {
@@ -120,13 +120,16 @@ public partial class Formula {
             else if (token == ")") {
                 closeParenCount++;
 
-                // Tests the closing parentheses rule (Rule #3)
+                // Checks the closing parentheses rule (Rule #3)
                 if (closeParenCount > openParenCount) throw new FormulaFormatException("Number of closing parenthesis has exceeded the number of open parenthesis."); //TODO - Check if this is a good error message
             }
 
 
             Console.WriteLine(token); //TODO - remove this
         }
+
+        // Checks the balanced parentheses rule (Rule #4)
+        if (openParenCount != closeParenCount) throw new FormulaFormatException("Parentheses are not balanced in the formula.");
     }
 
     private bool TokenIsVariable(string token) => _variableRegex.IsMatch(token);
