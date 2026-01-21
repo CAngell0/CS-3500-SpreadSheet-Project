@@ -42,8 +42,7 @@ using System.Text.RegularExpressions;
 ///     </item>
 ///   </list>
 /// </summary>
-public class Formula
-{
+public class Formula {
     /// <summary>
     ///   All variables are letters followed by numbers.  This pattern
     ///   represents valid variable name strings.
@@ -77,8 +76,7 @@ public class Formula
     ///   </list>
     /// </summary>
     /// <param name="formula"> The string representation of the formula to be created.</param>
-    public Formula( string formula )
-    {
+    public Formula(string formula) {
         // FIXME: implement your code here
     }
 
@@ -98,8 +96,7 @@ public class Formula
     ///   </list>
     /// </summary>
     /// <returns> the set of variables (string names) representing the variables referenced by the formula. </returns>
-    public ISet<string> GetVariables( )
-    {
+    public ISet<string> GetVariables() {
         // FIXME: implement your code here
         return new HashSet<string>();
     }
@@ -137,8 +134,7 @@ public class Formula
     ///   A canonical version (string) of the formula. All "equal" formulas
     ///   should have the same value here.
     /// </returns>
-    public override string ToString( )
-    {
+    public override string ToString() {
         // FIXME: add your code here.
         return string.Empty;
     }
@@ -149,11 +145,10 @@ public class Formula
     /// </summary>
     /// <param name="token"> A token that may be a variable. </param>
     /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
-    private static bool IsVar( string token )
-    {
+    private static bool IsVar(string token) {
         // notice the use of ^ and $ to denote that the entire string being matched is just the variable
         string standaloneVarPattern = $"^{VariableRegExPattern}$";
-        return Regex.IsMatch( token, standaloneVarPattern );
+        return Regex.IsMatch(token, standaloneVarPattern);
     }
 
     /// <summary>
@@ -177,8 +172,7 @@ public class Formula
     /// </summary>
     /// <param name="formula"> A string representing an infix formula such as 1*B1/3.0. </param>
     /// <returns> The ordered list of tokens in the formula. </returns>
-    private static List<string> GetTokens( string formula )
-    {
+    private static List<string> GetTokens(string formula) {
         List<string> results = [];
 
         string lpPattern = @"\(";
@@ -198,10 +192,8 @@ public class Formula
                                         spacePattern);
 
         // Enumerate matching tokens that don't consist solely of white space.
-        foreach ( string s in Regex.Split( formula, pattern, RegexOptions.IgnorePatternWhitespace ) )
-        {
-            if ( !Regex.IsMatch( s, @"^\s*$", RegexOptions.Singleline ) )
-            {
+        foreach (string s in Regex.Split(formula, pattern, RegexOptions.IgnorePatternWhitespace)) {
+            if (!Regex.IsMatch(s, @"^\s*$", RegexOptions.Singleline)) {
                 results.Add(s);
             }
         }
@@ -214,8 +206,7 @@ public class Formula
 /// <summary>
 ///   Used to report syntax errors in the argument to the Formula constructor.
 /// </summary>
-public class FormulaFormatException : Exception
-{
+public class FormulaFormatException : Exception {
     /// <summary>
     ///   Initializes a new instance of the <see cref="FormulaFormatException"/> class.
     ///   <para>
@@ -223,9 +214,8 @@ public class FormulaFormatException : Exception
     ///   </para>
     /// </summary>
     /// <param name="message"> A developer defined message describing why the exception occured.</param>
-    public FormulaFormatException( string message )
-        : base( message )
-    {
+    public FormulaFormatException(string message)
+        : base(message) {
         // All this does is call the base constructor. No extra code needed.
     }
 }
