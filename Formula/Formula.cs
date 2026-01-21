@@ -42,13 +42,16 @@ using System.Text.RegularExpressions;
 ///     </item>
 ///   </list>
 /// </summary>
-public class Formula {
+public partial class Formula {
     /// <summary>
     ///   All variables are letters followed by numbers.  This pattern
     ///   represents valid variable name strings.
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
-    private const string NoSpecialCharsRegExPattern = @"[\+\-*/\(\)a-zA-Z\d]+";
+    private const string ValidCharsRegExPattern = @"[\+\-*/\(\)a-zA-Z\d]+";
+
+    private readonly Regex _variableRegex;
+    private readonly Regex _validCharsRegex;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -80,18 +83,37 @@ public class Formula {
     public Formula(string formula) {
         List<string> tokens = GetTokens(formula);
 
+        // IDE suggestion was made to use generated regex so that they are initialized at compile time.
+        _variableRegex = new Regex(VariableRegExPattern);
+        _validCharsRegex = new Regex(ValidCharsRegExPattern);
+
+        // Test for one token rule (Rule #1)
         if (tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula.");
 
-        // Regex variableRegex = new(VariableRegExPattern);
-        Regex noSpecialCharsRegex = new(NoSpecialCharsRegExPattern);
+
+        // Test for first token rule (Rule #5)
+        string firstToken = tokens.First();
+        if (firstToken != "(" && !TokenHasValidChars(firstToken) && !TokenIsVariable(firstToken) && !TokenIsNumber(firstToken)) 
+                throw new FormulaFormatException("The first token must be either a number, variable or opening parenthesis");
+
+
+        // Test for lst token rule (Rule #6)
+        string lastToken = tokens.Last();
+        if (lastToken != ")" && !TokenHasValidChars(lastToken) && !TokenIsVariable(lastToken) && !TokenIsNumber(lastToken)) 
+                throw new FormulaFormatException("The last token must be either a number, variable or closing parenthesis");
+
 
         for (int i = 0; i < tokens.Count; i++) {
             string token = tokens.ElementAt(i);
             Console.WriteLine(token); //TODO - remove this
 
-            if (!noSpecialCharsRegex.IsMatch(token)) throw new FormulaFormatException("Formula must contain valid tokens, no special characters allowed.");
+            if (!TokenHasValidChars(token)) throw new FormulaFormatException("Formula must contain valid tokens, no special characters allowed.");
         }
     }
+
+    private bool TokenIsNumber(string token) => Double.TryParse(token, out _);
+    private bool TokenIsVariable(string token) => _variableRegex.IsMatch(token);
+    private bool TokenHasValidChars(string token) => _validCharsRegex.IsMatch(token);
 
     /// <summary>
     ///   <para>
