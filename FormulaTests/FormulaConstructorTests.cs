@@ -809,7 +809,7 @@ public sealed class FormulaConstructorTests {
     /// </summary>
     [TestMethod]
     public void FormulaConstructor_LeftHeavyParensWithMultiTermEquation_Invalid() {
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((4673871-84 +0047.5721) /((885 - 45)) * ((6735/ fijwaiSJowmdE00291.36)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((4673871-84 +0047.5721) /(((885 - 45)) * ((6735/ fijwaiSJowmdE00291.36)))"));
     }
 
 

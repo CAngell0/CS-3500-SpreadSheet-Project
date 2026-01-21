@@ -48,12 +48,14 @@ public partial class Formula {
     ///   represents valid variable name strings.
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
-    private const string ValidCharsRegExPattern = @"[\+\-*/\(\)a-zA-Z\d]+";
+    private const string ValidCharsRegExPattern = @"[\+\-\*/\(\)a-zA-Z\d]+";
+    private const string OperatorRegExPattern = @"[\+\-\*/]";
 
     private List<string> _tokens;
 
     private readonly Regex _variableRegex;
     private readonly Regex _validCharsRegex;
+    private readonly Regex _operatorRegex;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -87,9 +89,9 @@ public partial class Formula {
         int openParenCount = 0;
         int closeParenCount = 0;
 
-        // IDE suggestion was made to use generated regex so that they are initialized at compile time.
         _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generatede RegEx is better
         _validCharsRegex = new Regex(ValidCharsRegExPattern);
+        _operatorRegex = new Regex(OperatorRegExPattern);
 
 
         // Checks the one token rule (Rule #1)
@@ -98,14 +100,12 @@ public partial class Formula {
 
         // Checks the first token rule (Rule #5)
         string firstToken = _tokens.First();
-        if (firstToken != "(" && !TokenHasValidChars(firstToken) && !TokenIsVariable(firstToken) && !TokenIsNumber(firstToken)) 
-                throw new FormulaFormatException("The first token must be either a number, variable or opening parenthesis");
+        if (!(TokenIsNumber(firstToken) || TokenIsVariable(firstToken) || firstToken == "(")) throw new FormulaFormatException("The first token must be either a number, variable or opening parenthesis");
 
 
         // Checks the last token rule (Rule #6)
         string lastToken = _tokens.Last();
-        if (lastToken != ")" && !TokenHasValidChars(lastToken) && !TokenIsVariable(lastToken) && !TokenIsNumber(lastToken)) 
-                throw new FormulaFormatException("The last token must be either a number, variable or closing parenthesis");
+        if (!(TokenIsNumber(lastToken) || TokenIsVariable(lastToken) || lastToken == ")")) throw new FormulaFormatException("The last token must be either a number, variable or closing parenthesis");
 
 
         for (int i = 0; i < _tokens.Count; i++) {
@@ -135,6 +135,7 @@ public partial class Formula {
     private bool TokenIsVariable(string token) => _variableRegex.IsMatch(token);
     private static bool TokenIsNumber(string token) => Double.TryParse(token, out _);
     private bool TokenHasValidChars(string token) => _validCharsRegex.IsMatch(token);
+    private bool TokenIsOperator(string token) => _operatorRegex.IsMatch(token);
 
     /// <summary>
     ///   <para>
