@@ -7,6 +7,6 @@ using Formula;
 public class DevTests {
     [TestMethod]
     public void TestMethod1() {
-        
+        Formula form = new(".63425");
     }
 }

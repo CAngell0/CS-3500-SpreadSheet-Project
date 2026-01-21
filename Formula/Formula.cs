@@ -48,6 +48,7 @@ public class Formula {
     ///   represents valid variable name strings.
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
+    private const string NoSpecialCharsRegExPattern = @"[\+\-*/\(\)a-zA-Z\d]+";
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -77,7 +78,19 @@ public class Formula {
     /// </summary>
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula) {
-        // FIXME: implement your code here
+        List<string> tokens = GetTokens(formula);
+
+        if (tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula.");
+
+        // Regex variableRegex = new(VariableRegExPattern);
+        Regex noSpecialCharsRegex = new(NoSpecialCharsRegExPattern);
+
+        for (int i = 0; i < tokens.Count; i++) {
+            string token = tokens.ElementAt(i);
+            Console.WriteLine(token); //TODO - remove this
+
+            if (!noSpecialCharsRegex.IsMatch(token)) throw new FormulaFormatException("Formula must contain valid tokens, no special characters allowed.");
+        }
     }
 
     /// <summary>
