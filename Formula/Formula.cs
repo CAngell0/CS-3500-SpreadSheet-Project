@@ -53,6 +53,7 @@ public partial class Formula {
     
     //TODO - See if I should add comments for these properties
     private readonly List<string> _tokens;
+    private readonly HashSet<string> _variables;
     private readonly Regex _variableRegex;
     private readonly Regex _operatorRegex;
     private readonly Regex _leadingZeroVarRegex;
@@ -86,6 +87,7 @@ public partial class Formula {
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula) {
         _tokens = GetTokens(formula);
+        _variables = new HashSet<string>();
         _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generated RegEx is better
         _operatorRegex = new Regex(OperatorRegExPattern);
         _leadingZeroVarRegex = new Regex(LeadingZeroInVariableRegExPattern);
@@ -137,6 +139,7 @@ public partial class Formula {
             // This executes if the current token is a number or variable
             else {
                 UpdateTokenToCannonicalForm(i);
+                if (TokenIsVariable(token)) _variables.Add(_tokens[i]);
                 // Checks the extra following rule (Rule #8)
                 if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following a number or variable.");
             }
@@ -237,8 +240,12 @@ public partial class Formula {
     /// </summary>
     /// <returns> the set of variables (string names) representing the variables referenced by the formula in canonical form (all letters converted to uppercase). </returns>
     public ISet<string> GetVariables() {
-        // FIXME: implement your code here
-        return new HashSet<string>();
+        return _variables;
+
+        //TODO - O(n) implementation, remove if not needed
+        // HashSet<string> variables = [];
+        // foreach (string token in _tokens) if (TokenIsVariable(token)) variables.Add(token);
+        // return variables;
     }
 
     /// <summary>

@@ -61,7 +61,7 @@ public class FormulaToStringTests {
     }
     
     /// <summary>
-    ///     Since variable names are really column-row coordinate for the spreadshett, that would mean
+    ///     Since variable names are really column-row coordinates for the spreadsheet, that would mean
     ///     the number part of the variable name should be treated as a pure number. Meaning any
     ///     leading zeroes would be removed in canonical form. This tests that.
     ///         Ex:  "a05" -> "A5"
