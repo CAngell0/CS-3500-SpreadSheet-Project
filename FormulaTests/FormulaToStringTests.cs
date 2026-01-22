@@ -47,8 +47,8 @@ public class FormulaToStringTests {
     }
 
 
-    // --- Tests for single variable tokens ---
 
+    // --- Tests for single variable tokens ---
     [TestMethod]
     public void FormulaToString_SingleVariableToken_ReturnsUnchanged() {
         Assert.AreEqual("ABC123", new Formula("ABC123").ToString());
@@ -69,5 +69,27 @@ public class FormulaToStringTests {
     [TestMethod]
     public void FormulaToString_SingleVariableTokenWithLeadingZeroes_ReturnsCanonicalForm() {
         Assert.AreEqual("ABC123", new Formula("abc00123").ToString());
+    }
+
+
+
+    // --- Tests with longer equations ---
+    [TestMethod]
+    public void FormulaToString_TwoTermEquation_ReturnsCanonicalForm() {
+        Assert.AreEqual("45.32*200000", new Formula("45.3200 * 2e5").ToString());
+        Assert.AreEqual("90/JED1", new Formula("090 / jEd1").ToString());
+    }
+
+    [TestMethod]
+    public void FormulaToString_TwoTermEquationWithParentheses_ReturnsCanonicalForm() {
+        Assert.AreEqual("((45.32*200000))", new Formula("((45.3200 * 2e5))").ToString());
+        Assert.AreEqual("(90)/JED1", new Formula("(090) / jEd1").ToString());
+        Assert.AreEqual("500+((((((((((((K9))))))))))))", new Formula("5E02 + ((((((((((((k9))))))))))))").ToString());
+    }
+
+    [TestMethod]
+    public void FormulaToString_EquationsInsideParentheses_ReturnsCanonicalForm() {
+        Assert.AreEqual("28+(ABD34*4000)", new Formula("28 + (abd34 * 4e00003)").ToString());
+        Assert.AreEqual("(0.56-23)*(((AL2/10)))", new Formula("(.5600-23) * (((al2/1e1)))").ToString());
     }
 }
