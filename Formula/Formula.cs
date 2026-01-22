@@ -1,5 +1,4 @@
-﻿//TODO - Make error throws include the token in question
-//TODO - Finish ToString method and GetVariables method
+﻿//TODO - Finish GetVariables test cases
 
 namespace Formula;
 
@@ -41,7 +40,7 @@ public partial class Formula {
     /// </summary>
     private const string VariableRegExPattern = @"^[a-zA-Z]+\d+$";
     /// <summary>
-    ///     All operater tokens are single character strings with one of the four main basic operators (+, -, *, /).
+    ///     All operator tokens are single character strings with one of the four main basic operators (+, -, *, /).
     ///     This pattern represents valid operator tokens.
     /// </summary>
     private const string OperatorRegExPattern = @"^[\+\-\*/]$";
@@ -51,12 +50,15 @@ public partial class Formula {
     /// </summary>
     private const string LeadingZeroInVariableRegExPattern = @"[a-zA-Z]0+";
     
-    //TODO - See if I should add comments for these properties
     private readonly List<string> _tokens;
     private readonly HashSet<string> _variables;
+
+    // These Regex member objects correspond to the patterns above
     private readonly Regex _variableRegex;
     private readonly Regex _operatorRegex;
     private readonly Regex _leadingZeroVarRegex;
+
+    // Holds the canonical string version of the formula
     private readonly string _stringifiedFormula;
 
     /// <summary>
@@ -88,7 +90,7 @@ public partial class Formula {
     public Formula(string formula) {
         _tokens = GetTokens(formula);
         _variables = new HashSet<string>();
-        _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generated RegEx is better
+        _variableRegex = new Regex(VariableRegExPattern);
         _operatorRegex = new Regex(OperatorRegExPattern);
         _leadingZeroVarRegex = new Regex(LeadingZeroInVariableRegExPattern);
 
@@ -104,44 +106,50 @@ public partial class Formula {
 
         // Checks the first token rule (Rule #5)
         string firstToken = _tokens.First();
-        if (!(TokenIsNumber(firstToken) || TokenIsVariable(firstToken) || firstToken == "(")) throw new FormulaFormatException("The first token must be either a number, variable or opening parenthesis");
+        if (!(TokenIsNumber(firstToken) || TokenIsVariable(firstToken) || firstToken == "(")) throw new FormulaFormatException($"Invalid first token: \"{firstToken}\". Must be either a number, variable or opening parenthesis");
 
 
         // Checks the last token rule (Rule #6)
         string lastToken = _tokens.Last();
-        if (!(TokenIsNumber(lastToken) || TokenIsVariable(lastToken) || lastToken == ")")) throw new FormulaFormatException("The last token must be either a number, variable or closing parenthesis");
+        if (!(TokenIsNumber(lastToken) || TokenIsVariable(lastToken) || lastToken == ")")) throw new FormulaFormatException($"Invalid last token: \"{lastToken}\". Must be either a number, variable or closing parenthesis");
 
+        // Iterates through the tokens and checks each one
         //TODO - See if this code block below should be put into a helper method
         for (int i = 0; i < _tokens.Count; i++) {
             string token = _tokens[i];
+
+            // If there is no token after the current one, the value is null (meaning we reached the end of the list)
+            // I did this to avoid IndexOutOfBounds exceptions when referencing tokens in front of the current one.
             string? nextToken = (i != _tokens.Count - 1) ? _tokens[i + 1] : null;
 
             if (TokenIsOperator(token)) {
                 //Checks the operator following rule (Rule #7)
-                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException("Invalid token following operator.");
+                // Null checking for nextToken is not needed here since an operator cannot be the last token (earlier checks made sure of that).
+                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following operator: \"{nextToken}\".");
             }
 
             else if (token == "(") {
                 openParenCount++;
                 // Checks the parenthesis following rule (Rule #7)
-                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException("Invalid token following open parenthesis.");
+                // Null checking for nextToken is not needed here since an opening parenthesis cannot be the last token (earlier checks made sure of that).
+                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following open parenthesis: \"{nextToken}\".");
             }
 
             else if (token == ")") {
                 closeParenCount++;
                 // Checks the closing parentheses rule (Rule #3)
-                if (closeParenCount > openParenCount) throw new FormulaFormatException("Number of closing parenthesis has exceeded the number of open parenthesis.");// TODO - See if this is a good error message
+                if (closeParenCount > openParenCount) throw new FormulaFormatException("Cannot have more closing parentheses than opening parentheses.");
 
                 // Checks the extra following rule (Rule #8)
-                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following closed parenthesis.");
+                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException($"Invalid token following closed parenthesis: \"{nextToken}\".");
             }
 
-            // This executes if the current token is a number or variable
+            // Executes if the current token is a number or variable
             else {
-                UpdateTokenToCannonicalForm(i);
+                UpdateTokenToCanonicalForm(tokenIndex: i);
                 if (TokenIsVariable(token)) _variables.Add(_tokens[i]);
                 // Checks the extra following rule (Rule #8)
-                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following a number or variable.");
+                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException($"Invalid token following a number or variable: \"{nextToken}\".");
             }
 
             builder.Append(_tokens[i]);
@@ -177,7 +185,7 @@ public partial class Formula {
     ///     </list>
     /// </summary>
     /// <param name="tokenIndex"></param>
-    private void UpdateTokenToCannonicalForm(int tokenIndex) {
+    private void UpdateTokenToCanonicalForm(int tokenIndex) {
         string token = _tokens[tokenIndex];
         if (TokenIsVariable(token)) {
             if (_leadingZeroVarRegex.IsMatch(token)) _tokens[tokenIndex] = Regex.Replace(token, @"(?<=[a-zA-Z])0+", "").ToUpper(); //TODO - See if this is necessary
@@ -254,7 +262,7 @@ public partial class Formula {
     ///         The string will contain no spaces. All the variable and number tokens in the string will be normalized.
     ///         For numbers, this means that the original string token is converted to
     ///         a number using double.Parse or double.TryParse, then converted back to a
-    ///         string using double.ToString. For variables, this means all letters are uppercased.
+    ///         string using double.ToString. For variables, this means all letters are uppercase.
     ///         <para> For example: </para>
     ///         <code>
     ///             new("x1 + Y1").ToString() should return "X1+Y1"
@@ -332,7 +340,7 @@ public class FormulaFormatException : Exception {
     ///      Constructs a FormulaFormatException containing the explanatory message.
     ///   </para>
     /// </summary>
-    /// <param name="message"> A developer defined message describing why the exception occured.</param>
+    /// <param name="message"> A developer defined message describing why the exception occurred.</param>
     public FormulaFormatException(string message)
         : base(message) {
         // All this does is call the base constructor. No extra code needed.

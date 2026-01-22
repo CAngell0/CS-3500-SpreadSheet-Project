@@ -4,7 +4,7 @@
 // <authors> Carson Angell </authors>
 // <date> 1/10/2025 </date>
 
-//TODO - Add tests for decimals with no leeding zeroes (eg .5)
+//TODO - Add tests for decimals with no leading zeroes (eg .5)
 
 namespace FormulaTests;
 
@@ -39,7 +39,7 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> This test makes sure the constructor can handle single integer tokens. </para>
     ///     <remarks> 
-    ///         Short integers, long integers and inegers with leading zeroes arae tested. 
+    ///         Short integers, long integers and integers with leading zeroes are tested. 
     ///         <list type="bullet">
     ///             <item> Input: 5, 598582, 00028532, etc. </item>
     ///             <item> Expected Output: None </item>
@@ -184,7 +184,7 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests malformed single variable tokens in the formula constructor. </para>
     ///     <remarks> 
-    ///         Variables that don't match the expected naming scheme are tests. Captital and lowercase letters are tested in the variable names. 
+    ///         Variables that don't match the expected naming scheme are tests. Capital and lowercase letters are tested in the variable names. 
     ///         <list type="bullet">
     ///             <item> Input: a, auegfiuwo, a8i, J, 9K4, 83926jagdws, 7u </item>
     ///             <item> Expected Output: FormulaFormatException </item>
@@ -224,7 +224,7 @@ public sealed class FormulaConstructorTests {
 
 
     /// <summary>
-    ///     <para> Tests simple special chartacters as single tokens inside a string</par>
+    ///     <para> Tests simple special characters as single tokens inside a string</par>
     ///     <remarks> 
     ///         Four special characters are tests on their own, "&", "#", "$", "!"
     ///         <list type="bullet">
@@ -246,7 +246,7 @@ public sealed class FormulaConstructorTests {
     ///     <para> Tests every ASCII character as single tokens in the formula constructor. Excluding valid tokens like number characters. </para>
     ///     <remarks> 
     ///         This test iterates through the ASCII table and tests every character as a single token in the formula constructor.
-    ///         Skips the characters 0 throguh 9, since they are valid integer tokens when used in the constructor in this way.
+    ///         Skips the characters 0 through 9, since they are valid integer tokens when used in the constructor in this way.
     ///         <list type="bullet">
     ///             <item> Input: +, A, &, #, etc. </item>
     ///             <item> Expected Output: FormulaFormatException </item>
@@ -282,7 +282,7 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests integer equations with two terms (pairwise) with the basic arithmetic operators (+, -, *, /) </para>
     ///     <remarks> 
-    ///         This test inputs integers into two term equations with a single basic operator seperating them (+, -, *, /).
+    ///         This test inputs integers into two term equations with a single basic operator separating them (+, -, *, /).
     ///         Also tests with and without spaces between the operators and integers. Integers with leading zeroes are tested.
     ///         <list type="bullet">
     ///             <item> Input: 8 +10, 346 - 219, 556428*05895318, 00271468716349821 / 195476561281</item>
@@ -302,7 +302,7 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests decimal equations with two terms (pairwise) with the basic arithmetic operators (+, -, *, /) </para>
     ///     <remarks>
-    ///         This test inputs decimals into two term equations with a single basic operator seperating them (+, -, *, /).
+    ///         This test inputs decimals into two term equations with a single basic operator separating them (+, -, *, /).
     ///         Also tests with and without spaces between the operators and numbers. Decimals with leading zeroes are tested.
     ///         <list type="bullet">
     ///             <item> Input: 8.2 + 19.53, 588.1235 -964.1335, 5698214.731893 * 06123764.435941, etc.</item>
@@ -322,9 +322,9 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests scientific notation equations with two terms (pairwise) with the basic arithmetic operators (+, -, *, /) </para>
     ///     <remarks>
-    ///         This test inputs scientific notation integers into two term equations with a single basic operator seperating them (+, -, *, /).
+    ///         This test inputs scientific notation integers into two term equations with a single basic operator separating them (+, -, *, /).
     ///         Also tests with and without spaces between the operators and numbers. Leading zeroes are tested.
-    ///         Captial exponent notation (3E10) and lowercase notation (3e10) is tested, along with negative exponents.
+    ///         Capital exponent notation (3E10) and lowercase notation (3e10) is tested, along with negative exponents.
     ///         <list type="bullet">
     ///             <item> Input: 85E2 + 96E10, 718E6-0835e92, 718e6 * 0835e92, etc.</item>
     ///             <item> Expected Output: None </item>
@@ -345,7 +345,7 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests equations with variables in two term (pairwise) equations using the basic arithmetic operators (+, -, *, /) </para>
     ///     <remarks>
-    ///         This test inputs variables into two term equations with a single basic operator seperating them (+, -, *, /).
+    ///         This test inputs variables into two term equations with a single basic operator separating them (+, -, *, /).
     ///         Also tests with and without spaces between the operators and numbers.
     ///         <list type="bullet">
     ///             <item> Input: g6 + J9, fhd631-KDBE83472, sjbdEIEDN9331 * dwmwn4783317, JSJiensn20491* eJ9, etc.</item>
@@ -382,9 +382,9 @@ public sealed class FormulaConstructorTests {
 
 
     /// <summary>
-    ///     <para> Tests longer integer equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
+    ///     <para> Tests longer integer equations that have multiple terms, with the basic operators separating them (+, -, *, /) </para>
     ///     <remarks>
-    ///         The longer formulas contain multiple terms of integer tokens with basic operators seperating them.
+    ///         The longer formulas contain multiple terms of integer tokens with basic operators separating them.
     ///         Containing leading zeroes, along with varying spaces between the operators and terms.
     ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
     ///         <list type="bullet">
@@ -403,9 +403,9 @@ public sealed class FormulaConstructorTests {
 
 
     /// <summary>
-    ///     <para> Tests longer decimal equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
+    ///     <para> Tests longer decimal equations that have multiple terms, with the basic operators separating them (+, -, *, /) </para>
     ///     <remarks>
-    ///         The longer formulas contain multiple terms of decimal tokens with basic operators seperating them.
+    ///         The longer formulas contain multiple terms of decimal tokens with basic operators separating them.
     ///         Containing leading zeroes, along with varying spaces between the operators and terms.
     ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
     ///         <list type="bullet">
@@ -424,9 +424,9 @@ public sealed class FormulaConstructorTests {
 
 
     /// <summary>
-    ///     <para> Tests longer scientific notation equations that have multiple terms, with the basic operators seperating them (+, -, *, /) </para>
+    ///     <para> Tests longer scientific notation equations that have multiple terms, with the basic operators separating them (+, -, *, /) </para>
     ///     <remarks>
-    ///         The longer formulas contain multiple terms of scientific notation number tokens with basic operators seperating them.
+    ///         The longer formulas contain multiple terms of scientific notation number tokens with basic operators separating them.
     ///         Containing leading zeroes, along with varying spaces between the operators and terms.
     ///         Capital and lowercase scientific notation is included. Along with negative exponents.
     ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
@@ -446,9 +446,9 @@ public sealed class FormulaConstructorTests {
 
 
     /// <summary>
-    ///     <para> Tests longer equations with only variables. Terms are seperated with the basic operators seperating them (+, -, *, /) </para>
+    ///     <para> Tests longer equations with only variables. Terms are separated with the basic operators separating them (+, -, *, /) </para>
     ///     <remarks>
-    ///         The longer formulas contain multiple terms of variable tokens with basic operators seperating them.
+    ///         The longer formulas contain multiple terms of variable tokens with basic operators separating them.
     ///         Parenthesis are not used in the equations.
     ///         <list type="bullet">
     ///             <item> Input: gfasd5543 + esa35 -OPJDUY3245878 / F4 * dsfFSAFD3543, FAEF34 - GHGefsger3565/FGD0064</item>
@@ -464,7 +464,7 @@ public sealed class FormulaConstructorTests {
 
 
     /// <summary>
-    ///     <para> Tests longer formulas with multiple terms seperated by basic operators (+, -, *, /). Except it includes a random special character in the formula.</para>
+    ///     <para> Tests longer formulas with multiple terms separated by basic operators (+, -, *, /). Except it includes a random special character in the formula.</para>
     ///     <remarks> 
     ///         The tokens used are a random combination of integers, decimals, scientific notation, and variables. 
     ///         With negative exponents, and capital/lowercase notations for scientific notation.
@@ -578,7 +578,7 @@ public sealed class FormulaConstructorTests {
     ///     </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_RightHeeavyParensWithIncreasingDifference_Invalid() {
+    public void FormulaConstructor_RightHeavyParensWithIncreasingDifference_Invalid() {
         // Set some constants for the test and initialize a string builder
         int maxDifference = 10;
         int maxNumberOfParens = 20;
@@ -614,7 +614,7 @@ public sealed class FormulaConstructorTests {
     ///     </remarks>
     /// </summary>
     [TestMethod]
-    public void FormulaConstructor_RightHeeavyParensWithMultipleTerms_Invalid() {
+    public void FormulaConstructor_RightHeavyParensWithMultipleTerms_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((541 +398) / (221- 4566)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(2451 - 9)) / (78 * 661E-2)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((12342E-33+ 0047.5721) / (885-45)) * ((6735 /fijwaiSJowmdE00291)))"));
@@ -668,7 +668,7 @@ public sealed class FormulaConstructorTests {
         string insideToken = "120.54E-00047";
         StringBuilder builder = new(); //!
 
-        // Iteratres through the parenthesis amounts
+        // Iterates through the parenthesis amounts
         for (int i = 0; i <= maxParenCount; i++) {
             System.Diagnostics.Trace.WriteLine($"Parenthesis Count : {i}");
 
@@ -739,7 +739,7 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Puts multiple terms of multi-layer balanced parenthesis in a longer equation and tests it. </para>
     ///     <remarks>
-    ///         The test puts multiple terms of parethesized single token or two term equations in one longer formula (seperated by operators).
+    ///         The test puts multiple terms of parenthesized single token or two term equations in one longer formula (separated by operators).
     ///         Tokens used are a mix of integers, decimals, scientific notation, and variables. Spaces are mixed into the equation between tokens,
     ///         parenthesis and other spots.
     ///         <list type="bullet">
@@ -758,7 +758,7 @@ public sealed class FormulaConstructorTests {
 
     
     /// <summary>
-    ///     <para> Puts singular tokens into parenthesis that are left heavy and unbalaned </para>
+    ///     <para> Puts singular tokens into parenthesis that are left heavy and unbalanced </para>
     ///     <remarks>
     ///         Tests all four kinds of tokens, integer, decimal, scientific notation and variables.
     ///         Along with varying amounts of parenthesis and difference in balance.
@@ -780,9 +780,9 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests two term equations in a left heavy set of parens. </para>
     ///     <remarks>
-    ///         Tests all four kinds of tokens, integers, decimals, scientific notaton and variables.
+    ///         Tests all four kinds of tokens, integers, decimals, scientific notation and variables.
     ///         Along with varying amounts of parenthesis and difference in balance.
-    ///         Equation terms are seperated by basic operators and varying amounts of spaces.
+    ///         Equation terms are separated by basic operators and varying amounts of spaces.
     ///         <list type="bullet">
     ///             <item> Input: ((63132 * 437631), ((((63132.7664/437631e10), (((((((((((((((DUGajw546737 +afjkewh47631))))))))))))))</item>
     ///             <item> Expected Output: FormulaFormatException </item>
@@ -1059,7 +1059,7 @@ public sealed class FormulaConstructorTests {
     // --- Tests for Parentheses/Operator Following Rule ---
 
     /// <summary>
-    ///     <para> Puts an operator as the first charcter after an open parenthesis </para>
+    ///     <para> Puts an operator as the first character after an open parenthesis </para>
     ///     <remarks>
     ///         The parentheses are balanced and wrap around a single token inside (after the operator).
     ///         The token is ether a number or a variable. Spaces are tested in between the operator
@@ -1080,7 +1080,7 @@ public sealed class FormulaConstructorTests {
     }
 
     /// <summary>
-    ///     <para> Puts a special characer as the first charcter after an open parenthesis </para>
+    ///     <para> Puts a special character as the first character after an open parenthesis </para>
     ///     <remarks>
     ///         The parentheses are balanced and wrap around a single token inside (after the operator).
     ///         The token is ether a number or a variable. Spaces are tested in between the special character
@@ -1101,9 +1101,9 @@ public sealed class FormulaConstructorTests {
     }
 
     /// <summary>
-    ///     <para> Puts a closed paren as the first charcter after an open parenthesis. Essentially making an empty set of parens. </para>
+    ///     <para> Puts a closed paren as the first character after an open parenthesis. Essentially making an empty set of parens. </para>
     ///     <remarks>
-    ///         Tests both balanced and unbalaned parens. No token is put inside the parens.
+    ///         Tests both balanced and unbalanced parens. No token is put inside the parens.
     ///         Multiply sets of empty parens put side by side are also tested.
     ///         Spaces between parens and paren sets are also tested.
     ///         <list type="bullet">
@@ -1122,7 +1122,7 @@ public sealed class FormulaConstructorTests {
     }
 
     /// <summary>
-    ///     <para> Ierates through the ASCII table and tests putting special characters in front of open parens </para>
+    ///     <para> Iterates through the ASCII table and tests putting special characters in front of open parens </para>
     ///     <remarks>
     ///         Puts the special character in a balanced set of parens '($)' and test that for each ASCII character
     ///         except numbers and the open parenthesis.
@@ -1179,7 +1179,7 @@ public sealed class FormulaConstructorTests {
     ///     <para> Takes a two term equation and puts two operators between the terms, side by side. </para>
     ///     <remarks>
     ///         The tokens used for the equation terms are either numbers or variables. Spaces
-    ///         are varyied between operators and terms. Balanced parentheses are also wrapped
+    ///         are varied between operators and terms. Balanced parentheses are also wrapped
     ///         around some of the equations.
     ///         <list type="bullet">
     ///             <item> Input: 54 +/ afd32, 4782E-3--566, (48632.4673** 123), (((djd6347--3932))), etc. </item>
@@ -1200,7 +1200,7 @@ public sealed class FormulaConstructorTests {
     ///     <para> Takes a two term equation and puts an operator followed by a special character between the terms, side by side. </para>
     ///     <remarks>
     ///         The tokens used for the equation terms are either numbers or variables. Spaces
-    ///         are varyied between operators/special characters and terms. Balanced parentheses are also wrapped
+    ///         are varied between operators/special characters and terms. Balanced parentheses are also wrapped
     ///         around some of the equations.
     ///         <list type="bullet">
     ///             <item> Input: 6542 +& af324, (64321.654 -^453245E12), ajisdh3341+= 565.432 etc. </item>
@@ -1257,7 +1257,7 @@ public sealed class FormulaConstructorTests {
     ///     <para> Takes a two term equation and makes the first term wrapped in parens. Then follows the closed paren with an operator and the second term </para>
     ///     <remarks>
     ///         The two terms used are either a number or variable. The parentheses are balanced and come in varying layers.
-    ///         Spaces are varyied between the operator and the two terms (and parens).
+    ///         Spaces are varied between the operator and the two terms (and parens).
     ///         <list type="bullet">
     ///             <item> Input: (572) + 563891, (((584E1))) -483E10, (572)/ 5748.543e20, (af325)*6542.641, etc. </item>
     ///             <item> Expected Output: None </item>

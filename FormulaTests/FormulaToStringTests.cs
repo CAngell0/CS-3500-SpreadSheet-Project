@@ -57,7 +57,7 @@ public class FormulaToStringTests {
     [TestMethod]
     public void FormulaToString_SingleVariableToken_ReturnsCanonicalForm() {
         Assert.AreEqual("AGD478", new Formula("agd478").ToString());
-        Assert.AreEqual("ASBHJS9", new Formula("aSbhJs9").ToString());
+        Assert.AreEqual("ABCDE9", new Formula("aBcdE9").ToString());
     }
     
     /// <summary>
@@ -95,9 +95,9 @@ public class FormulaToStringTests {
 
 
 
-    // --- Tests with equivilent equations
+    // --- Tests with equivalent equations
     [TestMethod]
-    public void FormulaToString_EquivilentTwoTermEquations_AreEquivilent() {
+    public void FormulaToString_EquivalentTwoTermEquations_AreEquivalent() {
         Assert.AreEqual(
             new Formula("anj54- 2e4").ToString(), 
             new Formula("aNj054- 2E004").ToString());
@@ -108,7 +108,7 @@ public class FormulaToStringTests {
     }
 
     [TestMethod]
-    public void FormulaToString_EquivilentTwoTermEquationWithParentheses_AreEquivilent() {
+    public void FormulaToString_EquivalentTwoTermEquationWithParentheses_AreEquivalent() {
         Assert.AreEqual(
             new Formula("(((((03- 200000)))))").ToString(), 
             new Formula("(((((.300e1 - 2e005)))))").ToString());
@@ -119,7 +119,7 @@ public class FormulaToStringTests {
     }
 
     [TestMethod]
-    public void FormulaToString_EquivilentEquationsInsideParentheses_AreEquivilent() {
+    public void FormulaToString_EquivalentEquationsInsideParentheses_AreEquivalent() {
         Assert.AreEqual(
             new Formula("28 +(aBd34*40e2)").ToString(), 
             new Formula("28+ (abd34 * 4e00003)").ToString());
