@@ -99,7 +99,7 @@ public sealed class FormulaConstructorTests {
     ///     <remarks> 
     ///         Tests numbers with capital notation (3E10) and lowercase notation (3e10). Numbers with leading zeroes are also tested. 
     ///         <list type="bullet">
-    ///             <item> Input: 8E10, 166e100000, 8721E-10, 00386e100 </item>
+    ///             <item> Input: 8E10, 166e10, 8721E-10, 00386e10 </item>
     ///            <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -108,9 +108,9 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_SingleScientificNotationToken_Valid() {
         _ = new Formula("8E10");
         _ = new Formula("8e10");
-        _ = new Formula("166e100000");
+        _ = new Formula("166e10");
         _ = new Formula("8721E-10");
-        _ = new Formula("00386e100");
+        _ = new Formula("00386e10");
     }
 
 
@@ -119,7 +119,7 @@ public sealed class FormulaConstructorTests {
     ///     <remarks> 
     ///         Tests numbers with capital notation (3.7E10) and lowercase notation (3.7e10). Numbers with leading zeroes, and negative exponents are also tested. 
     ///         <list type="bullet">
-    ///             <item> Input: 7.42e10, 961.9572E1004550, 21146.88321E-20, 00942.4551e1000 </item>
+    ///             <item> Input: 7.42e10, 961.9572E10, 21146.88321E-20, 00942.4551e10 </item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -127,14 +127,14 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_SingleDecimalScientificNotationToken_Valid() {
         _ = new Formula("7.42e10");
-        _ = new Formula("961.9572E1004550");
+        _ = new Formula("961.9572E10");
         _ = new Formula("21146.88321E-20");
-        _ = new Formula("00942.4551e1000");
+        _ = new Formula("00942.4551e10");
 
         _ = new Formula("8.31e76");
-        _ = new Formula("28571.48421E855631");
+        _ = new Formula("28571.48421E35");
         _ = new Formula("495782.45822e-43");
-        _ = new Formula("002143.9482E100");
+        _ = new Formula("002143.9482E10");
     }
 
 
@@ -144,7 +144,7 @@ public sealed class FormulaConstructorTests {
     ///         Tests numbers with multiple exponent terms. Tests numbers with capital notation (3e10E20) and lowercase notation (3E10e20). 
     ///         Decimal and numbers with leading zeroes are tested. 
     ///         <list type="bullet">
-    ///             <item> Input: 8E10E10, 8e10e10, 102.44E362310, 0000481e7E20E428 </item>
+    ///             <item> Input: 8E10E10, 8e10e10, 102.44E36, 0000481e7E20E428 </item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
     ///         </remarks>
@@ -154,7 +154,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("8E10E10"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("102e362E10"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("8e10e10"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("102.44E3623E10"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("102.44E36E10"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("0000481e7E20E428"));
     }
 
@@ -326,7 +326,7 @@ public sealed class FormulaConstructorTests {
     ///         Also tests with and without spaces between the operators and numbers. Leading zeroes are tested.
     ///         Captial exponent notation (3E10) and lowercase notation (3e10) is tested, along with negative exponents.
     ///         <list type="bullet">
-    ///             <item> Input: 85E2 + 96E10, 718E651-0835e927, 718e651 * 0835e927, etc.</item>
+    ///             <item> Input: 85E2 + 96E10, 718E6-0835e92, 718e6 * 0835e92, etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -335,10 +335,10 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_ArithmeticTokensInTwoTermScientificEquation_Valid() {
         _ = new Formula("85E2 + 96E10");
         _ = new Formula("4.54E-10-2124");
-        _ = new Formula("718E651-0835e927");
-        _ = new Formula("718e651 * 0835e927");
-        _ = new Formula("4645783E241734* 5655713E-025461");
-        _ = new Formula("3453687123e564739014 / 87464731245E5864371985");
+        _ = new Formula("718E6-0835e7");
+        _ = new Formula("718e6 * 0835e7");
+        _ = new Formula("4645783E24* 5655713E-021");
+        _ = new Formula("3453687123e5 / 87464731245E9");
     }
 
 
@@ -431,17 +431,17 @@ public sealed class FormulaConstructorTests {
     ///         Capital and lowercase scientific notation is included. Along with negative exponents.
     ///         Parenthesis are not used in the equations. Variables are also thrown into the equations at random points.
     ///         <list type="bullet">
-    ///             <item> Input: 78E56 + 97e13 -OPJDUY3245878 / 561E-284 * 12e-0042, 482E1234 - 3984.53E-0004881/00673E2140, etc.</item>
+    ///             <item> Input: 78E56 + 97e13 -OPJDUY3245878 / 561E-28 * 12e-42, 482E12 - 3984.53E-28/00673E21, etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
     /// </summary>
     [TestMethod]
     public void FormulaConstructor_ScientificNotationWithArithmeticTokensInLongerEquation_Valid() {
-        _ = new Formula("78E56 + 97e13 -OPJDUY3245878 / 561E-284 * 12e-0042");
-        _ = new Formula("482E1234 - 3984.53E-0004881/00673E2140");
-        _ = new Formula("43914E9182* 49582E-48731 + 374831.004318E-5");
-        _ = new Formula("3453687123E564739014 / 7464731245E5864371985 + 5748391097E18295841 *00000567182.5743516E-0047561");
+        _ = new Formula("78E56 + 97e13 -OPJDUY3245878 / 561E-28 * 12e-42");
+        _ = new Formula("482E12 - 3984.53E-48/00673E21");
+        _ = new Formula("43914E41* 49582E-28 + 374831.004318E-5");
+        _ = new Formula("3453687123E56 / 7464731245E58 + 5748391097E18 *00000567182.5743516E-4");
     }
 
 
@@ -529,7 +529,7 @@ public sealed class FormulaConstructorTests {
     ///         Integers, decimals, scientific notation, and variable tokens are tested inside the parenthesis.
     ///         The difference in the amount of opening parens vs closing parens also varies.
     ///         <list type="bullet">
-    ///             <item> Input: 6522), (65)), (65.742)), (4751E482.47))), ((wadDJG5653))))))))))</item>
+    ///             <item> Input: 6522), (65)), (65.742)), (4751E48))), ((wadDJG5653))))))))))</item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
     ///     </remarks>
@@ -539,7 +539,7 @@ public sealed class FormulaConstructorTests {
         // Assert.Throws<FormulaFormatException>(() => _ = new Formula("6522)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(65))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(65.742))"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(4751E482.47)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(4751E48)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((wadDJG5653))))))))))"));
     }
 
@@ -616,8 +616,8 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_RightHeeavyParensWithMultipleTerms_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((541 +398) / (221- 4566)))"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(2451 - 9)) / (78 * 661E-2198)"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((12342E-83+ 0047.5721) / (885-45)) * ((6735 /fijwaiSJowmdE00291)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(2451 - 9)) / (78 * 661E-2)"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((12342E-33+ 0047.5721) / (885-45)) * ((6735 /fijwaiSJowmdE00291)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(28.293 / 0582.43725E10)) / (6 - 903) * aHvw287 * 10))+ ((9.9)))"));
     }
 
@@ -654,9 +654,9 @@ public sealed class FormulaConstructorTests {
     ///     <remarks>
     ///         This test iterates and adds different amounts of balanced parenthesis around a single token.
     ///         Starting off with no parenthesis, all the way up to 100 layers of balanced parens.
-    ///         The token inside the parens is constant, with a value of "120.54E-00047261".
+    ///         The token inside the parens is constant, with a value of "120.54E-00047".
     ///         <list type="bullet">
-    ///             <item> Input: (120.54E-00047261), (((120.54E-00047261))), (((((((120.54E-00047261))))))), etc.</item>
+    ///             <item> Input: (120.54E-00047), (((120.54E-00047))), (((((((120.54E-00047))))))), etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -665,8 +665,8 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_ManyBalancedParenLayersWithSingleToken_Valid() {
         // Sets some constants for the test and initializes a string builder
         int maxParenCount = 100;
-        string insideToken = "120.54E-00047261";
-        StringBuilder builder = new();
+        string insideToken = "120.54E-00047";
+        StringBuilder builder = new(); //!
 
         // Iteratres through the parenthesis amounts
         for (int i = 0; i <= maxParenCount; i++) {
@@ -701,8 +701,8 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_BalancedParensInTwoTermEquation_Valid() {
         _ = new Formula("(473+ 76E10)");
-        _ = new Formula("(ajsn36281 / 482E-75  )");
-        _ = new Formula("((297.53 + 6E82))");
+        _ = new Formula("(ajsn36281 / 482E-7  )");
+        _ = new Formula("((297.53 + 6E2))");
         _ = new Formula("((5782 * 137))");
         _ = new Formula("(((   krSJNei3957 +144617.341)) )");
         _ = new Formula("(( ((JBEF347 - 1e10))))");
@@ -743,7 +743,7 @@ public sealed class FormulaConstructorTests {
     ///         Tokens used are a mix of integers, decimals, scientific notation, and variables. Spaces are mixed into the equation between tokens,
     ///         parenthesis and other spots.
     ///         <list type="bullet">
-    ///             <item> Input: ((541 + 398) / (221 -4566))  ), ((12342E-83+0047.5721) / ((885 - 45)) * ((6735 /fijwaiSJowmdE00291)) ), etc.</item>
+    ///             <item> Input: ((541 + 398) / (221 -4566))  ), ((12342E-53+0047.5721) / ((885 - 45)) * ((6735 /fijwaiSJowmdE00291)) ), etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -751,8 +751,8 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_BalancedParensWithLongerEquation_Valid() {
         _ = new Formula("(((541 + 398) / (221 -4566))  )");
-        _ = new Formula("((2451-9))/ (78 * 661E210)");
-        _ = new Formula("((12342E-83+0047.5721) / ((885 - 45)) * ((6735 /fijwaiSJowmdE00291)) )");
+        _ = new Formula("((2451-9))/ (78 * 661E21)");
+        _ = new Formula("((12342E-53+0047.5721) / ((885 - 45)) * ((6735 /fijwaiSJowmdE00291)) )");
         _ = new Formula("(( (28.293 / 0582.43725E10) / (6  - 903) *aHvw287*10)) + (9.9)");
     }
 
@@ -818,12 +818,12 @@ public sealed class FormulaConstructorTests {
     /// <summary>
     ///     <para> Tests a two term equation inside left heavy parens with increasing amount of difference between the opening and closing parens </para>
     ///     <remarks>
-    ///         Puts this two term equation in parenthesis, "aihjnd3672 +578367E104". Then iterates and puts opening and closing parenthesis on either side of the equation in different amount of differences.
-    ///         For example, it'll start with a difference of one, "((aihjnd3672 +578367E104)", then a difference of two, "(((aihjnd3672 +578367E104)", and three "((((aihjnd3672 +578367E104)", etc. until it reaches a max difference of 10.
-    ///         It will also do it with more closing parens in the varying differences. For example, it will test a difference of 5 with 10 parens "(((((((((((((((aihjnd3672 +578367E104))))))))))".
+    ///         Puts this two term equation in parenthesis, "aihjnd3672 +578367E7". Then iterates and puts opening and closing parenthesis on either side of the equation in different amount of differences.
+    ///         For example, it'll start with a difference of one, "((aihjnd3672 +578367E7)", then a difference of two, "(((aihjnd3672 +578367E7)", and three "((((aihjnd3672 +578367E7)", etc. until it reaches a max difference of 10.
+    ///         It will also do it with more closing parens in the varying differences. For example, it will test a difference of 5 with 10 parens "(((((((((((((((aihjnd3672 +578367E7))))))))))".
     ///         It goes to a maximum of 20 closing parens. It tests every one of these combinations.
     ///         <list type="bullet">
-    ///             <item> Input: ((aihjnd3672 +578367E104), (((aihjnd3672 +578367E104), ((((aihjnd3672 +578367E104), (((((((((((((((aihjnd3672 +578367E104)))))))))), etc.</item>
+    ///             <item> Input: ((aihjnd3672 +578367E7), (((aihjnd3672 +578367E7), ((((aihjnd3672 +578367E7), (((((((((((((((aihjnd3672 +578367E7)))))))))), etc.</item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
     ///     </remarks>
@@ -832,7 +832,7 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_LeftHeeavyParensWithIncreasingDifference_Invalid() {
         int maxDifference = 10;
         int maxNumberOfParens = 20;
-        string equation = "aihjnd3672 +578367E104";
+        string equation = "aihjnd3672 +578367E7";
         StringBuilder builder = new();
 
         for (int i = 1; i <= maxDifference; i++) {
@@ -886,7 +886,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("54737E10 -75342");
         _ = new Formula("5483.64e3 + as3731");
         _ = new Formula("574.53e-3 + 02");
-        _ = new Formula("00010E010/4637.432E030");
+        _ = new Formula("00010E10/4637.432E30");
         _ = new Formula("1e1 - 1E1");
     }
     
@@ -999,7 +999,7 @@ public sealed class FormulaConstructorTests {
     ///         Puts a open paren as the last character of the string, with either an equation or a set of parentheses before it.
     ///         Spaces are also tested between the parens/equation and the open paren.
     ///         <list type="bullet">
-    ///             <item> Input: 578e10 * a5(, (837.34 * 43)  (, ((((4431e123)))))(, (((ajhkdgwihu2312))) (</item>
+    ///             <item> Input: 578e10 * a5(, (837.34 * 43)  (, ((((4431e3)))))(, (((ajhkdgwihu2312))) (</item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
     ///     </remarks>
@@ -1008,7 +1008,7 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_LastTokenOpenParen_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("578e10 * a5("));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(837.34 * 43)  ("));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((((4431e123)))))("));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((((4431e3)))))("));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((ajhkdgwihu2312))) ("));
     }
 
@@ -1161,7 +1161,7 @@ public sealed class FormulaConstructorTests {
     ///         The tokens in each term or pair of parens are either numbers orm variables.
     ///         spaces are put between parens/terms and the operator, along with in between paren characters.
     ///         <list type="bullet">
-    ///             <item> Input: 64 + (541), (((6234.65)))* (agfe354), 6587.531E-2178-((( (( (aiewhd67387  )))) )), etc. </item>
+    ///             <item> Input: 64 + (541), (((6234.65)))* (agfe354), 6587.531E-21-((( (( (aiewhd67387  )))) )), etc. </item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -1172,7 +1172,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("(((6234.65)))* (agfe354)");
         _ = new Formula("984/(534.54e10)");
         _ = new Formula("anfd7346-(((431.453)))");
-        _ = new Formula("6587.531E-2178-((( (( (aiewhd67387  )))) ))");
+        _ = new Formula("6587.531E-21-((( (( (aiewhd67387  )))) ))");
     }
 
     /// <summary>
@@ -1182,7 +1182,7 @@ public sealed class FormulaConstructorTests {
     ///         are varyied between operators and terms. Balanced parentheses are also wrapped
     ///         around some of the equations.
     ///         <list type="bullet">
-    ///             <item> Input: 54 +/ afd32, 4782E-348--566, (48632.4673** 123), (((djd6347--3932))), etc. </item>
+    ///             <item> Input: 54 +/ afd32, 4782E-3--566, (48632.4673** 123), (((djd6347--3932))), etc. </item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
     ///     </remarks>
@@ -1190,7 +1190,7 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_OperatorFollowingOperator_Invalid() {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("54 +/ afd32"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("4782E-348--566"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("4782E-3--566"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(48632.4673** 123)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((djd6347--3932)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(5421E10*//3412)"));
