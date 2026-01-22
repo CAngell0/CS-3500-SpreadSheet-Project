@@ -1,6 +1,13 @@
+// <authors> Carson Angell </authors>
+// <date> 1/22/2025 </date>
+
 namespace FormulaTests;
 
 using Formula;
+
+/// <summary>
+///     Unit tests for the Formula class ToString method.
+/// </summary>
 [TestClass]
 public class FormulaToStringTests {
 

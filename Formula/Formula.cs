@@ -1,9 +1,10 @@
 ﻿//TODO - Finish GetVariables test cases
+// <authors> Carson Angell </authors>
+// <date> 1/19/2025 </date>
 
 namespace Formula;
 
 using System.Text;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -113,24 +114,25 @@ public partial class Formula {
         string lastToken = _tokens.Last();
         if (!(TokenIsNumber(lastToken) || TokenIsVariable(lastToken) || lastToken == ")")) throw new FormulaFormatException($"Invalid last token: \"{lastToken}\". Must be either a number, variable or closing parenthesis");
 
+
         // Iterates through the tokens and checks each one
         //TODO - See if this code block below should be put into a helper method
         for (int i = 0; i < _tokens.Count; i++) {
             string token = _tokens[i];
 
             // If there is no token after the current one, the value is null (meaning we reached the end of the list)
-            // I did this to avoid IndexOutOfBounds exceptions when referencing tokens in front of the current one.
+            // I did this to avoid IndexOutOfBounds exceptions when referencing tokens in front of the current one. It makes it a bit cleaner than index checking.
             string? nextToken = (i != _tokens.Count - 1) ? _tokens[i + 1] : null;
 
             if (TokenIsOperator(token)) {
-                //Checks the operator following rule (Rule #7)
+                // Checks the operator following rule (Rule #7)
                 // Null checking for nextToken is not needed here since an operator cannot be the last token (earlier checks made sure of that).
                 if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following operator: \"{nextToken}\".");
             }
 
             else if (token == "(") {
                 openParenCount++;
-                // Checks the parenthesis following rule (Rule #7)
+                // Checks the open parenthesis following rule (Rule #7)
                 // Null checking for nextToken is not needed here since an opening parenthesis cannot be the last token (earlier checks made sure of that).
                 if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following open parenthesis: \"{nextToken}\".");
             }
@@ -141,18 +143,18 @@ public partial class Formula {
                 if (closeParenCount > openParenCount) throw new FormulaFormatException("Cannot have more closing parentheses than opening parentheses.");
 
                 // Checks the extra following rule (Rule #8)
-                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException($"Invalid token following closed parenthesis: \"{nextToken}\".");
+                if (nextToken != null && nextToken != ")" && !TokenIsOperator(nextToken)) throw new FormulaFormatException($"Invalid token following closed parenthesis: \"{nextToken}\".");
             }
 
             // Executes if the current token is a number or variable
             else {
-                UpdateTokenToCanonicalForm(tokenIndex: i);
-                if (TokenIsVariable(token)) _variables.Add(_tokens[i]);
+                token = UpdateTokenToCanonicalForm(tokenIndex: i);
+                if (TokenIsVariable(token)) _variables.Add(token);
                 // Checks the extra following rule (Rule #8)
-                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException($"Invalid token following a number or variable: \"{nextToken}\".");
+                if (nextToken != null && nextToken != ")" && !TokenIsOperator(nextToken)) throw new FormulaFormatException($"Invalid token following a number or variable: \"{nextToken}\".");
             }
 
-            builder.Append(_tokens[i]);
+            builder.Append(token);
         }
 
         // Checks the balanced parentheses rule (Rule #4)
@@ -185,7 +187,8 @@ public partial class Formula {
     ///     </list>
     /// </summary>
     /// <param name="tokenIndex"></param>
-    private void UpdateTokenToCanonicalForm(int tokenIndex) {
+    /// <returns> New version of token after it has been updated to canonical form </returns>
+    private string UpdateTokenToCanonicalForm(int tokenIndex) {
         string token = _tokens[tokenIndex];
         if (TokenIsVariable(token)) {
             if (_leadingZeroVarRegex.IsMatch(token)) _tokens[tokenIndex] = Regex.Replace(token, @"(?<=[a-zA-Z])0+", "").ToUpper(); //TODO - See if this is necessary
@@ -195,6 +198,7 @@ public partial class Formula {
             _ = Double.TryParse(token, out double convertedToken);
             _tokens[tokenIndex] = $"{convertedToken}";
         }
+        return _tokens[tokenIndex];
     }
 
 

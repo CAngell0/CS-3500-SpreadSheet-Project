@@ -4,17 +4,13 @@
 // <authors> Carson Angell </authors>
 // <date> 1/10/2025 </date>
 
-//TODO - Add tests for decimals with no leading zeroes (eg .5)
-
 namespace FormulaTests;
 
 using System.Text;
 using Formula;
 
 /// <summary>
-///   <para>
-///     Unit test cases for the Formula class constructor. Used to test the different implementations made by past students and the instructor/TAs
-///   </para>
+///     Unit test cases for the Formula class constructor.
 /// </summary>
 [TestClass]
 public sealed class FormulaConstructorTests {
@@ -71,6 +67,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("545.9281");
         _ = new Formula("5.02744192");
         _ = new Formula("0072.2861");
+        _ = new Formula(".4");
     }
 
 
@@ -91,6 +88,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("008812.456.1"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("008812 . 456"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("008812. 456"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("..90"));
     }
 
 
@@ -305,7 +303,7 @@ public sealed class FormulaConstructorTests {
     ///         This test inputs decimals into two term equations with a single basic operator separating them (+, -, *, /).
     ///         Also tests with and without spaces between the operators and numbers. Decimals with leading zeroes are tested.
     ///         <list type="bullet">
-    ///             <item> Input: 8.2 + 19.53, 588.1235 -964.1335, 5698214.731893 * 06123764.435941, etc.</item>
+    ///             <item> Input: 8.2 + 19.53, 588.1235 -.1335, 5698214.731893 * 06123764.435941, etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -313,7 +311,7 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_ArithmeticTokensInTwoTermDecimalEquation_Valid() {
         _ = new Formula("8.2 + 19.53");
-        _ = new Formula("588.1235 -964.1335");
+        _ = new Formula("588.1235 -.1335");
         _ = new Formula("5698214.731893 * 06123764.435941");
         _ = new Formula("45619823791581.325698271 / 91238645791.54186931");
     }
@@ -326,7 +324,7 @@ public sealed class FormulaConstructorTests {
     ///         Also tests with and without spaces between the operators and numbers. Leading zeroes are tested.
     ///         Capital exponent notation (3E10) and lowercase notation (3e10) is tested, along with negative exponents.
     ///         <list type="bullet">
-    ///             <item> Input: 85E2 + 96E10, 718E6-0835e92, 718e6 * 0835e92, etc.</item>
+    ///             <item> Input: 85E2 + 96E10, 718E6-0835e92, 71.6e6 * 0835e92, etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -334,9 +332,9 @@ public sealed class FormulaConstructorTests {
     [TestMethod]
     public void FormulaConstructor_ArithmeticTokensInTwoTermScientificEquation_Valid() {
         _ = new Formula("85E2 + 96E10");
-        _ = new Formula("4.54E-10-2124");
+        _ = new Formula(".54E-10-2124");
         _ = new Formula("718E6-0835e7");
-        _ = new Formula("718e6 * 0835e7");
+        _ = new Formula("71.6e6 * 0835e7");
         _ = new Formula("4645783E24* 5655713E-021");
         _ = new Formula("3453687123e5 / 87464731245E9");
     }
@@ -416,10 +414,10 @@ public sealed class FormulaConstructorTests {
     /// </summary>
     [TestMethod]
     public void FormulaConstructor_DecimalsWithArithmeticTokensInLongerEquation_Valid() {
-        _ = new Formula("2.7 + 68.63 - 72.25 * 34.63 / 53.12");
+        _ = new Formula("2.7 + 68.63 - 0.25 * 34.63 / 53.12");
         _ = new Formula("4981.3848 * kjvcSzh623478 + 592.6653 - 812.6621/451.2514");
-        _ = new Formula("4792123.48314 /00547381.0057481 - 003435617.54315 + 3875843.43124 / 4567831.5764536");
-        _ = new Formula("461907651024.547185 / 8748381245.56487125/ 563712455.6546372/ 000000045367814.0000005463712");
+        _ = new Formula("4792123.48314 /00547381.0057481 - 003435617.54315 + .43124 / 4567831.5764536");
+        _ = new Formula(".547185 / 8748381245.56487125/ 0.6546372/ 000000045367814.0000005463712");
     }
 
 
@@ -539,6 +537,7 @@ public sealed class FormulaConstructorTests {
         // Assert.Throws<FormulaFormatException>(() => _ = new Formula("6522)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(65))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(65.742))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("((.742)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(4751E48)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((wadDJG5653))))))))))"));
     }
@@ -608,7 +607,7 @@ public sealed class FormulaConstructorTests {
     ///         This tests whether the constructor can detect those right heavy sets that are hard to spot.
     ///         Uses all kinds of tokens like integers, decimals, scientific notation, variables and operators.
     ///         <list type="bullet">
-    ///             <item> Input: ((541 +398) / (221- 4566))), (28.293 / 0582.43725E10)) / (6 - 903) * aHvw287 * 10))+ ((9.9))), etc.</item>
+    ///             <item> Input: ((541 +398) / (221- 4566))), (28.293 / 0582.43725E10)) / (6 - 903) * aHvw287 * 10))+ ((.9))), etc.</item>
     ///             <item> Expected Output: FormulaFormatException </item>
     ///         </list>
     ///     </remarks>
@@ -618,7 +617,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((541 +398) / (221- 4566)))"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(2451 - 9)) / (78 * 661E-2)"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((12342E-33+ 0047.5721) / (885-45)) * ((6735 /fijwaiSJowmdE00291)))"));
-        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(28.293 / 0582.43725E10)) / (6 - 903) * aHvw287 * 10))+ ((9.9)))"));
+        Assert.Throws<FormulaFormatException>(() => _ = new Formula("(28.293 / 0582.43725E10)) / (6 - 903) * aHvw287 * 10))+ ((.9)))"));
     }
 
 
@@ -876,7 +875,7 @@ public sealed class FormulaConstructorTests {
     ///         Along with varying spaces between the operators and the terms.
     ///         Tests with the second term as another token of all types, integer, decimal, scientific notation, and a variable.
     ///         <list type="bullet">
-    ///             <item> Input: a54737E10 -75342, 5483.64e3 + as3731, 574.53e-3 + 02 etc.</item>
+    ///             <item> Input: a54737E10 -75342, 5483.64e3 + as3731, 574.53e-3 + .2 etc.</item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -885,7 +884,7 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_FirstTokenScientificNotation_Valid() {
         _ = new Formula("54737E10 -75342");
         _ = new Formula("5483.64e3 + as3731");
-        _ = new Formula("574.53e-3 + 02");
+        _ = new Formula("574.53e-3 + .2");
         _ = new Formula("00010E10/4637.432E30");
         _ = new Formula("1e1 - 1E1");
     }
@@ -959,7 +958,7 @@ public sealed class FormulaConstructorTests {
     ///         Spaces are also varied between the operator and the equation terms.
     ///         Leading zeroes are also added in places.
     ///         <list type="bullet">
-    ///             <item> Input: 1+1, 63124 +00436271, 7646.57 +587E10, etc. </item>
+    ///             <item> Input: 1+1, 63124 +00436271, .57 +587E10, etc. </item>
     ///             <item> Expected Output: None </item>
     ///         </list>
     ///     </remarks>
@@ -968,7 +967,7 @@ public sealed class FormulaConstructorTests {
     public void FormulaConstructor_LastTokenNumber_Valid() {
         _ = new Formula("1+1");
         _ = new Formula("63124 +00436271");
-        _ = new Formula("7646.57 +587E10");
+        _ = new Formula(".57 +587E10");
         _ = new Formula("asf36 +587e10");
         _ = new Formula("0002*1241.0 / 0000043652.46");
     }
