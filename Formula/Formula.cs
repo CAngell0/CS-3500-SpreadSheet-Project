@@ -249,37 +249,21 @@ public partial class Formula {
     }
 
     /// <summary>
-    ///   <para>
     ///     Returns a string representation of a canonical form of the formula.
-    ///   </para>
-    ///   <para>
-    ///     The string will contain no spaces.
-    ///   </para>
-    ///   <para>
-    ///     If the string is passed to the Formula constructor, the new Formula f
-    ///     will be such that this.ToString() == f.ToString().
-    ///   </para>
-    ///   <para>
-    ///     All the variable and number tokens in the string will be normalized.
-    ///     For numbers, this means that the original string token is converted to
-    ///     a number using double.Parse or double.TryParse, then converted back to a
-    ///     string using double.ToString.
-    ///     For variables, this means all letters are uppercased.
-    ///   </para>
-    ///   <para>
-    ///       For example:
-    ///   </para>
-    ///   <code>
-    ///       new("x1 + Y1").ToString() should return "X1+Y1"
-    ///       new("x1 + 5.0000").ToString() should return "X1+5".
-    ///   </code>
-    ///   <para>
-    ///     This method should execute in O(1) time.
-    ///   </para>
+    ///     <remarks>
+    ///         The string will contain no spaces. All the variable and number tokens in the string will be normalized.
+    ///         For numbers, this means that the original string token is converted to
+    ///         a number using double.Parse or double.TryParse, then converted back to a
+    ///         string using double.ToString. For variables, this means all letters are uppercased.
+    ///         <para> For example: </para>
+    ///         <code>
+    ///             new("x1 + Y1").ToString() should return "X1+Y1"
+    ///             new("x1 + 5.0000").ToString() should return "X1+5".
+    ///         </code>
+    ///     </remarks>
     /// </summary>
     /// <returns>
-    ///   A canonical version (string) of the formula. All "equal" formulas
-    ///   should have the same value here.
+    ///     A canonical version (string) of the formula. All "equal" formulas should have the same value here.
     /// </returns>
     public override string ToString() {
         return _stringifiedFormula;

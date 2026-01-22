@@ -92,4 +92,40 @@ public class FormulaToStringTests {
         Assert.AreEqual("28+(ABD34*4000)", new Formula("28 + (abd34 * 4e00003)").ToString());
         Assert.AreEqual("(0.56-23)*(((AL2/10)))", new Formula("(.5600-23) * (((al2/1e1)))").ToString());
     }
+
+
+
+    // --- Tests with equivilent equations
+    [TestMethod]
+    public void FormulaToString_EquivilentTwoTermEquations_AreEquivilent() {
+        Assert.AreEqual(
+            new Formula("anj54- 2e4").ToString(), 
+            new Formula("aNj054- 2E004").ToString());
+        
+        Assert.AreEqual(
+            new Formula(".651 / 76e0").ToString(), 
+            new Formula("00.65100/76").ToString());
+    }
+
+    [TestMethod]
+    public void FormulaToString_EquivilentTwoTermEquationWithParentheses_AreEquivilent() {
+        Assert.AreEqual(
+            new Formula("(((((03- 200000)))))").ToString(), 
+            new Formula("(((((.300e1 - 2e005)))))").ToString());
+        
+        Assert.AreEqual(
+            new Formula("(90.000)/JEd01").ToString(), 
+            new Formula("(090) / jEd1").ToString());
+    }
+
+    [TestMethod]
+    public void FormulaToString_EquivilentEquationsInsideParentheses_AreEquivilent() {
+        Assert.AreEqual(
+            new Formula("28 +(aBd34*40e2)").ToString(), 
+            new Formula("28+ (abd34 * 4e00003)").ToString());
+        
+        Assert.AreEqual(
+            new Formula("( 0.560- 0023) *(( (AL02/1E1)))").ToString(), 
+            new Formula("(.5600-23) * (((al2/1e1)))").ToString());
+    }
 }
