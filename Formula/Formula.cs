@@ -1,4 +1,5 @@
 ﻿//TODO - Make error throws include the token in question
+//TODO - Finish ToString method and GetVariables method
 
 namespace Formula;
 
@@ -49,8 +50,7 @@ public partial class Formula {
     ///   <para>
     ///     Creates a Formula from a string that consists of an infix expression written as
     ///     described in the class comment.  If the expression is syntactically incorrect,
-    ///     throws a FormulaFormatException with an explanatory Message.  See the assignment
-    ///     specifications for the syntax rules you are to implement.
+    ///     throws a FormulaFormatException with an explanatory Message.
     ///   </para>
     ///   <para>
     ///     Non-Exhaustive Example Errors:
@@ -130,8 +130,37 @@ public partial class Formula {
         if (openParenCount != closeParenCount) throw new FormulaFormatException("Parentheses are not balanced in the formula.");
     }
 
+    /// <summary>
+    ///     Reports when the token is variableIt must be one or more letters
+    ///     followed by one or more numbers.
+    /// </summary>
+    /// <param name="token">A token that may be a variable. </param>
+    /// <returns> 
+    ///     true if the string matches the requirements, e.g., A1 or a1. 
+    ///     Will return false if token string is null.
+    /// </returns>
     private bool TokenIsVariable(string? token) => token != null && _variableRegex.IsMatch(token);
+
+    /// <summary>
+    ///     Reports whether a token is a valid operator. Token must be a basic
+    ///     arithmetic operator.
+    /// </summary>
+    /// <param name="token"> A token that may be an operator </param>
+    /// <returns> 
+    ///     true if the string matches the requirements. e.g. +, -, *, or /.
+    ///     Will return false if token string is null.
+    /// </returns>
     private bool TokenIsOperator(string? token) => token != null && _operatorRegex.IsMatch(token);
+
+    /// <summary>
+    ///     Reports whether a token is a valid number. Accepts integers,
+    ///     decimals and numbers with scientific notation.
+    /// </summary>
+    /// <param name="token"> A token that may be a number </param>
+    /// <returns>
+    ///     true if the string matches the requirements.
+    ///     Will return false if token is null.
+    /// </returns>
     private static bool TokenIsNumber(string? token) => token != null && Double.TryParse(token, out _);
 
     /// <summary>
@@ -139,17 +168,15 @@ public partial class Formula {
     ///     Returns a set of all the variables in the formula.
     ///   </para>
     ///   <remarks>
-    ///     Important: no variable may appear more than once in the returned set, even
+    ///     No variable may appear more than once in the returned set, even
     ///     if it is used more than once in the Formula.
-	///     Variables should be returned in canonical form, having all letters converted
-	///     to uppercase.
     ///   </remarks>
     ///   <list type="bullet">
     ///     <item>new("x1+y1*z1").GetVariables() should return a set containing "X1", "Y1", and "Z1".</item>
     ///     <item>new("x1+X1"   ).GetVariables() should return a set containing "X1".</item>
     ///   </list>
     /// </summary>
-    /// <returns> the set of variables (string names) representing the variables referenced by the formula. </returns>
+    /// <returns> the set of variables (string names) representing the variables referenced by the formula in canonical form (all letters converted to uppercase). </returns>
     public ISet<string> GetVariables() {
         // FIXME: implement your code here
         return new HashSet<string>();
@@ -191,18 +218,6 @@ public partial class Formula {
     public override string ToString() {
         // FIXME: add your code here.
         return string.Empty;
-    }
-
-    /// <summary>
-    ///   Reports whether "token" is a variable.  It must be one or more letters
-    ///   followed by one or more numbers.
-    /// </summary>
-    /// <param name="token"> A token that may be a variable. </param>
-    /// <returns> true if the string matches the requirements, e.g., A1 or a1. </returns>
-    private static bool IsVar(string token) {
-        // notice the use of ^ and $ to denote that the entire string being matched is just the variable
-        string standaloneVarPattern = $"^{VariableRegExPattern}$";
-        return Regex.IsMatch(token, standaloneVarPattern);
     }
 
     /// <summary>
