@@ -3,7 +3,7 @@
 
 namespace Formula;
 
-using System.Collections.Concurrent;
+using System.Text;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -39,12 +39,17 @@ public partial class Formula {
     ///   represents valid variable name strings.
     /// </summary>
     private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
+    /// <summary>
+    ///     All operater tokens are single character strings with one of the four main basic operators (+, -, *, /).
+    ///     This pattern represents valid operator tokens.
+    /// </summary>
     private const string OperatorRegExPattern = @"^[\+\-\*/]$";
-
-    private List<string> _tokens;
-
+    
+    //TODO - See if I should add comments for these properties
+    private readonly List<string> _tokens;
     private readonly Regex _variableRegex;
     private readonly Regex _operatorRegex;
+    private readonly string _stringifiedFormula;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -74,12 +79,14 @@ public partial class Formula {
     /// <param name="formula"> The string representation of the formula to be created.</param>
     public Formula(string formula) {
         _tokens = GetTokens(formula);
-        int openParenCount = 0;
-        int closeParenCount = 0;
-
         _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generated RegEx is better
         _operatorRegex = new Regex(OperatorRegExPattern);
 
+        // Builder used to make the string returned by the ToString method.
+        // The canonical forms of the tokens are appended one by one during syntax checking.
+        StringBuilder builder = new();
+        int openParenCount = 0; 
+        int closeParenCount = 0;
 
         // Checks the one token rule (Rule #1)
         if (_tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula.");
@@ -94,6 +101,7 @@ public partial class Formula {
         string lastToken = _tokens.Last();
         if (!(TokenIsNumber(lastToken) || TokenIsVariable(lastToken) || lastToken == ")")) throw new FormulaFormatException("The last token must be either a number, variable or closing parenthesis");
 
+        //TODO - See if this code block below should be put into a helper method
         for (int i = 0; i < _tokens.Count; i++) {
             string token = _tokens[i];
             string? nextToken = (i != _tokens.Count - 1) ? _tokens[i + 1] : null;
@@ -126,13 +134,17 @@ public partial class Formula {
                 // Checks the extra following rule (Rule #8)
                 if (!TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following a number or variable.");
             }
+
+            builder.Append(_tokens[i]);
         }
 
         // Checks the balanced parentheses rule (Rule #4)
         if (openParenCount != closeParenCount) throw new FormulaFormatException("Parentheses are not balanced in the formula.");
 
-        foreach (string token in _tokens) Console.WriteLine(token);
+        _stringifiedFormula = builder.ToString();
     }
+
+
 
     /// <summary>
     ///     Converts the token at the given index into its canonical form.
@@ -164,6 +176,8 @@ public partial class Formula {
             _tokens[tokenIndex] = $"{convertedToken}";
         }
     }
+
+
 
     /// <summary>
     ///     Reports when the token is variableIt must be one or more letters
@@ -197,6 +211,7 @@ public partial class Formula {
     ///     Will return false if token is null.
     /// </returns>
     private static bool TokenIsNumber(string? token) => token != null && Double.TryParse(token, out _);
+
 
     /// <summary>
     ///   <para>
@@ -251,8 +266,7 @@ public partial class Formula {
     ///   should have the same value here.
     /// </returns>
     public override string ToString() {
-        // FIXME: add your code here.
-        return string.Empty;
+        return _stringifiedFormula;
     }
 
     /// <summary>
