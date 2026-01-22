@@ -3,8 +3,10 @@ namespace FormulaTests;
 using Formula;
 [TestClass]
 public class FormulaToStringTests {
+
+    // --- Tests for single integer tokens ---
     [TestMethod]
-    public void FormulaToString_SingleIntegerToken_ReturnsCanonicalForm() {
+    public void FormulaToString_SingleIntegerToken_ReturnsUnchanged() {
         Assert.AreEqual("56", new Formula("56").ToString());
     }
 
@@ -15,7 +17,7 @@ public class FormulaToStringTests {
     }
 
     [TestMethod]
-    public void FormulaToString_SingleDecimalToken_ReturnsCanonicalForm() {
+    public void FormulaToString_SingleDecimalToken_ReturnsUnchanged() {
         Assert.AreEqual("8.2", new Formula("8.2").ToString());
     }
 
@@ -42,5 +44,30 @@ public class FormulaToStringTests {
         Assert.AreEqual("500", new Formula("0005e2").ToString());
         Assert.AreEqual("500", new Formula("5E002").ToString());
         Assert.AreEqual("500", new Formula("0005E002").ToString());
+    }
+
+
+    // --- Tests for single variable tokens ---
+
+    [TestMethod]
+    public void FormulaToString_SingleVariableToken_ReturnsUnchanged() {
+        Assert.AreEqual("ABC123", new Formula("ABC123").ToString());
+    }
+
+    [TestMethod]
+    public void FormulaToString_SingleVariableToken_ReturnsCanonicalForm() {
+        Assert.AreEqual("AGD478", new Formula("agd478").ToString());
+        Assert.AreEqual("ASBHJS9", new Formula("aSbhJs9").ToString());
+    }
+    
+    /// <summary>
+    ///     Since variable names are really column-row coordinate for the spreadshett, that would mean
+    ///     the number part of the variable name should be treated as a pure number. Meaning any
+    ///     leading zeroes would be removed in canonical form. This tests that.
+    ///         Ex:  "a05" -> "A5"
+    /// </summary>
+    [TestMethod]
+    public void FormulaToString_SingleVariableTokenWithLeadingZeroes_ReturnsCanonicalForm() {
+        Assert.AreEqual("ABC123", new Formula("abc00123").ToString());
     }
 }
