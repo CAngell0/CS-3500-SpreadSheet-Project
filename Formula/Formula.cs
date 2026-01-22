@@ -4,6 +4,7 @@
 namespace Formula;
 
 using System.Text;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -35,10 +36,10 @@ using System.Text.RegularExpressions;
 /// </summary>
 public partial class Formula {
     /// <summary>
-    ///   All variables are letters followed by numbers.  This pattern
-    ///   represents valid variable name strings.
+    ///   All variables tokens are letters followed by numbers. This pattern
+    ///   represents valid variable name tokens.
     /// </summary>
-    private const string VariableRegExPattern = @"[a-zA-Z]+\d+";
+    private const string VariableRegExPattern = @"^[a-zA-Z]+\d+$";
     /// <summary>
     ///     All operater tokens are single character strings with one of the four main basic operators (+, -, *, /).
     ///     This pattern represents valid operator tokens.
@@ -122,17 +123,15 @@ public partial class Formula {
                 // Checks the closing parentheses rule (Rule #3)
                 if (closeParenCount > openParenCount) throw new FormulaFormatException("Number of closing parenthesis has exceeded the number of open parenthesis.");// TODO - See if this is a good error message
 
-                if (nextToken == null) continue;
                 // Checks the extra following rule (Rule #8)
-                if (!TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following closed parenthesis.");
+                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following closed parenthesis.");
             }
 
             // This executes if the current token is a number or variable
             else {
                 UpdateTokenToCannonicalForm(i);
-                if (nextToken == null) continue;
                 // Checks the extra following rule (Rule #8)
-                if (!TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following a number or variable.");
+                if (nextToken != null && !TokenIsOperator(nextToken) && nextToken != ")") throw new FormulaFormatException("Invalid token following a number or variable.");
             }
 
             builder.Append(_tokens[i]);
@@ -174,6 +173,7 @@ public partial class Formula {
         else if (TokenIsNumber(token)) {
             _ = Double.TryParse(token, out double convertedToken);
             _tokens[tokenIndex] = $"{convertedToken}";
+            // _tokens[tokenIndex] = convertedToken.ToString("0.################", CultureInfo.InvariantCulture);
         }
     }
 
@@ -296,6 +296,7 @@ public partial class Formula {
         string lpPattern = @"\(";
         string rpPattern = @"\)";
         string opPattern = @"[\+\-*/]";
+        string varPattern = @"[a-zA-Z]+\d+";
         string doublePattern = @"(?: \d+\.\d* | \d*\.\d+ | \d+ ) (?: [eE][\+-]?\d+)?";
         string spacePattern = @"\s+";
 
@@ -305,7 +306,7 @@ public partial class Formula {
                                         lpPattern,
                                         rpPattern,
                                         opPattern,
-                                        VariableRegExPattern,
+                                        varPattern,
                                         doublePattern,
                                         spacePattern);
 
