@@ -31,7 +31,7 @@ using System.Text.RegularExpressions;
 ///     </item>
 ///     <item>
 ///        ToString
-///     </item>
+///     </item> (?<=[a-zA-Z]0+)
 ///   </list>
 /// </summary>
 public partial class Formula {
@@ -45,11 +45,17 @@ public partial class Formula {
     ///     This pattern represents valid operator tokens.
     /// </summary>
     private const string OperatorRegExPattern = @"^[\+\-\*/]$";
+    /// <summary>
+    ///     Some variable may contain leading zeroes in front of their row coordinate (e.g. abc0123 instead of abc123).
+    ///     This pattern detects that case in a variable.
+    /// </summary>
+    private const string LeadingZeroInVariableRegExPattern = @"[a-zA-Z]0+";
     
     //TODO - See if I should add comments for these properties
     private readonly List<string> _tokens;
     private readonly Regex _variableRegex;
     private readonly Regex _operatorRegex;
+    private readonly Regex _leadingZeroVarRegex;
     private readonly string _stringifiedFormula;
 
     /// <summary>
@@ -82,6 +88,7 @@ public partial class Formula {
         _tokens = GetTokens(formula);
         _variableRegex = new Regex(VariableRegExPattern); //TODO - Check to see if generated RegEx is better
         _operatorRegex = new Regex(OperatorRegExPattern);
+        _leadingZeroVarRegex = new Regex(LeadingZeroInVariableRegExPattern);
 
         // Builder used to make the string returned by the ToString method.
         // The canonical forms of the tokens are appended one by one during syntax checking.
@@ -169,11 +176,13 @@ public partial class Formula {
     /// <param name="tokenIndex"></param>
     private void UpdateTokenToCannonicalForm(int tokenIndex) {
         string token = _tokens[tokenIndex];
-        if (TokenIsVariable(token)) _tokens[tokenIndex] = token.ToUpper();
+        if (TokenIsVariable(token)) {
+            if (_leadingZeroVarRegex.IsMatch(token)) _tokens[tokenIndex] = Regex.Replace(token, @"(?<=[a-zA-Z])0+", "").ToUpper(); //TODO - See if this is necessary
+            else _tokens[tokenIndex] = token.ToUpper();
+        }
         else if (TokenIsNumber(token)) {
             _ = Double.TryParse(token, out double convertedToken);
             _tokens[tokenIndex] = $"{convertedToken}";
-            // _tokens[tokenIndex] = convertedToken.ToString("0.################", CultureInfo.InvariantCulture);
         }
     }
 
