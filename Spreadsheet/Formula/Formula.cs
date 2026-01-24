@@ -45,6 +45,12 @@ public partial class Formula {
     /// </summary>
     private const string OperatorRegExPattern = @"^[\+\-\*/]$";
     /// <summary>
+    ///     The pattern will match if there are any special characters in a string.
+    ///     Meaning when there's a character that isn't part of a number, variable, operator,
+    ///     parenthesis or whitespace.
+    /// </summary>
+    private const string SpecialCharsRegExPattern = @"[^a-zA-Z0-9.\+\-/\*\() ]+";
+    /// <summary>
     ///     Some variable may contain leading zeroes in front of their row coordinate (e.g. abc0123 instead of abc123).
     ///     This pattern detects that case in a variable.
     /// </summary>
@@ -95,11 +101,13 @@ public partial class Formula {
         _leadingZeroVarRegex = new Regex(LeadingZeroInVariableRegExPattern);
         _stringifiedFormula = ""; // The CheckFormulaSyntaxOnEveryToken method will set this to the correct value
 
-        // The following tests only check for the surface level rules (Rules #1, #5, and #6) where iterating is not needed.
+        // The following tests only check for the surface level rules (Rules #1, #2, #5, and #6) where iterating is not needed.
+
+        // Checks the valid tokens rule (Rule #2)
+        if (Regex.IsMatch(formula, SpecialCharsRegExPattern)) throw new FormulaFormatException($"Invalid character \"{Regex.Match(formula, SpecialCharsRegExPattern)}\" only operators, numbers, variables and parentheses allowed. Rule #2 (Valid Tokens Rule) Violated.");
 
         // Checks the one token rule (Rule #1)
         if (_tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula. Rule #1 (One Token Rule) Violated.");
-
 
         // Checks the first token rule (Rule #5)
         string firstToken = _tokens.First();
@@ -122,8 +130,7 @@ public partial class Formula {
     ///        Some things to note about this method:
     ///        <list type="bullet">
     ///            <item>
-    ///                Checks rules #2, #3, #4, #7, and #8. Assumes that rules #1, #5, and #6 are already checked.
-    ///                Rule #2 is checked implicitly due to how the Regex patterns are constructed (they will not match with special characters).
+    ///                Explicitly checks rules #3, #4, #7, and #8. Assumes that rules #1, #5, and #6 are already checked.
     ///            </item>
     ///            <item>
     ///                Method constructs the canonical version of the formula and stores it in the _stringifiedFormula field.
