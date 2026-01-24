@@ -1,5 +1,4 @@
-﻿//TODO - Finish GetVariables test cases
-// <authors> Carson Angell </authors>
+﻿// <authors> Carson Angell </authors>
 // <date> 1/19/2026 </date>
 
 namespace Formula;
@@ -60,7 +59,7 @@ public partial class Formula {
     private readonly Regex _leadingZeroVarRegex;
 
     // Holds the canonical string version of the formula
-    private readonly string _stringifiedFormula;
+    private string _stringifiedFormula;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="Formula"/> class.
@@ -94,12 +93,9 @@ public partial class Formula {
         _variableRegex = new Regex(VariableRegExPattern);
         _operatorRegex = new Regex(OperatorRegExPattern);
         _leadingZeroVarRegex = new Regex(LeadingZeroInVariableRegExPattern);
+        _stringifiedFormula = ""; // The CheckFormulaSyntaxOnEveryToken method will set this to the correct value
 
-        // Builder used to make the string returned by the ToString method.
-        // The canonical forms of the tokens are appended one by one during syntax checking.
-        StringBuilder builder = new();
-        int openParenCount = 0; 
-        int closeParenCount = 0;
+        // The following tests only check for the surface level rules (Rules #1, #5, and #6) where iterating is not needed.
 
         // Checks the one token rule (Rule #1)
         if (_tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula.");
@@ -116,7 +112,29 @@ public partial class Formula {
 
 
         // Iterates through the tokens and checks each one
-        //TODO - See if this code block below should be put into a helper method
+        // I decided to put this code into a seperate method so make things look less messy and hard to read.
+        CheckFormulaSyntaxOnEveryToken();
+    }
+
+    /// <summary>
+    ///     Iterates through the current list of formula tokens and checks each one for syntax errors.
+    ///     <para>
+    ///         <remarks>
+    ///             Checks rules #2, #3, #4, #7, and #8. Method also constructs the canonical version of the formula and stores it in the _stringifiedFormula field.
+    ///             Complexity is O(n) where n is the number of tokens in the formula. Assumes that rules #1, #5, and #6 are already checked.
+    ///             Rule #2 is checked implicitely due to how the Regex patterns are constructed (they will not match with special characters).
+    ///         </remarks>
+    ///     </para>
+    /// </summary>
+    /// <exception cref="FormulaFormatException">Exception detailing the problem with the formula's syntax</exception>
+    private void CheckFormulaSyntaxOnEveryToken() {
+        // Builder used to make the string returned by the ToString method.
+        // The canonical forms of the tokens are appended one by one during syntax checking.
+        StringBuilder builder = new();
+        int openParenCount = 0; 
+        int closeParenCount = 0;
+
+        // Iterates through the formula tokens...
         for (int i = 0; i < _tokens.Count; i++) {
             string token = _tokens[i];
 
@@ -190,10 +208,14 @@ public partial class Formula {
     /// <returns> New version of token after it has been updated to canonical form </returns>
     private string UpdateTokenToCanonicalForm(int tokenIndex) {
         string token = _tokens[tokenIndex];
+        // Convert a variable token to canonical form...
         if (TokenIsVariable(token)) {
-            if (_leadingZeroVarRegex.IsMatch(token)) _tokens[tokenIndex] = Regex.Replace(token, @"(?<=[a-zA-Z])0+", "").ToUpper(); //TODO - See if this is necessary
-            else _tokens[tokenIndex] = token.ToUpper();
+            // If there are leading tokens in a variable, remove them with the regex below.
+            if (_leadingZeroVarRegex.IsMatch(token)) token = Regex.Replace(token, @"(?<=[a-zA-Z])0+", "");
+
+            _tokens[tokenIndex] = token.ToUpper();
         }
+        // Convert a number token to canonical form...
         else if (TokenIsNumber(token)) {
             _ = Double.TryParse(token, out double convertedToken);
             _tokens[tokenIndex] = $"{convertedToken}";
