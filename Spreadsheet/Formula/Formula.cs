@@ -51,7 +51,7 @@ public partial class Formula {
     /// </summary>
     private const string SpecialCharsRegExPattern = @"[^a-zA-Z0-9.\+\-/\*\() ]+";
     /// <summary>
-    ///     Some variable may contain leading zeroes in front of their row coordinate (e.g. abc0123 instead of abc123).
+    ///     Some variable may contain leading zeroes in front of their row coordinate (e.g. abc00123 instead of abc123).
     ///     This pattern detects that case in a variable.
     /// </summary>
     private const string LeadingZeroInVariableRegExPattern = @"[a-zA-Z]0+";
