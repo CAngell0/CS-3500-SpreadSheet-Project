@@ -43,4 +43,41 @@ public class FormulaGetVariablesTests {
         Assert.HasCount(1, vars);
         Assert.Contains("AB12", vars);
     }
+
+
+
+    // --- Two term equation tests ---
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithIntegers_Empty() {
+        ISet<string> vars = new Formula("5464*80").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.IsEmpty(vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithDecimals_Empty() {
+        ISet<string> vars = new Formula("5.3*.900").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.IsEmpty(vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithScientific_Empty() {
+        ISet<string> vars = new Formula("5.5E6*3e2").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.IsEmpty(vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithVariables_Empty() {
+        ISet<string> vars = new Formula("abc123*Jei67").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.HasCount(2, vars);
+        Assert.Contains("ABC123", vars);
+        Assert.Contains("JEI67", vars);
+    }
 }
