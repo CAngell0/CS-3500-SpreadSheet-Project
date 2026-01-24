@@ -103,28 +103,39 @@ public partial class Formula {
 
         // Checks the first token rule (Rule #5)
         string firstToken = _tokens.First();
-        if (!(TokenIsNumber(firstToken) || TokenIsVariable(firstToken) || firstToken == "(")) throw new FormulaFormatException($"Invalid first token: \"{firstToken}\". Must be either a number, variable or opening parenthesis");
+        if (!TokenIsNumber(firstToken) && !TokenIsVariable(firstToken) && firstToken != "(") throw new FormulaFormatException($"Invalid first token: \"{firstToken}\". Must be either a number, variable or opening parenthesis");
 
 
         // Checks the last token rule (Rule #6)
         string lastToken = _tokens.Last();
-        if (!(TokenIsNumber(lastToken) || TokenIsVariable(lastToken) || lastToken == ")")) throw new FormulaFormatException($"Invalid last token: \"{lastToken}\". Must be either a number, variable or closing parenthesis");
+        if (!TokenIsNumber(lastToken) && !TokenIsVariable(lastToken) && lastToken != ")") throw new FormulaFormatException($"Invalid last token: \"{lastToken}\". Must be either a number, variable or closing parenthesis");
 
 
         // Iterates through the tokens and checks each one
-        // I decided to put this code into a seperate method so make things look less messy and hard to read.
+        // I decided to put this code into a separate method so make things look less messy and hard to read.
         CheckFormulaSyntaxOnEveryToken();
     }
 
     /// <summary>
     ///     Iterates through the current list of formula tokens and checks each one for syntax errors.
-    ///     <para>
-    ///         <remarks>
-    ///             Checks rules #2, #3, #4, #7, and #8. Method also constructs the canonical version of the formula and stores it in the _stringifiedFormula field.
-    ///             Complexity is O(n) where n is the number of tokens in the formula. Assumes that rules #1, #5, and #6 are already checked.
-    ///             Rule #2 is checked implicitely due to how the Regex patterns are constructed (they will not match with special characters).
-    ///         </remarks>
-    ///     </para>
+    ///     <para><remarks>
+    ///        Some things to note about this method:
+    ///        <list type="bullet">
+    ///            <item>
+    ///                Checks rules #2, #3, #4, #7, and #8. Assumes that rules #1, #5, and #6 are already checked.
+    ///                Rule #2 is checked implicitly due to how the Regex patterns are constructed (they will not match with special characters).
+    ///            </item>
+    ///            <item>
+    ///                Method constructs the canonical version of the formula and stores it in the _stringifiedFormula field.
+    ///            </item>
+    ///            <item>
+    ///                Method will take any variables it finds and store its canonical version in the _variables field.
+    ///            </item>
+    ///            <item>
+    ///                Complexity is O(n) where n is the number of tokens in the formula.
+    ///            </item>
+    ///        </list>
+    ///     </remarks></para>
     /// </summary>
     /// <exception cref="FormulaFormatException">Exception detailing the problem with the formula's syntax</exception>
     private void CheckFormulaSyntaxOnEveryToken() {
@@ -226,7 +237,7 @@ public partial class Formula {
 
 
     /// <summary>
-    ///     Reports when the token is variableIt must be one or more letters
+    ///     Reports when the token is a valid variable. It must be one or more letters
     ///     followed by one or more numbers.
     /// </summary>
     /// <param name="token">A token that may be a variable. </param>
