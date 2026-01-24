@@ -252,12 +252,9 @@ public partial class Formula {
     /// </summary>
     /// <returns> the set of variables (string names) representing the variables referenced by the formula in canonical form (all letters converted to uppercase). </returns>
     public ISet<string> GetVariables() {
-        return _variables;
-
-        //TODO - O(n) implementation, remove if not needed
-        // HashSet<string> variables = [];
-        // foreach (string token in _tokens) if (TokenIsVariable(token)) variables.Add(token);
-        // return variables;
+        HashSet<string> returnVariables = [];
+        foreach (string variable in _variables) returnVariables.Add(variable);
+        return returnVariables;
     }
 
     /// <summary>
