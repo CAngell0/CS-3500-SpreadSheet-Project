@@ -1,6 +1,6 @@
 // <authors> Carson Angell </authors>
 // <date> 1/23/2026 </date>
-namespace Company.TestProject1;
+namespace FormulaTests;
 
 using Formula;
 
@@ -48,7 +48,7 @@ public class FormulaGetVariablesTests {
 
     // --- Two term equation tests ---
     [TestMethod]
-    public void FormulaGetVariables_TwoTermEquationWithIntegers_Empty() {
+    public void FormulaGetVariables_TwoTermEquationWithIntegersOnly_Empty() {
         ISet<string> vars = new Formula("5464*80").GetVariables();
 
         Assert.IsNotNull(vars);
@@ -56,7 +56,7 @@ public class FormulaGetVariablesTests {
     }
 
     [TestMethod]
-    public void FormulaGetVariables_TwoTermEquationWithDecimals_Empty() {
+    public void FormulaGetVariables_TwoTermEquationWithDecimalsOnly_Empty() {
         ISet<string> vars = new Formula("5.3*.900").GetVariables();
 
         Assert.IsNotNull(vars);
@@ -64,7 +64,7 @@ public class FormulaGetVariablesTests {
     }
 
     [TestMethod]
-    public void FormulaGetVariables_TwoTermEquationWithScientific_Empty() {
+    public void FormulaGetVariables_TwoTermEquationWithScientificOnly_Empty() {
         ISet<string> vars = new Formula("5.5E6*3e2").GetVariables();
 
         Assert.IsNotNull(vars);
@@ -72,13 +72,40 @@ public class FormulaGetVariablesTests {
     }
 
     [TestMethod]
-    public void FormulaGetVariables_TwoTermEquationWithVariables_TwoCanonicalVariables() {
+    public void FormulaGetVariables_TwoTermEquationWithVariablesOnly_TwoCanonicalVariables() {
         ISet<string> vars = new Formula("abc123*Jei67").GetVariables();
 
         Assert.IsNotNull(vars);
         Assert.HasCount(2, vars);
         Assert.Contains("ABC123", vars);
         Assert.Contains("JEI67", vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithVariableAndInteger_OneCanonicalVariable() {
+        ISet<string> vars = new Formula("5787 / ag0060").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.HasCount(1, vars);
+        Assert.Contains("AG60", vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithVariableAndDecimal_OneCanonicalVariable() {
+        ISet<string> vars = new Formula("jKn87*.6734").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.HasCount(1, vars);
+        Assert.Contains("JKN87", vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_TwoTermEquationWithVariableAndScientific_OneCanonicalVariable() {
+        ISet<string> vars = new Formula("Kje23*5e-3").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.HasCount(1, vars);
+        Assert.Contains("KJE23", vars);
     }
 
 
@@ -119,5 +146,17 @@ public class FormulaGetVariablesTests {
         Assert.Contains("JHED90", vars);
         Assert.Contains("ASD21", vars);
         Assert.Contains("H6", vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_MixedTokenEquationWithParenthesis_FourCanonicalVariables() {
+        ISet<string> vars = new Formula(".675 + (a4 / ((56 * 2e4))) / (anj23) + ((NejD003 - Kol34))").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.HasCount(4, vars);
+        Assert.Contains("A4", vars);
+        Assert.Contains("ANJ23", vars);
+        Assert.Contains("NEJD3", vars);
+        Assert.Contains("KOL34", vars);
     }
 }
