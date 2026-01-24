@@ -1,16 +1,12 @@
-- Author:	  Carson Angell
-- Date:		  1/7/2026
-- Assignment: Assignment 1 (PS1)
-
-This template is the starting place for the first
-lab and the first assignment.  The Formula Tests project should
-contain:
-
-1) Formula.dll
-2) FormulaSyntaxTests.cs
+# Spreadsheet Project
+Throughout my CS 3500 Software Practice I class, I will be developing and working on this project. Making changes and improving its functionality until roughly half way through the semester.
 
 
-The solution folder should contain this README as well as the .editorconfig file.
+- Class: **CS 3500**
+- Author:	  **Carson Angell**
+- Creation Date:  **Jan 15th 2026**
+- Project: **Spreadsheet Project**
+- Current Assignment: **PS2**
 
-When you have completed your work for the assignment, update this
-README to contain the appropriate information.
+Currently, I am working on making the Formula class detect and flag formulas with incorrect syntax.
+
