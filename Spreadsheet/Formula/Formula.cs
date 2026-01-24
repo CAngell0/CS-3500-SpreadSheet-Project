@@ -98,17 +98,17 @@ public partial class Formula {
         // The following tests only check for the surface level rules (Rules #1, #5, and #6) where iterating is not needed.
 
         // Checks the one token rule (Rule #1)
-        if (_tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula.");
+        if (_tokens.Count == 0) throw new FormulaFormatException("There must be at least one token in the formula. Rule #1 (One Token Rule) Violated.");
 
 
         // Checks the first token rule (Rule #5)
         string firstToken = _tokens.First();
-        if (!TokenIsNumber(firstToken) && !TokenIsVariable(firstToken) && firstToken != "(") throw new FormulaFormatException($"Invalid first token: \"{firstToken}\". Must be either a number, variable or opening parenthesis");
+        if (!TokenIsNumber(firstToken) && !TokenIsVariable(firstToken) && firstToken != "(") throw new FormulaFormatException($"Invalid first token: \"{firstToken}\". Must be either a number, variable or opening parenthesis. Rule #5 (First Token Rule) Violated.");
 
 
         // Checks the last token rule (Rule #6)
         string lastToken = _tokens.Last();
-        if (!TokenIsNumber(lastToken) && !TokenIsVariable(lastToken) && lastToken != ")") throw new FormulaFormatException($"Invalid last token: \"{lastToken}\". Must be either a number, variable or closing parenthesis");
+        if (!TokenIsNumber(lastToken) && !TokenIsVariable(lastToken) && lastToken != ")") throw new FormulaFormatException($"Invalid last token: \"{lastToken}\". Must be either a number, variable or closing parenthesis. Rule #6 (Last Token Rule) Violated.");
 
 
         // Iterates through the tokens and checks each one
@@ -156,23 +156,23 @@ public partial class Formula {
             if (TokenIsOperator(token)) {
                 // Checks the operator following rule (Rule #7)
                 // Null checking for nextToken is not needed here since an operator cannot be the last token (earlier checks made sure of that).
-                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following operator: \"{nextToken}\".");
+                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following operator: \"{nextToken}\". Rule #7 (Parenthesis/Operator Following Rule) Violated.");
             }
 
             else if (token == "(") {
                 openParenCount++;
                 // Checks the open parenthesis following rule (Rule #7)
                 // Null checking for nextToken is not needed here since an opening parenthesis cannot be the last token (earlier checks made sure of that).
-                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following open parenthesis: \"{nextToken}\".");
+                if (!TokenIsNumber(nextToken) && !TokenIsVariable(nextToken) && nextToken != "(") throw new FormulaFormatException($"Invalid token following open parenthesis: \"{nextToken}\". Rule #7 (Parenthesis/Operator Following Rule) Violated.");
             }
 
             else if (token == ")") {
                 closeParenCount++;
                 // Checks the closing parentheses rule (Rule #3)
-                if (closeParenCount > openParenCount) throw new FormulaFormatException("Cannot have more closing parentheses than opening parentheses.");
+                if (closeParenCount > openParenCount) throw new FormulaFormatException("Cannot have more closing parentheses than opening parentheses. Rule #3 (Closing Parentheses Rule) Violated.");
 
                 // Checks the extra following rule (Rule #8)
-                if (nextToken != null && nextToken != ")" && !TokenIsOperator(nextToken)) throw new FormulaFormatException($"Invalid token following closed parenthesis: \"{nextToken}\".");
+                if (nextToken != null && nextToken != ")" && !TokenIsOperator(nextToken)) throw new FormulaFormatException($"Invalid token following closed parenthesis: \"{nextToken}\". Rule #8 (Extra Following Rule) Violated.");   
             }
 
             // Executes if the current token is a number or variable
@@ -180,14 +180,14 @@ public partial class Formula {
                 token = UpdateTokenToCanonicalForm(tokenIndex: i);
                 if (TokenIsVariable(token)) _variables.Add(token);
                 // Checks the extra following rule (Rule #8)
-                if (nextToken != null && nextToken != ")" && !TokenIsOperator(nextToken)) throw new FormulaFormatException($"Invalid token following a number or variable: \"{nextToken}\".");
+                if (nextToken != null && nextToken != ")" && !TokenIsOperator(nextToken)) throw new FormulaFormatException($"Invalid token following a number or variable: \"{nextToken}\". Rule #8 (Extra Following Rule) Violated.");
             }
 
             builder.Append(token);
         }
 
         // Checks the balanced parentheses rule (Rule #4)
-        if (openParenCount != closeParenCount) throw new FormulaFormatException("Parentheses are not balanced in the formula.");
+        if (openParenCount != closeParenCount) throw new FormulaFormatException("Parentheses are not balanced in the formula. Rule #4 (Balanced Parentheses Rule) Violated.");
 
         _stringifiedFormula = builder.ToString();
     }
