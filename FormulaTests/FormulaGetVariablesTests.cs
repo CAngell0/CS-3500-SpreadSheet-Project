@@ -36,7 +36,7 @@ public class FormulaGetVariablesTests {
     }
 
     [TestMethod]
-    public void FormulaGetVariables_SingleVariableToken_Empty() {
+    public void FormulaGetVariables_SingleVariableToken_OneCanonicalVariable() {
         ISet<string> vars = new Formula("ab12").GetVariables();
 
         Assert.IsNotNull(vars);
@@ -72,12 +72,52 @@ public class FormulaGetVariablesTests {
     }
 
     [TestMethod]
-    public void FormulaGetVariables_TwoTermEquationWithVariables_Empty() {
+    public void FormulaGetVariables_TwoTermEquationWithVariables_TwoCanonicalVariables() {
         ISet<string> vars = new Formula("abc123*Jei67").GetVariables();
 
         Assert.IsNotNull(vars);
         Assert.HasCount(2, vars);
         Assert.Contains("ABC123", vars);
         Assert.Contains("JEI67", vars);
+    }
+
+
+
+    // --- Tests with equations that have parentheses ---
+    [TestMethod]
+    public void FormulaGetVariables_IntegerOnlyEquationWithParenthesis_Empty() {
+        ISet<string> vars = new Formula("((56 + 20)) / (2) * 600").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.IsEmpty(vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_DecimalOnlyEquationWithParenthesis_Empty() {
+        ISet<string> vars = new Formula(".5-.9 * (45.7) / (((((30.5 + (6.344))))))").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.IsEmpty(vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_ScientificOnlyEquationWithParenthesis_Empty() {
+        ISet<string> vars = new Formula("(((1e3)))/ 4E2 * (1e2 + 6E0)/3e-2").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.IsEmpty(vars);
+    }
+
+    [TestMethod]
+    public void FormulaGetVariables_VariableOnlyEquationWithParenthesis_FiveCanonicalVariables() {
+        ISet<string> vars = new Formula("((ab34)) / k9 *(((JHeD90 - ASD21)* h0006))").GetVariables();
+
+        Assert.IsNotNull(vars);
+        Assert.HasCount(5, vars);
+        Assert.Contains("AB34", vars);
+        Assert.Contains("K9", vars);
+        Assert.Contains("JHED90", vars);
+        Assert.Contains("ASD21", vars);
+        Assert.Contains("H6", vars);
     }
 }
