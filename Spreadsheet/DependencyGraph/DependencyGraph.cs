@@ -158,33 +158,16 @@ public class DependencyGraph {
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents) {
         bool wasOldDepRetrieved = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet);
         HashSet<string> oldDepSet = (wasOldDepRetrieved && depSet != null) ? depSet : [];
-        HashSet<string> newDepSet = [];
+        HashSet<string> newDepSet = newDependents.ToHashSet();
 
-        
-        
-        // foreach (string newDep in newDependents) {
-        //     newDepSet.Add(newDep);
-        //     bool wasRemovedFromOld = oldDepSet.Remove(newDep);
+        string[] dependentsToRemove = oldDepSet.Except(newDepSet).ToArray();
+        string[] dependentsToAdd = newDepSet.Except(oldDepSet).ToArray();
 
-        //     if (!wasRemovedFromOld) {
-                
-        //     }
-        // }
-        
-        // // Adds all new dependents to a new hash set. Removes any intersecting dependents from the old hashset
-        // foreach (string newDependent in newDependents) {
-        //     if (wasOldDepRetrieved && oldDepSet != null) {
-        //         if (!oldDepSet.Remove(newDependent)) _size++;
-        //     }
-        //     newDepSet.Add(newDependent);
-        // }
+        foreach (string dep in dependentsToRemove) RemoveFromDependeeMap(dep, nodeName);
+        foreach (string dep in dependentsToAdd) AddToDependeeMap(dep, nodeName);
 
-        // // Any dependentss left over in the old dependency hashset are removed in the dependee graph.
-        // if (wasOldDepRetrieved && oldDepSet != null) {
-        //     foreach (string oldDependent in oldDepSet) if (_dependendeeMap.TryGetValue(oldDependent, out HashSet<string>? oldDependees)) {
-        //         oldDependees.Remove(oldDependent);
-        //     }
-        // }
+        _dependencyMap[nodeName] = newDepSet;
+        _size += dependentsToAdd.Length - dependentsToRemove.Length;
     }
 
     /// <summary>
@@ -196,21 +179,18 @@ public class DependencyGraph {
     /// <param name="nodeName"> The name of the node who's dependees are being replaced</param>
     /// <param name="newDependees"> The new dependees for nodeName</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees) {
-        bool wasOldDepRetrieved = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? oldDepSet);
-        HashSet<string> newDepSet = [];
-        
-        // Adds all new dependents to a new hash set. Removes any intersecting dependents from the old hashset
-        foreach (string newDependee in newDependees) {
-            if (wasOldDepRetrieved && oldDepSet != null) oldDepSet.Remove(newDependee);
-            newDepSet.Add(newDependee);
-        }
+        bool wasOldDepRetrieved = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
+        HashSet<string> oldDepSet = (wasOldDepRetrieved && depSet != null) ? depSet : [];
+        HashSet<string> newDepSet = newDependees.ToHashSet();
 
-        // Any dependentss left over in the old dependency hashset are removed in the dependee graph.
-        if (wasOldDepRetrieved && oldDepSet != null) {
-            foreach (string oldDependee in oldDepSet) if (_dependencyMap.TryGetValue(oldDependee, out HashSet<string>? oldDependencies)) {
-                oldDependencies.Remove(oldDependee);
-            }
-        }
+        string[] dependeesToRemove = oldDepSet.Except(newDepSet).ToArray();
+        string[] dependeesToAdd = newDepSet.Except(oldDepSet).ToArray();
+
+        foreach (string dep in dependeesToRemove) RemoveFromDependencyMap(dep, nodeName);
+        foreach (string dep in dependeesToAdd) AddToDependencyMap(dep, nodeName);
+
+        _dependendeeMap[nodeName] = newDepSet;
+        _size += dependeesToAdd.Length - dependeesToRemove.Length;
     }
 
     private bool AddToDependencyMap(string dependee, string dependent) {
