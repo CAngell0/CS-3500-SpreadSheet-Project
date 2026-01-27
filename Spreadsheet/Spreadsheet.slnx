@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="DependencyGraph/DependencyGraph.csproj" />
+  <Project Path="DependencyGraphTests/DependencyGraphTests.csproj" />
   <Project Path="Formula/Formula.csproj" />
   <Project Path="FormulaTests/FormulaTests.csproj" />
 </Solution>
