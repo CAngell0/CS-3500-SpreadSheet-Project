@@ -50,22 +50,27 @@ namespace DependencyGraph;
 ///     dependees("d")  = {"b", "d"}
 ///   </code>
 /// </summary>
-public class DependencyGraph
-{
+public class DependencyGraph {
+    private Dictionary<string, HashSet<string>> _dependencyMap;
+    private Dictionary<string, HashSet<string>> _dependendeeMap;
+    private int _size;
+
+
     /// <summary>
     ///   Initializes a new instance of the <see cref="DependencyGraph"/> class.
     ///   The initial DependencyGraph is empty.
     /// </summary>
-    public DependencyGraph()
-    {
+    public DependencyGraph() {
+        _dependencyMap = new Dictionary<string, HashSet<string>>();
+        _dependendeeMap = new Dictionary<string, HashSet<string>>();
+        _size = 0;
     }
 
     /// <summary>
     /// The number of ordered pairs in the DependencyGraph.
     /// </summary>
-    public int Size
-    {
-        get { return 0; }
+    public int Size {
+        get { return _size; }
     }
 
     /// <summary>
@@ -73,8 +78,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="nodeName"> The name of the node.</param>
     /// <returns> true if the node has dependents. </returns>
-    public bool HasDependents(string nodeName)
-    {
+    public bool HasDependents(string nodeName) {
         return false;
     }
 
@@ -83,8 +87,7 @@ public class DependencyGraph
     /// </summary>
     /// <returns> true if the node has dependees.</returns>
     /// <param name="nodeName">The name of the node.</param>
-    public bool HasDependees(string nodeName)
-    {
+    public bool HasDependees(string nodeName) {
         return false;
     }
 
@@ -95,8 +98,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="nodeName"> The node we are looking at.</param>
     /// <returns> The dependents of nodeName. </returns>
-    public IEnumerable<string> GetDependents(string nodeName)
-    {
+    public IEnumerable<string> GetDependents(string nodeName) {
         return new List<string>(); // Choose your own data structure
     }
 
@@ -107,8 +109,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="nodeName"> The node we are looking at.</param>
     /// <returns> The dependees of nodeName. </returns>
-    public IEnumerable<string> GetDependees(string nodeName)
-    {
+    public IEnumerable<string> GetDependees(string nodeName) {
         return new List<string>(); // Choose your own data structure
     }
 
@@ -121,8 +122,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="dependee"> the name of the node that must be evaluated first</param>
     /// <param name="dependent"> the name of the node that cannot be evaluated until after dependee</param>
-    public void AddDependency(string dependee, string dependent)
-    {
+    public void AddDependency(string dependee, string dependent) {
     }
 
     /// <summary>
@@ -132,8 +132,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="dependee"> The name of the node that must be evaluated first</param>
     /// <param name="dependent"> The name of the node that cannot be evaluated until after dependee</param>
-    public void RemoveDependency(string dependee, string dependent)
-    {
+    public void RemoveDependency(string dependee, string dependent) {
     }
 
     /// <summary>
@@ -142,8 +141,7 @@ public class DependencyGraph
     /// </summary>
     /// <param name="nodeName"> The name of the node whose dependents are being replaced </param>
     /// <param name="newDependents"> The new dependents for nodeName</param>
-    public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents)
-    {
+    public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents) {
     }
 
     /// <summary>
@@ -154,7 +152,6 @@ public class DependencyGraph
     /// </summary>
     /// <param name="nodeName"> The name of the node who's dependees are being replaced</param>
     /// <param name="newDependees"> The new dependees for nodeName</param>
-    public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees)
-    {
+    public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees) {
     }
 }
