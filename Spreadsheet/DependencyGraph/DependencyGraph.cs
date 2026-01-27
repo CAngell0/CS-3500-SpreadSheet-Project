@@ -79,8 +79,7 @@ public class DependencyGraph {
     /// <param name="nodeName"> The name of the node.</param>
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName) {
-        bool wasGetValueSuccess = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet);
-        return wasGetValueSuccess && depSet != null && depSet.Count > 0;
+        return _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet) && depSet.Count > 0;
     }
 
     /// <summary>
@@ -89,8 +88,7 @@ public class DependencyGraph {
     /// <returns> true if the node has dependees.</returns>
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName) {
-        bool wasGetValueSuccess = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
-        return wasGetValueSuccess && depSet != null && depSet.Count > 0;
+        return _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet) && depSet.Count > 0;
     }
 
     /// <summary>
@@ -102,9 +100,7 @@ public class DependencyGraph {
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName) {
         List<string> dependents = [];
-        
-        bool wasGetValueSuccess = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet);
-        if (!wasGetValueSuccess || depSet == null) return dependents;
+        if (!_dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet)) return dependents;
 
         foreach (string dependency in depSet) dependents.Add(dependency);
         return dependents;
@@ -118,10 +114,8 @@ public class DependencyGraph {
     /// <param name="nodeName"> The node we are looking at.</param>
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName) {
-        List<string> dependees = [];
-        
-        bool wasGetValueSuccess = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
-        if (!wasGetValueSuccess || depSet == null) return dependees;
+        HashSet<string> dependees = [];
+        if (!_dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet)) return dependees;
 
         foreach (string dependency in depSet) dependees.Add(dependency);
         return dependees;
@@ -137,16 +131,11 @@ public class DependencyGraph {
     /// <param name="dependee"> the name of the node that must be evaluated first</param>
     /// <param name="dependent"> the name of the node that cannot be evaluated until after dependee</param>
     public void AddDependency(string dependee, string dependent) {
-        bool wasValueGotten;
-        HashSet<string>? depSet;
-
-        wasValueGotten = _dependencyMap.TryGetValue(dependee, out depSet);
-        if (wasValueGotten && depSet != null) depSet.Add(dependent);
+        if (_dependencyMap.TryGetValue(dependee, out HashSet<string>? depSet)) depSet.Add(dependent);
         else if (_dependencyMap.ContainsKey(dependee)) _dependencyMap[dependee] = [dependent];
         else _dependencyMap.Add(dependee, [dependent]);
 
-        wasValueGotten = _dependendeeMap.TryGetValue(dependent, out depSet);
-        if (wasValueGotten && depSet != null) depSet.Add(dependee);
+        if (_dependendeeMap.TryGetValue(dependent, out depSet)) depSet.Add(dependee);
         else if (_dependendeeMap.ContainsKey(dependent)) _dependendeeMap[dependent] = [dependee];
         else _dependendeeMap.Add(dependent, [dependee]);
     }
@@ -159,14 +148,15 @@ public class DependencyGraph {
     /// <param name="dependee"> The name of the node that must be evaluated first</param>
     /// <param name="dependent"> The name of the node that cannot be evaluated until after dependee</param>
     public void RemoveDependency(string dependee, string dependent) {
-        bool wasValueGotten;
-        HashSet<string>? depSet;
+        if (_dependencyMap.TryGetValue(dependee, out HashSet<string>? depSet)) {
+            depSet.Remove(dependent);
+            if (depSet.Count == 0) _dependencyMap.Remove(dependent);
+        }
 
-        wasValueGotten = _dependencyMap.TryGetValue(dependee, out depSet);
-        if (wasValueGotten && depSet != null) depSet.Remove(dependent);
-
-        wasValueGotten = _dependencyMap.TryGetValue(dependent, out depSet);
-        if (wasValueGotten && depSet != null) depSet.Remove(dependee);
+        if (_dependencyMap.TryGetValue(dependent, out depSet)) {
+            depSet.Remove(dependee);
+            if (depSet.Count == 0) _dependendeeMap.Remove(dependee);
+        }
     }
 
     /// <summary>
@@ -176,6 +166,21 @@ public class DependencyGraph {
     /// <param name="nodeName"> The name of the node whose dependents are being replaced </param>
     /// <param name="newDependents"> The new dependents for nodeName</param>
     public void ReplaceDependents(string nodeName, IEnumerable<string> newDependents) {
+        bool wasOldDepRetrieved = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? oldDepSet);
+        HashSet<string> newDepSet = [];
+        
+        // Adds all new dependents to a new hash set. Removes any intersecting dependents from the old hashset
+        foreach (string newDependent in newDependents) {
+            if (wasOldDepRetrieved && oldDepSet != null) oldDepSet.Remove(newDependent);
+            newDepSet.Add(newDependent);
+        }
+
+        // Any dependentss left over in the old dependency hashset are removed in the dependee graph.
+        if (wasOldDepRetrieved && oldDepSet != null) {
+            foreach (string oldDependent in oldDepSet) if (_dependendeeMap.TryGetValue(oldDependent, out HashSet<string>? oldDependees)) {
+                oldDependees.Remove(oldDependent);
+            }
+        }
     }
 
     /// <summary>
