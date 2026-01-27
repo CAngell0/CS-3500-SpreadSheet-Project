@@ -44,18 +44,18 @@ public class DependencyGraphTests {
     }
 
     [TestMethod]
-    public void DependencyGraphGetDependents_EmptyGraph_EmptySet() {
+    public void DependencyGraphGetDependents_EmptyGraph_EmptyList() {
         DependencyGraph graph = new();
-        HashSet<string> dependents = graph.GetDependents("A1").ToHashSet();
+        List<string> dependents = graph.GetDependents("A1").ToList();
 
         Assert.IsNotNull(dependents);
         Assert.IsEmpty(dependents);
     }
 
     [TestMethod]
-    public void DependencyGraphGetDependees_EmptyGraph_EmptySet() {
+    public void DependencyGraphGetDependees_EmptyGraph_EmptyList() {
         DependencyGraph graph = new();
-        HashSet<string> dependees = graph.GetDependents("B2").ToHashSet();
+        List<string> dependees = graph.GetDependents("B2").ToList();
 
         Assert.IsNotNull(dependees);
         Assert.IsEmpty(dependees);
@@ -113,36 +113,22 @@ public class DependencyGraphTests {
     public void DependencyGraphGetDependents_OneDependencyPair_CorrectDependent() {
         DependencyGraph graph = new();
         graph.AddDependency("A1", "B2");
-
-        Assert.IsNotNull(graph);
-        Assert.AreEqual(1, graph.Size);
-
-        HashSet<string> correctDependents = ["B2"];
-        HashSet<string> testedDependents = graph.GetDependents("A1").ToHashSet();
+        List<string> testedDependents = graph.GetDependents("A1").ToList();
 
         Assert.IsNotNull(testedDependents);
-        Assert.HasCount(correctDependents.Count, testedDependents);
-        foreach (string dep in testedDependents) {
-            Assert.Contains(dep, correctDependents);
-        }
+        Assert.HasCount(1, testedDependents);
+        Assert.Contains("B2", testedDependents);
     }
 
     [TestMethod]
     public void DependencyGraphGetDependendees_OneDependencyPair_CorrectDependee() {
         DependencyGraph graph = new();
         graph.AddDependency("A1", "B2");
-
-        Assert.IsNotNull(graph);
-        Assert.AreEqual(1, graph.Size);
-
-        List<string> correctDependees = ["A1"];
         List<string> testedDependees = graph.GetDependees("B2").ToList();
 
         Assert.IsNotNull(testedDependees);
-        Assert.HasCount(correctDependees.Count, testedDependees);
-        foreach (string dep in testedDependees) {
-            Assert.Contains(dep, correctDependees);
-        }
+        Assert.HasCount(1, testedDependees);
+        Assert.Contains("A1", testedDependees);
     }
 
     [TestMethod]
@@ -150,28 +136,19 @@ public class DependencyGraphTests {
         DependencyGraph graph = new();
         graph.AddDependency("A1", "B2");
 
-        Assert.IsNotNull(graph);
-        Assert.AreEqual(1, graph.Size);
-
-        List<string> newDependents = ["C4"];
-        graph.ReplaceDependents("A1", newDependents);
+        graph.ReplaceDependents("A1", ["C4"]);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
 
         Assert.IsNotNull(testedDependents);
-        Assert.HasCount(newDependents.Count, testedDependents);
+        Assert.HasCount(1, testedDependents);
         Assert.IsFalse(graph.HasDependees("B2"));
-        foreach (string dep in testedDependents) {
-            Assert.Contains(dep, newDependents);
-        }
+        Assert.Contains("C4", testedDependents);
     }
 
     [TestMethod]
     public void DependencyGraphReplaceDependees_OneDependencyPair_SuccessfullyReplaced() {
         DependencyGraph graph = new();
         graph.AddDependency("A1", "B2");
-
-        Assert.IsNotNull(graph);
-        Assert.AreEqual(1, graph.Size);
 
         List<string> newDependees = ["C4"];
         graph.ReplaceDependees("B2", newDependees);
@@ -180,9 +157,7 @@ public class DependencyGraphTests {
         Assert.IsNotNull(testedDependees);
         Assert.HasCount(newDependees.Count, testedDependees);
         Assert.IsFalse(graph.HasDependents("A1"));
-        foreach (string dep in testedDependees) {
-            Assert.Contains(dep, newDependees);
-        }
+        Assert.Contains("C4", testedDependees);
     }
 
 
@@ -221,6 +196,79 @@ public class DependencyGraphTests {
         Assert.IsTrue(graph.HasDependees("C3"));
         Assert.IsFalse(graph.HasDependees("B2"));
         Assert.IsFalse(graph.HasDependees("D4"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphGetDependents_OneDependeeWithMultipleDependents_ThreeDependents() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+        graph.AddDependency("A1", "C3");
+        graph.AddDependency("A1", "D4");
+
+        List<string> dependents = graph.GetDependents("A1").ToList();
+        
+        Assert.IsNotNull(dependents);
+        Assert.HasCount(3, dependents);
+        Assert.Contains("B2", dependents);
+        Assert.Contains("C3", dependents);
+        Assert.Contains("D4", dependents);
+    }
+
+    [TestMethod]
+    public void DependencyGraphGetDependees_OneDependeeWithMultipleDependents_OneDependee() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+        graph.AddDependency("A1", "C3");
+        graph.AddDependency("A1", "D4");
+
+        List<string>[] dependeeGroups = [
+            graph.GetDependees("B2").ToList(),
+            graph.GetDependees("C3").ToList(),
+            graph.GetDependees("D4").ToList()
+        ];
+
+        foreach (List<string> dependeeGroup in dependeeGroups) {
+            Assert.IsNotNull(dependeeGroup);
+            Assert.HasCount(1, dependeeGroup);
+            Assert.Contains("A1", dependeeGroup);
+        }
+    }
+
+    [TestMethod]
+    public void DependencyGraphReplaceDependents_WithoutIntersection_AllNewDependents() {
+        DependencyGraph graph = new();
+        List<string> newDependents = ["E5", "F6", "G7"];
+        List<string> oldDependants = ["B2", "C3", "D4"];    
+        foreach (string oldDep in oldDependants) graph.AddDependency("A1", oldDep);
+
+        graph.ReplaceDependents("A1", newDependents);
+        List<string> testedDependents = graph.GetDependents("A1").ToList();
+
+        Assert.IsNotNull(testedDependents);
+        Assert.HasCount(3, testedDependents);
+
+        // Checks the new dependents
+        foreach (string newDep in newDependents) {
+            // Make sure they are listed as a dependent
+            Assert.Contains(newDep, testedDependents);
+            
+            // Checks to make sure the new dependents have only A1 has a dependee
+            List<string> dependeesOfNewDep = graph.GetDependees(newDep).ToList();
+            Assert.IsNotNull(dependeesOfNewDep);
+            Assert.HasCount(1, dependeesOfNewDep);
+            Assert.Contains("A1", dependeesOfNewDep);
+        }
+
+        //Checks the old dependents
+        foreach (string oldDep in oldDependants) {
+            // Makes sure they are not listed as a dependent
+            Assert.DoesNotContain(oldDep, testedDependents);
+
+            // Checks to make sure the old dependents don't have any dependees
+            List<string> dependeesOfOldDep = graph.GetDependees(oldDep).ToList();
+            Assert.IsNotNull(dependeesOfOldDep);
+            Assert.IsEmpty(dependeesOfOldDep);
+        }
     }
 
 
