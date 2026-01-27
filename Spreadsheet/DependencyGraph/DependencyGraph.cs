@@ -79,7 +79,8 @@ public class DependencyGraph {
     /// <param name="nodeName"> The name of the node.</param>
     /// <returns> true if the node has dependents. </returns>
     public bool HasDependents(string nodeName) {
-        return false;
+        bool wasGetValueSuccess = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet);
+        return wasGetValueSuccess && depSet != null && depSet.Count > 0;
     }
 
     /// <summary>
@@ -88,7 +89,8 @@ public class DependencyGraph {
     /// <returns> true if the node has dependees.</returns>
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName) {
-        return false;
+        bool wasGetValueSuccess = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
+        return wasGetValueSuccess && depSet != null && depSet.Count > 0;
     }
 
     /// <summary>
@@ -99,7 +101,13 @@ public class DependencyGraph {
     /// <param name="nodeName"> The node we are looking at.</param>
     /// <returns> The dependents of nodeName. </returns>
     public IEnumerable<string> GetDependents(string nodeName) {
-        return new List<string>(); // Choose your own data structure
+        List<string> dependents = [];
+        
+        bool wasGetValueSuccess = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet);
+        if (!wasGetValueSuccess || depSet == null) return dependents;
+
+        foreach (string dependency in depSet) dependents.Add(dependency);
+        return dependents;
     }
 
     /// <summary>
@@ -110,7 +118,13 @@ public class DependencyGraph {
     /// <param name="nodeName"> The node we are looking at.</param>
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName) {
-        return new List<string>(); // Choose your own data structure
+        List<string> dependees = [];
+        
+        bool wasGetValueSuccess = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
+        if (!wasGetValueSuccess || depSet == null) return dependees;
+
+        foreach (string dependency in depSet) dependees.Add(dependency);
+        return dependees;
     }
 
     /// <summary>
