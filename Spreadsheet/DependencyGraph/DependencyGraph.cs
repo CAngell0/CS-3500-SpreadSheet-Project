@@ -211,17 +211,17 @@ public class DependencyGraph {
 
     private bool RemoveFromDependencyMap(string dependee, string dependent) {
         bool result = false;
-        if (_dependencyMap.TryGetValue(dependent, out HashSet<string>? depSet)) {
-            result = depSet.Remove(dependee);
+        if (_dependencyMap.TryGetValue(dependee, out HashSet<string>? depSet)) {
+            result = depSet.Remove(dependent);
             if (depSet.Count == 0) _dependencyMap.Remove(dependee);
         }
         return result;
     }
 
-    private bool RemoveFromDependeeMap(string dependent, string dependee) {
+    private bool RemoveFromDependeeMap(string dependee, string dependent) {
         bool result = false;
-        if (_dependendeeMap.TryGetValue(dependee, out HashSet<string>? depSet)) {
-            result = depSet.Remove(dependent);
+        if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) {
+            result = depSet.Remove(dependee);
             if (depSet.Count == 0) _dependendeeMap.Remove(dependent);
         }
         return result;

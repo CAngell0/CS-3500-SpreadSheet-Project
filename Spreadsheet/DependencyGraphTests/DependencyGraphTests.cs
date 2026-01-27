@@ -8,8 +8,74 @@ using DependencyGraph;
 /// </summary>
 [TestClass]
 public class DependencyGraphTests {
+    [TestMethod]
+    public void DependencyGraphConstructor_EmptyGraph_SizeIsZero() {
+        DependencyGraph graph = new();
 
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(0, graph.Size);
+    }
 
+    // --- Tests for single dependency pairs ---
+
+    [TestMethod]
+    public void DependencyGraphAdd_OneDependencyPair_SizeIsOne() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(1, graph.Size);
+        Assert.IsTrue(graph.HasDependents("A1"));
+        Assert.IsTrue(graph.HasDependees("B2"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphRemove_OneDependencyPair_SizeIsZero() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+        graph.RemoveDependency("A1", "B2");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(0, graph.Size);
+        Assert.IsFalse(graph.HasDependents("A1"));
+        Assert.IsFalse(graph.HasDependees("B2"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphGetDependents_OneDependencyPair_CorrectDependent() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(1, graph.Size);
+
+        HashSet<string> correctDependents = ["B2"];
+        HashSet<string> testedDependents = graph.GetDependents("A1").ToHashSet();
+
+        Assert.IsNotNull(testedDependents);
+        Assert.HasCount(correctDependents.Count, testedDependents);
+        foreach (string dep in testedDependents) {
+            Assert.Contains(dep, correctDependents);
+        }
+    }
+
+    [TestMethod]
+    public void DependencyGraphGetDependendees_OneDependencyPair_CorrectDependee() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(1, graph.Size);
+
+        HashSet<string> correctDependees = ["A1"];
+        HashSet<string> testedDependees = graph.GetDependees("B2").ToHashSet();
+
+        Assert.IsNotNull(testedDependees);
+        Assert.HasCount(correctDependees.Count, testedDependees);
+        foreach (string dep in testedDependees) {
+            Assert.Contains(dep, correctDependees);
+        }
+    }
 
     /// <summary>
     ///   TODO:  Explain carefully what this code tests.
