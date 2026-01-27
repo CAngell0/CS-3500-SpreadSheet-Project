@@ -16,7 +16,7 @@ public class DependencyGraphTests {
         Assert.AreEqual(0, graph.Size);
     }
 
-    // --- Tests for single dependency pairs ---
+    // --- Tests For Single Dependency Pairs ---
 
     [TestMethod]
     public void DependencyGraphAdd_OneDependencyPair_SizeIsOne() {
@@ -91,6 +91,7 @@ public class DependencyGraphTests {
 
         Assert.IsNotNull(testedDependents);
         Assert.HasCount(newDependents.Count, testedDependents);
+        Assert.IsFalse(graph.HasDependees("B2"));
         foreach (string dep in testedDependents) {
             Assert.Contains(dep, newDependents);
         }
@@ -110,10 +111,50 @@ public class DependencyGraphTests {
 
         Assert.IsNotNull(testedDependees);
         Assert.HasCount(newDependees.Count, testedDependees);
+        Assert.IsFalse(graph.HasDependents("A1"));
         foreach (string dep in testedDependees) {
             Assert.Contains(dep, newDependees);
         }
     }
+
+
+
+
+    // --- Tests With Multiple Dependents and One Dependee ---
+    
+    [TestMethod]
+    public void DependencyGraphAdd_OneDependeeWithMultipleDependents_SizeMatchesEdges() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+        graph.AddDependency("A1", "C3");
+        graph.AddDependency("A1", "D4");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(3, graph.Size);
+        Assert.IsTrue(graph.HasDependents("A1"));
+        Assert.IsTrue(graph.HasDependees("B2"));
+        Assert.IsTrue(graph.HasDependees("C3"));
+        Assert.IsTrue(graph.HasDependees("D4"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphRemove_OneDependeeWithMultipleDependents_SizeMatchesEdges() {
+        DependencyGraph graph = new();
+        graph.AddDependency("A1", "B2");
+        graph.AddDependency("A1", "C3");
+        graph.AddDependency("A1", "D4");
+
+        graph.RemoveDependency("A1", "B2");
+        graph.RemoveDependency("A1", "D4");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(1, graph.Size);
+        Assert.IsTrue(graph.HasDependents("A1"));
+        Assert.IsTrue(graph.HasDependees("C3"));
+        Assert.IsFalse(graph.HasDependees("B2"));
+        Assert.IsFalse(graph.HasDependees("D4"));
+    }
+
 
     /// <summary>
     ///   TODO:  Explain carefully what this code tests.
