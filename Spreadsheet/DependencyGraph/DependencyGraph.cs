@@ -137,6 +137,18 @@ public class DependencyGraph {
     /// <param name="dependee"> the name of the node that must be evaluated first</param>
     /// <param name="dependent"> the name of the node that cannot be evaluated until after dependee</param>
     public void AddDependency(string dependee, string dependent) {
+        bool wasValueGotten;
+        HashSet<string>? depSet;
+
+        wasValueGotten = _dependencyMap.TryGetValue(dependee, out depSet);
+        if (wasValueGotten && depSet != null) depSet.Add(dependent);
+        else if (_dependencyMap.ContainsKey(dependee)) _dependencyMap[dependee] = [dependent];
+        else _dependencyMap.Add(dependee, [dependent]);
+
+        wasValueGotten = _dependendeeMap.TryGetValue(dependent, out depSet);
+        if (wasValueGotten && depSet != null) depSet.Add(dependee);
+        else if (_dependendeeMap.ContainsKey(dependent)) _dependendeeMap[dependent] = [dependee];
+        else _dependendeeMap.Add(dependent, [dependee]);
     }
 
     /// <summary>
@@ -147,6 +159,14 @@ public class DependencyGraph {
     /// <param name="dependee"> The name of the node that must be evaluated first</param>
     /// <param name="dependent"> The name of the node that cannot be evaluated until after dependee</param>
     public void RemoveDependency(string dependee, string dependent) {
+        bool wasValueGotten;
+        HashSet<string>? depSet;
+
+        wasValueGotten = _dependencyMap.TryGetValue(dependee, out depSet);
+        if (wasValueGotten && depSet != null) depSet.Remove(dependent);
+
+        wasValueGotten = _dependencyMap.TryGetValue(dependent, out depSet);
+        if (wasValueGotten && depSet != null) depSet.Remove(dependee);
     }
 
     /// <summary>
