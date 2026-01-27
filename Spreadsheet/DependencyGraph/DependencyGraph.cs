@@ -192,5 +192,20 @@ public class DependencyGraph {
     /// <param name="nodeName"> The name of the node who's dependees are being replaced</param>
     /// <param name="newDependees"> The new dependees for nodeName</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees) {
+        bool wasOldDepRetrieved = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? oldDepSet);
+        HashSet<string> newDepSet = [];
+        
+        // Adds all new dependents to a new hash set. Removes any intersecting dependents from the old hashset
+        foreach (string newDependee in newDependees) {
+            if (wasOldDepRetrieved && oldDepSet != null) oldDepSet.Remove(newDependee);
+            newDepSet.Add(newDependee);
+        }
+
+        // Any dependentss left over in the old dependency hashset are removed in the dependee graph.
+        if (wasOldDepRetrieved && oldDepSet != null) {
+            foreach (string oldDependee in oldDepSet) if (_dependencyMap.TryGetValue(oldDependee, out HashSet<string>? oldDependencies)) {
+                oldDependencies.Remove(oldDependee);
+            }
+        }
     }
 }
