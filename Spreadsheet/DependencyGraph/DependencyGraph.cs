@@ -196,16 +196,14 @@ public class DependencyGraph {
     private bool AddToDependentMap(string dependee, string dependent) {
         bool result = true;
         if (_dependentMap.TryGetValue(dependee, out HashSet<string>? depSet)) result = depSet.Add(dependent);
-        else if (_dependentMap.ContainsKey(dependee)) _dependentMap[dependee] = [dependent];
-        else _dependentMap.Add(dependee, [dependent]);
+        else _dependentMap[dependee] = [dependent];
         return result;
     }
 
     private bool AddToDependeeMap(string dependee, string dependent) {
         bool result = true;
         if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) result = depSet.Add(dependee);
-        else if (_dependendeeMap.ContainsKey(dependent)) _dependendeeMap[dependent] = [dependee];
-        else _dependendeeMap.Add(dependent, [dependee]);
+        else _dependendeeMap[dependent] = [dependee];
         return result;
     }
 

@@ -8,6 +8,8 @@ using DependencyGraph;
 /// </summary>
 [TestClass]
 public class DependencyGraphTests {
+    // --- Tests With Empty Graph ---
+
     [TestMethod]
     public void DependencyGraphConstructor_EmptyGraph_SizeIsZero() {
         DependencyGraph graph = new();
@@ -15,6 +17,72 @@ public class DependencyGraphTests {
         Assert.IsNotNull(graph);
         Assert.AreEqual(0, graph.Size);
     }
+
+    [TestMethod]
+    public void DependencyGraphHasDependents_EmptyGraph_False() {
+        DependencyGraph graph = new();
+
+        Assert.IsNotNull(graph);
+        Assert.IsFalse(graph.HasDependents("A1"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphHasDependees_EmptyGraph_False() {
+        DependencyGraph graph = new();
+
+        Assert.IsNotNull(graph);
+        Assert.IsFalse(graph.HasDependees("A1"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphRemove_EmptyGraph_NoChange() {
+        DependencyGraph graph = new();
+        graph.RemoveDependency("A1", "B2");
+
+        Assert.IsNotNull(graph);
+        Assert.AreEqual(0, graph.Size);
+    }
+
+    [TestMethod]
+    public void DependencyGraphGetDependents_EmptyGraph_EmptySet() {
+        DependencyGraph graph = new();
+        HashSet<string> dependents = graph.GetDependents("A1").ToHashSet();
+
+        Assert.IsNotNull(dependents);
+        Assert.IsEmpty(dependents);
+    }
+
+    [TestMethod]
+    public void DependencyGraphGetDependees_EmptyGraph_EmptySet() {
+        DependencyGraph graph = new();
+        HashSet<string> dependees = graph.GetDependents("B2").ToHashSet();
+
+        Assert.IsNotNull(dependees);
+        Assert.IsEmpty(dependees);
+    }
+
+    [TestMethod]
+    public void DependencyGraphReplaceDependents_EmptyGraph_DependenciesAdded() {
+        DependencyGraph graph = new();
+        graph.ReplaceDependents("A1", ["B2"]);
+
+        Assert.AreEqual(1, graph.Size);
+        Assert.IsTrue(graph.HasDependents("A1"));
+        Assert.IsTrue(graph.HasDependees("B2"));
+    }
+
+    [TestMethod]
+    public void DependencyGraphReplaceDependees_EmptyGraph_DependenciesAdded() {
+        DependencyGraph graph = new();
+        graph.ReplaceDependees("A1", ["B2"]);
+
+        Assert.AreEqual(1, graph.Size);
+        Assert.IsTrue(graph.HasDependents("B2"));
+        Assert.IsTrue(graph.HasDependees("A1"));
+    }
+
+
+
 
     // --- Tests For Single Dependency Pairs ---
 
