@@ -53,7 +53,6 @@ namespace DependencyGraph;
 public class DependencyGraph {
     private Dictionary<string, HashSet<string>> _dependentMap;
     private Dictionary<string, HashSet<string>> _dependendeeMap;
-    private int _size;
 
 
     /// <summary>
@@ -63,15 +62,13 @@ public class DependencyGraph {
     public DependencyGraph() {
         _dependentMap = new Dictionary<string, HashSet<string>>();
         _dependendeeMap = new Dictionary<string, HashSet<string>>();
-        _size = 0;
+        Size = 0;
     }
 
     /// <summary>
-    /// The number of ordered pairs in the DependencyGraph.
+    ///     The number of ordered pairs in the DependencyGraph.
     /// </summary>
-    public int Size {
-        get { return _size; }
-    }
+    public int Size { get; private set; }
 
     /// <summary>
     ///   Reports whether the given node has dependents (i.e., other nodes depend on it).
@@ -133,7 +130,7 @@ public class DependencyGraph {
     public void AddDependency(string dependee, string dependent) {
         bool alreadyExisted = !AddToDependentMap(dependee, dependent);
         AddToDependeeMap(dependee, dependent);
-        if (!alreadyExisted) _size++;
+        if (!alreadyExisted) Size++;
     }
 
     /// <summary>
@@ -146,7 +143,7 @@ public class DependencyGraph {
     public void RemoveDependency(string dependee, string dependent) {
         bool wasAlreadyRemoved = !RemoveFromDependentMap(dependee, dependent);
         RemoveFromDependeeMap(dependee, dependent);
-        if (!wasAlreadyRemoved) _size--;
+        if (!wasAlreadyRemoved) Size--;
     }
 
     /// <summary>
@@ -167,7 +164,7 @@ public class DependencyGraph {
         foreach (string dep in dependentsToAdd) AddToDependeeMap(nodeName, dep);
 
         _dependentMap[nodeName] = newDepSet;
-        _size += dependentsToAdd.Length - dependentsToRemove.Length;
+        Size += dependentsToAdd.Length - dependentsToRemove.Length;
     }
 
     /// <summary>
@@ -190,7 +187,7 @@ public class DependencyGraph {
         foreach (string dep in dependeesToAdd) AddToDependentMap(dep, nodeName);
 
         _dependendeeMap[nodeName] = newDepSet;
-        _size += dependeesToAdd.Length - dependeesToRemove.Length;
+        Size += dependeesToAdd.Length - dependeesToRemove.Length;
     }
 
 
