@@ -159,6 +159,8 @@ public class DependencyGraph {
         bool wasOldDepRetrieved = _dependencyMap.TryGetValue(nodeName, out HashSet<string>? depSet);
         HashSet<string> oldDepSet = (wasOldDepRetrieved && depSet != null) ? depSet : [];
         HashSet<string> newDepSet = [];
+
+        
         
         // foreach (string newDep in newDependents) {
         //     newDepSet.Add(newDep);
@@ -169,20 +171,20 @@ public class DependencyGraph {
         //     }
         // }
         
-        // Adds all new dependents to a new hash set. Removes any intersecting dependents from the old hashset
-        foreach (string newDependent in newDependents) {
-            if (wasOldDepRetrieved && oldDepSet != null) {
-                if (!oldDepSet.Remove(newDependent)) _size++;
-            }
-            newDepSet.Add(newDependent);
-        }
+        // // Adds all new dependents to a new hash set. Removes any intersecting dependents from the old hashset
+        // foreach (string newDependent in newDependents) {
+        //     if (wasOldDepRetrieved && oldDepSet != null) {
+        //         if (!oldDepSet.Remove(newDependent)) _size++;
+        //     }
+        //     newDepSet.Add(newDependent);
+        // }
 
-        // Any dependentss left over in the old dependency hashset are removed in the dependee graph.
-        if (wasOldDepRetrieved && oldDepSet != null) {
-            foreach (string oldDependent in oldDepSet) if (_dependendeeMap.TryGetValue(oldDependent, out HashSet<string>? oldDependees)) {
-                oldDependees.Remove(oldDependent);
-            }
-        }
+        // // Any dependentss left over in the old dependency hashset are removed in the dependee graph.
+        // if (wasOldDepRetrieved && oldDepSet != null) {
+        //     foreach (string oldDependent in oldDepSet) if (_dependendeeMap.TryGetValue(oldDependent, out HashSet<string>? oldDependees)) {
+        //         oldDependees.Remove(oldDependent);
+        //     }
+        // }
     }
 
     /// <summary>
