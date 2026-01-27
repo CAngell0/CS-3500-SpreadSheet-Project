@@ -193,6 +193,8 @@ public class DependencyGraph {
         _size += dependeesToAdd.Length - dependeesToRemove.Length;
     }
 
+
+    
     private bool AddToDependentMap(string dependee, string dependent) {
         bool result = true;
         if (_dependentMap.TryGetValue(dependee, out HashSet<string>? depSet)) result = depSet.Add(dependent);
@@ -200,6 +202,29 @@ public class DependencyGraph {
         return result;
     }
 
+
+    /// <summary>
+    ///     A helper method that adds a dependee-dependent relationship to the dependent map.
+    ///     <remarks><para> 
+    ///         Same as the RemoveFromDependeeMap method, but reversed. Must be called with 
+    ///         RemoveFromDependeeMap in order to completely remove a relationship.
+    ///     </para>
+    ///     <para>
+    ///         Doesn't remove the relationship from the dependee map. For example if I have a 
+    ///         edge that says A1 -> B2 and I call this method to remove it. The graph will know
+    ///         that B2 is no longer a dependent of A1. But it still sees A1 as a dependee of B2
+    ///         because it wasn't removed from the dependee map (only the dependent map).
+    ///     </para>
+    ///     <para>
+    ///         This method was created because some public facing methods only need to remove
+    ///         from either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         methods.
+    ///     </para></remarks>
+    /// </summary>
+    /// <param name="dependee"> Dependee to target </param>
+    /// <param name="dependent"> Associated dependent to target </param>
+    /// <returns> true if the relationship was removed. </returns>
+    // TODO - Finish this comment
     private bool AddToDependeeMap(string dependee, string dependent) {
         bool result = true;
         if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) result = depSet.Add(dependee);
@@ -207,6 +232,28 @@ public class DependencyGraph {
         return result;
     }
 
+
+    /// <summary>
+    ///     A helper method that removes a dependee-dependent relationship from the dependent map.
+    ///     <remarks><para> 
+    ///         Same as the RemoveFromDependeeMap method, but reversed. Must be called with 
+    ///         RemoveFromDependeeMap in order to completely remove a relationship.
+    ///     </para>
+    ///     <para>
+    ///         Doesn't remove the relationship from the dependee map. For example if I have a 
+    ///         edge that says A1 -> B2 and I call this method to remove it. The graph will know
+    ///         that B2 is no longer a dependent of A1. But it still sees A1 as a dependee of B2
+    ///         because it wasn't removed from the dependee map (only the dependent map).
+    ///     </para>
+    ///     <para>
+    ///         This method was created because some public facing methods only need to remove
+    ///         from either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         methods.
+    ///     </para></remarks>
+    /// </summary>
+    /// <param name="dependee"> Dependee to target </param>
+    /// <param name="dependent"> Associated dependent to target </param>
+    /// <returns> true if the relationship was removed. </returns>
     private bool RemoveFromDependentMap(string dependee, string dependent) {
         bool result = false;
         if (_dependentMap.TryGetValue(dependee, out HashSet<string>? depSet)) {
@@ -216,6 +263,27 @@ public class DependencyGraph {
         return result;
     }
 
+    /// <summary>
+    ///     A helper method that removes a dependee-dependent relationship from the dependee map.
+    ///     <remarks><para> 
+    ///         Same as the RemoveFromDependentMap method, but reversed. Must be called with 
+    ///         RemoveFromDependentMap in order to completely remove a relationship.
+    ///     </para>
+    ///     <para>
+    ///         Doesn't remove the relationship from the dependent map. For example if I have a 
+    ///         edge that says A1 -> B2 and I call this method to remove it. The graph will know
+    ///         that A1 is no longer a dependee of B2. But it still sees B2 as a dependee of A2
+    ///         because it wasn't removed from the dependent map (only the dependee map).
+    ///     </para>
+    ///     <para>
+    ///         This method was created because some public facing methods only need to remove
+    ///         from either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         methods.
+    ///     </para></remarks>
+    /// </summary>
+    /// <param name="dependee"> Dependee to target</param>
+    /// <param name="dependent"> Associated dependent to target</param>
+    /// <returns> true if the relationship was removed. </returns>
     private bool RemoveFromDependeeMap(string dependee, string dependent) {
         bool result = false;
         if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) {
