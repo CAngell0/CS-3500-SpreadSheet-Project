@@ -234,6 +234,8 @@ public class DependencyGraphTests {
         }
     }
 
+    // TODO - Go over the comments for the next three tests
+
     [TestMethod]
     public void DependencyGraphReplaceDependents_WithoutIntersection_AllNewDependents() {
         DependencyGraph graph = new();
@@ -268,6 +270,68 @@ public class DependencyGraphTests {
             List<string> dependeesOfOldDep = graph.GetDependees(oldDep).ToList();
             Assert.IsNotNull(dependeesOfOldDep);
             Assert.IsEmpty(dependeesOfOldDep);
+        }
+    }
+
+    [TestMethod]
+    public void DependencyGraphReplaceDependents_WithIntersection_TwoDeletionsOneAddition() {
+        DependencyGraph graph = new();
+        List<string> newDependents = ["C3", "D4", "F5"];
+        List<string> oldDependants = ["B2", "C3", "D4", "E5"];    
+        foreach (string oldDep in oldDependants) graph.AddDependency("A1", oldDep);
+
+        graph.ReplaceDependents("A1", newDependents);
+        List<string> testedDependents = graph.GetDependents("A1").ToList();
+        Assert.IsNotNull(testedDependents);
+        Assert.HasCount(3, testedDependents);
+
+        // Checks the new dependents
+        foreach (string newDep in newDependents) {
+            // Make sure they are listed as a dependent
+            Assert.Contains(newDep, testedDependents);
+            
+            // Checks to make sure the new dependents have only A1 has a dependee
+            List<string> dependeesOfNewDep = graph.GetDependees(newDep).ToList();
+            Assert.IsNotNull(dependeesOfNewDep);
+            Assert.HasCount(1, dependeesOfNewDep);
+            Assert.Contains("A1", dependeesOfNewDep);
+        }
+
+        List<string> deletedDeps = oldDependants.Except(newDependents).ToList();
+        //Checks the old dependents
+        foreach (string delDep in deletedDeps) {
+            // Makes sure they are not listed as a dependent
+            Assert.DoesNotContain(delDep, testedDependents);
+
+            // Checks to make sure the old dependents don't have any dependees
+            List<string> dependeesOfOldDep = graph.GetDependees(delDep).ToList();
+            Assert.IsNotNull(dependeesOfOldDep);
+            Assert.IsEmpty(dependeesOfOldDep);
+        }
+    }
+
+    [TestMethod]
+    public void DependencyGraphReplaceDependents_FullIntersection_NoChange() {
+        DependencyGraph graph = new();
+        List<string> newDependents = ["B2", "C3", "D4"];
+        List<string> oldDependants = ["B2", "C3", "D4"];    
+        foreach (string oldDep in oldDependants) graph.AddDependency("A1", oldDep);
+
+        graph.ReplaceDependents("A1", newDependents);
+        List<string> testedDependents = graph.GetDependents("A1").ToList();
+        Assert.IsNotNull(testedDependents);
+        Assert.HasCount(3, testedDependents);
+
+        // Checks the new dependents
+        foreach (string newDep in newDependents) {
+            // Make sure they are listed as a dependent
+            Assert.Contains(newDep, testedDependents);
+            
+            // Checks to make sure the new dependents have only A1 has a dependee
+            List<string> dependeesOfNewDep = graph.GetDependees(newDep).ToList();
+            Assert.IsNotNull(dependeesOfNewDep);
+            Assert.HasCount(1, dependeesOfNewDep);
+            Assert.Contains("A1", dependeesOfNewDep);
         }
     }
 
