@@ -8,11 +8,6 @@ using DependencyGraph;
 /// </summary>
 [TestClass]
 public class DependencyGraphTests {
-    private DependencyGraph CreateDependencyGraphWithDependencies(string[][] arr) {
-        return new DependencyGraph();
-    }
-
-
     // --- Tests With Empty Graph ---
 
     [TestMethod]

@@ -846,6 +846,10 @@ public sealed class FormulaConstructorTests {
         }
     }
 
+
+
+
+
     // --- Tests for First Token Rule
 
     /// <summary>
@@ -868,6 +872,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("jKj431 - D3");
     }
 
+
     /// <summary>
     ///     <para> Tests scientific notation numbers as the first token in a two term equation </para>
     ///     <remarks>
@@ -888,6 +893,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("00010E10/4637.432E30");
         _ = new Formula("1e1 - 1E1");
     }
+
     
     /// <summary>
     ///     <para> Tests a closed paren as the first token in a formula </para>
@@ -907,6 +913,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula(")((4541.87E1)))"));
     }
 
+
     /// <summary>
     ///     <para> Tests an operator as the first token in a formula </para>
     ///     <remarks>
@@ -925,6 +932,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("* JD583"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("/(676.32)"));
     }
+
 
     /// <summary>
     ///     <para> Tests an operator as the first token in a formula </para>
@@ -972,6 +980,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("0002*1241.0 / 0000043652.46");
     }
 
+
     /// <summary>
     ///     <para> Takes a two term equation and puts a variable as the last token in it. </para>
     ///     <remarks>
@@ -992,6 +1001,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("154732 - J2143");
     }
 
+
     /// <summary>
     ///     <para> Tests a open paren as the last token in a formula </para>
     ///     <remarks>
@@ -1010,6 +1020,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("((((4431e3)))))("));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((ajhkdgwihu2312))) ("));
     }
+
 
     /// <summary>
     ///     <para> Tests an operator as the last token in a formula </para>
@@ -1030,6 +1041,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("53E10-"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(000.0021)/"));
     }
+
 
     /// <summary>
     ///     <para> Tests a special character as the last token in a formula </para>
@@ -1078,6 +1090,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(-54E10)"));
     }
 
+
     /// <summary>
     ///     <para> Puts a special character as the first character after an open parenthesis </para>
     ///     <remarks>
@@ -1099,6 +1112,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("( #6j14)"));
     }
 
+
     /// <summary>
     ///     <para> Puts a closed paren as the first character after an open parenthesis. Essentially making an empty set of parens. </para>
     ///     <remarks>
@@ -1119,6 +1133,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("()()"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(( ()) ))  (())"));
     }
+
 
     /// <summary>
     ///     <para> Iterates through the ASCII table and tests putting special characters in front of open parens </para>
@@ -1153,6 +1168,7 @@ public sealed class FormulaConstructorTests {
         }
     }
 
+
     /// <summary>
     ///     <para> Tests two term equations that have a set pr parenthesis directly after the operator </para>
     ///     <remarks>
@@ -1173,6 +1189,7 @@ public sealed class FormulaConstructorTests {
         _ = new Formula("anfd7346-(((431.453)))");
         _ = new Formula("6587.531E-21-((( (( (aiewhd67387  )))) ))");
     }
+
 
     /// <summary>
     ///     <para> Takes a two term equation and puts two operators between the terms, side by side. </para>
@@ -1195,6 +1212,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(5421E10*//3412)"));
     }
 
+
     /// <summary>
     ///     <para> Takes a two term equation and puts an operator followed by a special character between the terms, side by side. </para>
     ///     <remarks>
@@ -1214,6 +1232,7 @@ public sealed class FormulaConstructorTests {
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("ajisdh3341+= 565.432"));
         Assert.Throws<FormulaFormatException>(() => _ = new Formula("(((a442+$af324)))"));
     }
+    
 
     /// <summary>
     ///     <para> Takes a two term equation and tests every ASCII character to go directly after the operator in that equation, side by side. </para>
@@ -1247,6 +1266,8 @@ public sealed class FormulaConstructorTests {
             }
         }
     }
+
+
 
 
 

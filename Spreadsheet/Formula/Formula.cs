@@ -222,7 +222,7 @@ public partial class Formula {
     ///         </item>
     ///     </list>
     /// </summary>
-    /// <param name="tokenIndex"></param>
+    /// <param name="tokenIndex">The index of the token to update inside of _tokens</param>
     /// <returns> New version of token after it has been updated to canonical form </returns>
     private string UpdateTokenToCanonicalForm(int tokenIndex) {
         string token = _tokens[tokenIndex];
