@@ -191,7 +191,26 @@ public class DependencyGraph {
     }
 
 
-    
+    /// <summary>
+    ///     A helper method that adds a dependee-dependent relationship to the dependent map.
+    ///     <remarks><para> 
+    ///         Same as the AddToDependee method, but reversed. Must be called with 
+    ///         AddToDependee in order to add a relationship to the graph completely.
+    ///     </para>
+    ///     <para>
+    ///         Doesn't add the relationship to the dependee map, only the dependent map. For example
+    ///         if I want to add an adge A1 -> B2 and I call this method. The graph will add B2 as a dependent
+    ///         of A1. But it will not add A1 as a dependee of B2 because it was only added to the dependent map.
+    ///     </para>
+    ///     <para>
+    ///         This method was created because some public facing methods only need to add
+    ///         to either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         methods.
+    ///     </para></remarks>
+    /// </summary>
+    /// <param name="dependee"> Dependee to add </param>
+    /// <param name="dependent"> Associated dependent to add </param>
+    /// <returns> true if the relationship was added to the dependent map. </returns>
     private bool AddToDependentMap(string dependee, string dependent) {
         bool result = true;
         if (_dependentMap.TryGetValue(dependee, out HashSet<string>? depSet)) result = depSet.Add(dependent);
@@ -201,27 +220,25 @@ public class DependencyGraph {
 
 
     /// <summary>
-    ///     A helper method that adds a dependee-dependent relationship to the dependent map.
+    ///     A helper method that adds a dependee-dependent relationship to the dependee map.
     ///     <remarks><para> 
-    ///         Same as the RemoveFromDependeeMap method, but reversed. Must be called with 
-    ///         RemoveFromDependeeMap in order to completely remove a relationship.
+    ///         Same as the AddToDependent method, but reversed. Must be called with 
+    ///         AddToDependent in order to add a relationship to the graph completely.
     ///     </para>
     ///     <para>
-    ///         Doesn't remove the relationship from the dependee map. For example if I have a 
-    ///         edge that says A1 -> B2 and I call this method to remove it. The graph will know
-    ///         that B2 is no longer a dependent of A1. But it still sees A1 as a dependee of B2
-    ///         because it wasn't removed from the dependee map (only the dependent map).
+    ///         Doesn't add the relationship to the dependent map, only the dependee map. For example
+    ///         if I want to add an adge A1 -> B2 and I call this method. The graph will add A1 as a dependee
+    ///         of B2. But it will not add B2 as a dependent of B2 because it was only added to the dependee map.
     ///     </para>
     ///     <para>
-    ///         This method was created because some public facing methods only need to remove
-    ///         from either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         This method was created because some public facing methods only need to add
+    ///         to either the dependent or dependee map. Not both. One example is the replacemenet
     ///         methods.
     ///     </para></remarks>
     /// </summary>
-    /// <param name="dependee"> Dependee to target </param>
-    /// <param name="dependent"> Associated dependent to target </param>
-    /// <returns> true if the relationship was removed. </returns>
-    // TODO - Finish this comment
+    /// <param name="dependee"> Associated dependee to add </param>
+    /// <param name="dependent"> Dependent to add </param>
+    /// <returns> true if the relationship was added to the dependee map. </returns>
     private bool AddToDependeeMap(string dependee, string dependent) {
         bool result = true;
         if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) result = depSet.Add(dependee);
@@ -250,7 +267,7 @@ public class DependencyGraph {
     /// </summary>
     /// <param name="dependee"> Dependee to target </param>
     /// <param name="dependent"> Associated dependent to target </param>
-    /// <returns> true if the relationship was removed. </returns>
+    /// <returns> true if the relationship was removed from the dependent map. </returns>
     private bool RemoveFromDependentMap(string dependee, string dependent) {
         bool result = false;
         if (_dependentMap.TryGetValue(dependee, out HashSet<string>? depSet)) {
@@ -280,7 +297,7 @@ public class DependencyGraph {
     /// </summary>
     /// <param name="dependee"> Dependee to target</param>
     /// <param name="dependent"> Associated dependent to target</param>
-    /// <returns> true if the relationship was removed. </returns>
+    /// <returns> true if the relationship was removed from the dependee map. </returns>
     private bool RemoveFromDependeeMap(string dependee, string dependent) {
         bool result = false;
         if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) {
