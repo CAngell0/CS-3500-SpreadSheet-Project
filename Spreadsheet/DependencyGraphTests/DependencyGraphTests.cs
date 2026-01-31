@@ -8,6 +8,20 @@ using DependencyGraph;
 /// </summary>
 [TestClass]
 public class DependencyGraphTests {
+    /// <summary>
+    ///     Helper method that creates a dependency graph using dependency pairs.
+    /// </summary>
+    /// <param name="dependencies">
+    ///     The innder string arrays should containg dependee-dependent pairs.
+    ///     Same as though you call DependencyGraph.AddDependency(dependee, dependent).
+    /// </param>
+    /// <returns> Dependency graph with the pairs added </returns>
+    private DependencyGraph CreateDependencyGraph(string[][] dependencies) {
+        DependencyGraph graph = new();
+        foreach (string[] dependency in dependencies) graph.AddDependency(dependency[0], dependency[1]);
+        return graph;
+    }
+
     // --- Tests With Empty Graph ---
 
     [TestMethod]
@@ -88,8 +102,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphAdd_OneDependencyPair_SizeIsOne() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
+        DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
 
         Assert.IsNotNull(graph);
         Assert.AreEqual(1, graph.Size);
@@ -99,8 +112,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphRemove_OneDependencyPair_SizeIsZero() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
+        DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
         graph.RemoveDependency("A1", "B2");
 
         Assert.IsNotNull(graph);
@@ -111,8 +123,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphGetDependents_OneDependencyPair_CorrectDependent() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
+        DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
 
         Assert.IsNotNull(testedDependents);
@@ -122,8 +133,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphGetDependendees_OneDependencyPair_CorrectDependee() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
+        DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
         List<string> testedDependees = graph.GetDependees("B2").ToList();
 
         Assert.IsNotNull(testedDependees);
@@ -133,8 +143,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphReplaceDependents_OneDependencyPair_SuccessfullyReplaced() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
+        DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
 
         graph.ReplaceDependents("A1", ["C4"]);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
@@ -147,8 +156,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphReplaceDependees_OneDependencyPair_SuccessfullyReplaced() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
+        DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
 
         List<string> newDependees = ["C4"];
         graph.ReplaceDependees("B2", newDependees);
@@ -167,10 +175,7 @@ public class DependencyGraphTests {
     
     [TestMethod]
     public void DependencyGraphAdd_OneDependeeWithMultipleDependents_SizeMatchesEdges() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
-        graph.AddDependency("A1", "C3");
-        graph.AddDependency("A1", "D4");
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
 
         Assert.IsNotNull(graph);
         Assert.AreEqual(3, graph.Size);
@@ -182,10 +187,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphRemove_OneDependeeWithMultipleDependents_SizeMatchesEdges() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
-        graph.AddDependency("A1", "C3");
-        graph.AddDependency("A1", "D4");
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
 
         graph.RemoveDependency("A1", "B2");
         graph.RemoveDependency("A1", "D4");
@@ -200,10 +202,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphGetDependents_OneDependeeWithMultipleDependents_ThreeDependents() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
-        graph.AddDependency("A1", "C3");
-        graph.AddDependency("A1", "D4");
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
 
         List<string> dependents = graph.GetDependents("A1").ToList();
         
@@ -216,10 +215,7 @@ public class DependencyGraphTests {
 
     [TestMethod]
     public void DependencyGraphGetDependees_OneDependeeWithMultipleDependents_OneDependee() {
-        DependencyGraph graph = new();
-        graph.AddDependency("A1", "B2");
-        graph.AddDependency("A1", "C3");
-        graph.AddDependency("A1", "D4");
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
 
         List<string>[] dependeeGroups = [
             graph.GetDependees("B2").ToList(),
@@ -235,13 +231,17 @@ public class DependencyGraphTests {
     }
 
     // TODO - Go over the comments for the next three tests
-
+    /// <summary>
+    ///     Takes a graph with one dependee and three dependents and replaces the dependents
+    ///     with a completely new set of dependents. Without intersection means that the dependents
+    ///     used to replace don't have any variables in common with the old dependents; they are
+    ///     completely new.
+    /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_neDependeeWithMultipleDependentsWithoutIntersection_AllNewDependents() {
-        DependencyGraph graph = new();
+    public void DependencyGraphReplaceDependents_OneDependeeWithMultipleDependentsWithoutIntersection_AllNewDependents() {
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
         List<string> newDependents = ["E5", "F6", "G7"];
-        List<string> oldDependants = ["B2", "C3", "D4"];    
-        foreach (string oldDep in oldDependants) graph.AddDependency("A1", oldDep);
+        List<string> oldDependants = ["B2", "C3", "D4"];
 
         graph.ReplaceDependents("A1", newDependents);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
@@ -270,12 +270,16 @@ public class DependencyGraphTests {
         }
     }
 
+    /// <summary>
+    ///     Same as last test. With intersection means that the dependents
+    ///     used to replace do have some variables in common with the old dependents.
+    ///     But there are still some new/different ones mixed into the "replacees".
+    /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_neDependeeWithMultipleDependentsWithIntersection_TwoDeletionsOneAddition() {
-        DependencyGraph graph = new();
+    public void DependencyGraphReplaceDependents_OneDependeeWithMultipleDependentsWithIntersection_TwoDeletionsOneAddition() {
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"], ["A1", "E5"] ]);
         List<string> newDependents = ["C3", "D4", "F5"];
         List<string> oldDependants = ["B2", "C3", "D4", "E5"];    
-        foreach (string oldDep in oldDependants) graph.AddDependency("A1", oldDep);
 
         graph.ReplaceDependents("A1", newDependents);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
@@ -305,12 +309,16 @@ public class DependencyGraphTests {
         }
     }
 
+    /// <summary>
+    ///     Same as last test. But this time the dependents used to replace are the exact
+    ///     same as the old ones. No new dependents will be added and no old ones will be removed.
+    ///     There should not be any change to the graph.
+    /// </summary>
     [TestMethod]
-    public void DependencyGraphReplaceDependents_neDependeeWithMultipleDependentsFullIntersection_NoChange() {
-        DependencyGraph graph = new();
+    public void DependencyGraphReplaceDependents_OneDependeeWithMultipleDependentsFullIntersection_NoChange() {
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
         List<string> newDependents = ["B2", "C3", "D4"];
-        List<string> oldDependants = ["B2", "C3", "D4"];    
-        foreach (string oldDep in oldDependants) graph.AddDependency("A1", oldDep);
+        List<string> oldDependants = ["B2", "C3", "D4"];
 
         graph.ReplaceDependents("A1", newDependents);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
