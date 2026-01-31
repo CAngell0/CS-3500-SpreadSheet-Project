@@ -1,4 +1,7 @@
-﻿namespace DependencyGraphTests;
+﻿// <author> Carson Angell </author>
+// <date> 1/26/2026 </date>
+
+namespace DependencyGraphTests;
 
 using DependencyGraph;
 
@@ -21,6 +24,10 @@ public class DependencyGraphTests {
         foreach (string[] dependency in dependencies) graph.AddDependency(dependency[0], dependency[1]);
         return graph;
     }
+
+
+
+    
 
     // --- Tests With Empty Graph ---
 
@@ -340,7 +347,7 @@ public class DependencyGraphTests {
 
 
     /// <summary>
-    ///   TODO:  Explain carefully what this code tests.
+    ///         Explain carefully what this code tests.
     ///          Also, update in-line comments as appropriate.
     /// </summary>
     [TestMethod]
