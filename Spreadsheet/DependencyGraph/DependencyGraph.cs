@@ -55,7 +55,7 @@ namespace DependencyGraph;
 /// </summary>
 public class DependencyGraph {
     private Dictionary<string, HashSet<string>> _dependentMap;
-    private Dictionary<string, HashSet<string>> _dependendeeMap;
+    private Dictionary<string, HashSet<string>> _dependeeMap;
 
 
     /// <summary>
@@ -64,7 +64,7 @@ public class DependencyGraph {
     /// </summary>
     public DependencyGraph() {
         _dependentMap = new Dictionary<string, HashSet<string>>();
-        _dependendeeMap = new Dictionary<string, HashSet<string>>();
+        _dependeeMap = new Dictionary<string, HashSet<string>>();
         Size = 0;
     }
 
@@ -88,7 +88,7 @@ public class DependencyGraph {
     /// <returns> true if the node has dependees.</returns>
     /// <param name="nodeName">The name of the node.</param>
     public bool HasDependees(string nodeName) {
-        return _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet) && depSet.Count > 0;
+        return _dependeeMap.TryGetValue(nodeName, out HashSet<string>? depSet) && depSet.Count > 0;
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class DependencyGraph {
     /// <returns> The dependees of nodeName. </returns>
     public IEnumerable<string> GetDependees(string nodeName) {
         HashSet<string> dependees = [];
-        if (!_dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet)) return dependees;
+        if (!_dependeeMap.TryGetValue(nodeName, out HashSet<string>? depSet)) return dependees;
 
         foreach (string dependency in depSet) dependees.Add(dependency);
         return dependees;
@@ -179,7 +179,7 @@ public class DependencyGraph {
     /// <param name="nodeName"> The name of the node who's dependees are being replaced</param>
     /// <param name="newDependees"> The new dependees for nodeName</param>
     public void ReplaceDependees(string nodeName, IEnumerable<string> newDependees) {
-        bool wasOldDepRetrieved = _dependendeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
+        bool wasOldDepRetrieved = _dependeeMap.TryGetValue(nodeName, out HashSet<string>? depSet);
         HashSet<string> oldDepSet = (wasOldDepRetrieved && depSet != null) ? depSet : [];
         HashSet<string> newDepSet = newDependees.ToHashSet();
 
@@ -189,7 +189,7 @@ public class DependencyGraph {
         foreach (string dep in dependeesToRemove) RemoveFromDependentMap(dep, nodeName);
         foreach (string dep in dependeesToAdd) AddToDependentMap(dep, nodeName);
 
-        _dependendeeMap[nodeName] = newDepSet;
+        _dependeeMap[nodeName] = newDepSet;
         Size += dependeesToAdd.Length - dependeesToRemove.Length;
     }
 
@@ -202,12 +202,12 @@ public class DependencyGraph {
     ///     </para>
     ///     <para>
     ///         Doesn't add the relationship to the dependee map, only the dependent map. For example
-    ///         if I want to add an adge A1 -> B2 and I call this method. The graph will add B2 as a dependent
+    ///         if I want to add an edge A1 -> B2 and I call this method. The graph will add B2 as a dependent
     ///         of A1. But it will not add A1 as a dependee of B2 because it was only added to the dependent map.
     ///     </para>
     ///     <para>
     ///         This method was created because some public facing methods only need to add
-    ///         to either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         to either the dependent or dependee map. Not both. One example is the replacement
     ///         methods.
     ///     </para></remarks>
     /// </summary>
@@ -230,12 +230,12 @@ public class DependencyGraph {
     ///     </para>
     ///     <para>
     ///         Doesn't add the relationship to the dependent map, only the dependee map. For example
-    ///         if I want to add an adge A1 -> B2 and I call this method. The graph will add A1 as a dependee
+    ///         if I want to add an edge A1 -> B2 and I call this method. The graph will add A1 as a dependee
     ///         of B2. But it will not add B2 as a dependent of B2 because it was only added to the dependee map.
     ///     </para>
     ///     <para>
     ///         This method was created because some public facing methods only need to add
-    ///         to either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         to either the dependent or dependee map. Not both. One example is the replacement
     ///         methods.
     ///     </para></remarks>
     /// </summary>
@@ -244,8 +244,8 @@ public class DependencyGraph {
     /// <returns> true if the relationship was added to the dependee map. </returns>
     private bool AddToDependeeMap(string dependee, string dependent) {
         bool result = true;
-        if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) result = depSet.Add(dependee);
-        else _dependendeeMap[dependent] = [dependee];
+        if (_dependeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) result = depSet.Add(dependee);
+        else _dependeeMap[dependent] = [dependee];
         return result;
     }
 
@@ -264,7 +264,7 @@ public class DependencyGraph {
     ///     </para>
     ///     <para>
     ///         This method was created because some public facing methods only need to remove
-    ///         from either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         from either the dependent or dependee map. Not both. One example is the replacement
     ///         methods.
     ///     </para></remarks>
     /// </summary>
@@ -294,7 +294,7 @@ public class DependencyGraph {
     ///     </para>
     ///     <para>
     ///         This method was created because some public facing methods only need to remove
-    ///         from either the dependent or dependee map. Not both. One example is the replacemenet
+    ///         from either the dependent or dependee map. Not both. One example is the replacement
     ///         methods.
     ///     </para></remarks>
     /// </summary>
@@ -303,9 +303,9 @@ public class DependencyGraph {
     /// <returns> true if the relationship was removed from the dependee map. </returns>
     private bool RemoveFromDependeeMap(string dependee, string dependent) {
         bool result = false;
-        if (_dependendeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) {
+        if (_dependeeMap.TryGetValue(dependent, out HashSet<string>? depSet)) {
             result = depSet.Remove(dependee);
-            if (depSet.Count == 0) _dependendeeMap.Remove(dependent);
+            if (depSet.Count == 0) _dependeeMap.Remove(dependent);
         }
         return result;
     }

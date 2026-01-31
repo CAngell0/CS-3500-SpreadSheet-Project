@@ -7,5 +7,5 @@ Throughout my CS 3500 Software Practice I class, I will be developing and workin
 - Project: **Spreadsheet Project**
 - Current Assignment: **PS2**
 
-Currently, I am working on making the Formula class detect and flag formulas with incorrect syntax.
+Currently, I am working on implementing a dependency graph to keep track of what spreadsheet cells depend on each other
 

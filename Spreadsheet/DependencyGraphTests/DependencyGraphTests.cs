@@ -15,7 +15,7 @@ public class DependencyGraphTests {
     ///     Helper method that creates a dependency graph using dependency pairs.
     /// </summary>
     /// <param name="dependencies">
-    ///     The innder string arrays should containg dependee-dependent pairs.
+    ///     The inner string arrays should containing dependee-dependent pairs.
     ///     Same as though you call DependencyGraph.AddDependency(dependee, dependent).
     /// </param>
     /// <returns> Dependency graph with the pairs added </returns>
@@ -139,7 +139,7 @@ public class DependencyGraphTests {
     }
 
     [TestMethod]
-    public void DependencyGraphGetDependendees_OneDependencyPair_CorrectDependee() {
+    public void DependencyGraphGetDependees_OneDependencyPair_CorrectDependee() {
         DependencyGraph graph = CreateDependencyGraph([["A1", "B2"]]);
         List<string> testedDependees = graph.GetDependees("B2").ToList();
 
@@ -247,7 +247,7 @@ public class DependencyGraphTests {
     public void DependencyGraphReplaceDependents_OneDependeeWithMultipleDependentsWithoutIntersection_AllNewDependents() {
         DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
         List<string> newDependents = ["E5", "F6", "G7"];
-        List<string> oldDependants = ["B2", "C3", "D4"];
+        List<string> oldDependents = ["B2", "C3", "D4"];
 
         graph.ReplaceDependents("A1", newDependents);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
@@ -268,7 +268,7 @@ public class DependencyGraphTests {
         }
 
         //Checks the old dependents
-        foreach (string oldDep in oldDependants) {
+        foreach (string oldDep in oldDependents) {
             // Makes sure they are not listed as a dependent
             Assert.DoesNotContain(oldDep, testedDependents);
             // Checks to make sure the old dependents don't have any dependees
@@ -279,13 +279,13 @@ public class DependencyGraphTests {
     /// <summary>
     ///     Same as last test. With intersection means that the dependents
     ///     used to replace do have some variables in common with the old dependents.
-    ///     But there are still some new/different ones mixed into the "replacees".
+    ///     But there are still some new/different ones mixed into the "replaces".
     /// </summary>
     [TestMethod]
     public void DependencyGraphReplaceDependents_OneDependeeWithMultipleDependentsWithIntersection_TwoDeletionsOneAddition() {
         DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"], ["A1", "E5"] ]);
         List<string> newDependents = ["C3", "D4", "F5"];
-        List<string> oldDependants = ["B2", "C3", "D4", "E5"];    
+        List<string> oldDependents = ["B2", "C3", "D4", "E5"];    
 
         graph.ReplaceDependents("A1", newDependents);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
@@ -304,7 +304,7 @@ public class DependencyGraphTests {
             Assert.Contains("A1", dependeesOfNewDep);
         }
 
-        List<string> deletedDeps = oldDependants.Except(newDependents).ToList();
+        List<string> deletedDeps = oldDependents.Except(newDependents).ToList();
         //Checks the old dependents
         foreach (string delDep in deletedDeps) {
             // Makes sure they are not listed as a dependent
@@ -324,7 +324,7 @@ public class DependencyGraphTests {
     public void DependencyGraphReplaceDependents_OneDependeeWithMultipleDependentsFullIntersection_NoChange() {
         DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"], ["A1", "C3"], ["A1", "D4"] ]);
         List<string> newDependents = ["B2", "C3", "D4"];
-        List<string> oldDependants = ["B2", "C3", "D4"];
+        List<string> oldDependents = ["B2", "C3", "D4"];
 
         graph.ReplaceDependents("A1", newDependents);
         List<string> testedDependents = graph.GetDependents("A1").ToList();
