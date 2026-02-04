@@ -5,7 +5,7 @@ using Formula;
 [TestClass]
 public class FormulaEqualsTests {
 
-    // --- TESTS USING THE .Equals METHOD ---
+    // --- TESTS WITH EQUAL FORMULAS ---
     // - Tests with single token formulas that are equal -
 
     [TestMethod]
@@ -14,6 +14,8 @@ public class FormulaEqualsTests {
         Formula f2 = new("89");
 
         Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
     }
 
     [TestMethod]
@@ -22,6 +24,8 @@ public class FormulaEqualsTests {
         Formula f2 = new("32.45");
 
         Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
     }
 
     [TestMethod]
@@ -33,6 +37,8 @@ public class FormulaEqualsTests {
         Assert.IsTrue(f1.Equals(f2));
         Assert.IsTrue(f2.Equals(f3));
         Assert.IsTrue(f3.Equals(f1));
+
+        // - Left off here, was adding == and != operators to equality unit tests. Next up is unit tests for other made methods
     }
 
     [TestMethod]
