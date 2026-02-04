@@ -412,8 +412,11 @@ public partial class Formula {
     ///   True if the two objects represent the same formula.
     /// </returns>
     public override bool Equals(object? obj) {
-        // TODO FIXME: write this method
-        throw new NotImplementedException();
+        if (obj == null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+
+        return _stringifiedFormula.Equals(obj.ToString());
+        //TODO - Add unit tests for this method
     }
 
     /// <summary>
