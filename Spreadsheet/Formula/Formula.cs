@@ -416,20 +416,7 @@ public partial class Formula {
         if (ReferenceEquals(this, obj)) return true;
 
         return _stringifiedFormula.Equals(obj.ToString());
-        //TODO - Add unit tests for this method
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Reports whether f1 != f2, using the notion of equality from the <see cref="Equals"/> method.
-    ///   </para>
-    /// </summary>
-    /// <param name="f1"> The first of two formula objects. </param>
-    /// <param name="f2"> The second of two formula objects. </param>
-    /// <returns> true if the two formulas are not equal to each other.</returns>
-    public static bool operator !=(Formula f1, Formula f2) {
-        // TODO FIXME: Write this method
-        throw new NotImplementedException();
+        //TODO - Add unit tests for this method AND overloaded operators
     }
 
     /// <summary>
@@ -440,10 +427,17 @@ public partial class Formula {
     /// <param name="f1"> The first of two formula objects. </param>
     /// <param name="f2"> The second of two formula objects. </param>
     /// <returns> true if the two formulas are the same.</returns>
-    public static bool operator ==(Formula f1, Formula f2) {
-        // TODO FIXME: Write this method
-        throw new NotImplementedException();
-    }
+    public static bool operator ==(Formula f1, Formula f2) => f1.Equals(f2);
+
+    /// <summary>
+    ///   <para>
+    ///     Reports whether f1 != f2, using the notion of equality from the <see cref="Equals"/> method.
+    ///   </para>
+    /// </summary>
+    /// <param name="f1"> The first of two formula objects. </param>
+    /// <param name="f2"> The second of two formula objects. </param>
+    /// <returns> true if the two formulas are not equal to each other.</returns>
+    public static bool operator !=(Formula f1, Formula f2) => !f1.Equals(f2);
 
     /// <summary>
     ///     Returns a string representation of a canonical form of the formula.
