@@ -56,21 +56,6 @@ public partial class Formula {
     /// </summary>
     private const string LeadingZeroInVariableRegExPattern = @"[a-zA-Z]0+";
 
-    /// <summary>
-    ///   Any method meeting this type signature can be used for
-    ///   looking up the value of a variable.
-    /// </summary>
-    /// <exception cref="ArgumentException">
-    ///   If a variable name is provided that is not recognized by the implementing method,
-    ///   then the method should throw an ArgumentException.
-    /// </exception>
-    /// <param name="variableName">
-    ///   The name of the variable (e.g., "A1") to lookup.
-    /// </param>
-    /// <returns> The value of the given variable (if one exists). </returns>
-    public delegate double Lookup(string variableName);
-
-
     private readonly List<string> _tokens;
     private readonly HashSet<string> _variables;
 
@@ -480,6 +465,20 @@ public partial class Formula {
 
 }
 
+
+/// <summary>
+///   Any method meeting this type signature can be used for
+///   looking up the value of a variable.
+/// </summary>
+/// <exception cref="ArgumentException">
+///   If a variable name is provided that is not recognized by the implementing method,
+///   then the method should throw an ArgumentException.
+/// </exception>
+/// <param name="variableName">
+///   The name of the variable (e.g., "A1") to lookup.
+/// </param>
+/// <returns> The value of the given variable (if one exists). </returns>
+public delegate double Lookup(string variableName);
 
 /// <summary>
 ///   Used to report syntax errors in the argument to the Formula constructor.

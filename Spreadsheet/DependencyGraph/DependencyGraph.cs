@@ -54,8 +54,21 @@ namespace DependencyGraph;
 ///   </code>
 /// </summary>
 public class DependencyGraph {
+    /// <summary>
+    ///     A map holding the dependee -> dependent relationships.
+    ///     Does not contain dependent -> dependee relationships.
+    /// </summary>
     private Dictionary<string, HashSet<string>> _dependentMap;
+     /// <summary>
+    ///     A map holding the dependent -> dependee relationships.
+    ///     Does not contain dependee -> dependent relationships.
+    /// </summary>
     private Dictionary<string, HashSet<string>> _dependeeMap;
+
+    /// <summary>
+    ///     The number of ordered pairs in the DependencyGraph.
+    /// </summary>
+    public int Size { get; private set; }
 
 
     /// <summary>
@@ -67,11 +80,6 @@ public class DependencyGraph {
         _dependeeMap = new Dictionary<string, HashSet<string>>();
         Size = 0;
     }
-
-    /// <summary>
-    ///     The number of ordered pairs in the DependencyGraph.
-    /// </summary>
-    public int Size { get; private set; }
 
     /// <summary>
     ///   Reports whether the given node has dependents (i.e., other nodes depend on it).
