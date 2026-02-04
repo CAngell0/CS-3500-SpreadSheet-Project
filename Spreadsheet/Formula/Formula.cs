@@ -389,10 +389,8 @@ public partial class Formula {
     ///   </para>
     /// </summary>
     /// <returns> The hashcode for the object. </returns>
-    public override int GetHashCode() {
-        // TODO FIXME: Implement the required algorithm here.
-        throw new NotImplementedException();
-    }
+    //TODO - Add testing for this method
+    public override int GetHashCode() => _stringifiedFormula.GetHashCode();
     
     /// <summary>
     ///   <para>
