@@ -5,11 +5,21 @@ using Formula;
 [TestClass]
 public class FormulaEqualsTests {
 
+    [TestMethod]
+    public void FormulaEquivilency_SameReferenceFormula_Equal() {
+        Formula f1 = new("(34 -  a2)/4e5 - ((.5 * 2.5))");
+        Formula f2 = f1;
+
+        Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
+    }
+
     // --- TESTS WITH EQUAL FORMULAS ---
     // - Tests with single token formulas that are equal -
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualSingleIntegerTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualSingleIntegerTokenFormulas_Equal() {
         Formula f1 = new("89");
         Formula f2 = new("89");
 
@@ -19,7 +29,7 @@ public class FormulaEqualsTests {
     }
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualSingleDecimalTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualSingleDecimalTokenFormulas_Equal() {
         Formula f1 = new("32.45");
         Formula f2 = new("32.45");
 
@@ -29,7 +39,7 @@ public class FormulaEqualsTests {
     }
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualSingleScientificTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualSingleScientificTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("5e2"), new("500"), new("5E2")];
 
         for (int i = 0; i < testedFormulas.Length; i++) {
@@ -40,7 +50,7 @@ public class FormulaEqualsTests {
     }
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualSingleVariableTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualSingleVariableTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("a15"), new("A15"), new("A15")];
 
         for (int i = 0; i < testedFormulas.Length; i++) {
@@ -51,10 +61,59 @@ public class FormulaEqualsTests {
     }
 
 
+
+
+    // - Tests with single token formulas with parentheses that are equal -
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualSingleIntegerTokenFormulasWithParens_Equal() {
+        Formula f1 = new("(((89)))");
+        Formula f2 = new("(((89)))");
+
+        Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualSingleDecimalTokenFormulasWithParens_Equal() {
+        Formula f1 = new("(  (32.45) )");
+        Formula f2 = new("((  32.45)   )");
+
+        Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualSingleScientificTokenFormulasWithParens_Equal() {
+        Formula[] testedFormulas = [new("(((5e2))   )"), new("(  ( (500) ) )"), new("(((5E2)))")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualSingleVariableTokenFormulasWithParens_Equal() {
+        Formula[] testedFormulas = [new("((a15))"), new("( (A15   ))"), new("(   ( A15 )   )")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+
+
+
     // - Tests with two token formulas that are equal -
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualDualIntegerTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualDualIntegerTokenFormulas_Equal() {
         Formula f1 = new("89 + 32");
         Formula f2 = new("89 + 32");
 
@@ -64,7 +123,7 @@ public class FormulaEqualsTests {
     }
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualDualDecimalTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualDualDecimalTokenFormulas_Equal() {
         Formula f1 = new("32.45 - .2");
         Formula f2 = new("32.45 - .2");
 
@@ -74,7 +133,7 @@ public class FormulaEqualsTests {
     }
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualDualScientificTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualDualScientificTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("5e2 / 3e1"), new("500 / 30"), new("5E2/3E1")];
 
         for (int i = 0; i < testedFormulas.Length; i++) {
@@ -85,7 +144,7 @@ public class FormulaEqualsTests {
     }
 
     [TestMethod]
-    public void FormulaEqualsMethod_EqualDualVariableTokenFormulas_Equal() {
+    public void FormulaEquivilency_EqualDualVariableTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("a15 - zc29"), new("A15-Zc29"), new("A15-zC29"), new("a15-ZC29")];
 
         for (int i = 0; i < testedFormulas.Length; i++) {
