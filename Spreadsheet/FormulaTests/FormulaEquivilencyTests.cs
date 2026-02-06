@@ -484,4 +484,42 @@ public class FormulaEqualsTests {
             Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
         }
     }
+
+
+
+
+    // - Tests with multi term formulas with and without parentheses that are equal -
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalMultiTermFormulas_Inequal() {
+        Formula[] testedFormulas = [
+            new("89 - 23 * a1"),
+            new("45 /6E2 * aB123 - 0.4 - 0.04 + 050"),
+            new("45.0/ 600 * Ab123 - .4 - 4E-2 + 60"),
+            new("45 / 6e2 * Ac0123 - 000.4 - 0.4 + 0060.0")
+        ];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalMultiTermFormulasWithParens_Inequal() {
+        Formula[] testedFormulas = [
+            new("((45 / 6e2) ) * ab123 - (.4 - ((    4e-2 + (60) )))"),
+            new("  (45 /6E2) * aB123 - 0.4 - ((0.04 + (060))  )"),
+            new("45.0/ 600 * Ab123 - .4 - 4E-2 + 60 "),
+            new("833- ab12 / 6e3"),
+            new("( (45 / 6e2 )) * AB0123 - (   000.4 - ((4E-2 + (0060.1) )))")
+        ];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
 }
