@@ -305,8 +305,30 @@ public partial class Formula {
     /// </param>
     /// <returns> Either a double or a FormulaError, based on evaluating the formula.</returns>
     public object Evaluate(Lookup lookup) {
+        Stack<string> values = new();
+        Stack<string> operators = new();
+
+
+
         // TODO FIXME: Implement the required algorithm here.
         throw new NotImplementedException();
+    }
+
+    private object ApplyMostRecentOperation(Stack<string> values, Stack<string> operators, Lookup lookup) {
+        string[] targetValues = [values.Pop(), values.Pop()];
+        double[] evaluatedValues = new double[2];
+        string oper = operators.Pop();
+
+        // Converts the values into complete doubles
+        for (int i = 0; i < targetValues.Length; i++) {
+            if (TokenIsVariable(targetValues[i])) evaluatedValues[i] = lookup(targetValues[i]);
+            else _ = Double.TryParse(targetValues[i], out evaluatedValues[i]);
+        }
+
+        // - Left off here, need to handle argument exception of lookup. Continue developing this method
+
+
+        return null;
     }
 
 
@@ -414,7 +436,6 @@ public partial class Formula {
         if (ReferenceEquals(this, obj)) return true;
 
         return _stringifiedFormula.Equals(obj.ToString());
-        //TODO - Add unit tests for this method AND overloaded operators
     }
 
     /// <summary>
