@@ -5,6 +5,59 @@ using Formula;
 [TestClass]
 public class FormulaHashCodeTests {
 
+    // --- Testing GetHashCode method with equivilent formulas ---
+    // - Tests with equivilent single token formulas
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentSingleIntegerTokens_SameHashCode() {
+        Formula f1 = new("456");
+        Formula f2 = new("456");
+
+        Assert.AreEqual(f1.GetHashCode(), f2.GetHashCode());
+    }
+    
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentSingleDecimalTokens_SameHashCode() {
+        Formula[] formulas = [
+            new("12.34"),
+            new("1234e-2"),
+            new("0012.3400"),
+            new(".1234e2")
+        ];
+
+        int len = formulas.Length;
+        for (int i = 0; i < formulas.Length; i++) Assert.AreEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
+    }
+
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentSingleScientificTokens_SameHashCode() {
+        Formula[] formulas = [
+            new("2e3"),
+            new("2000"),
+            new("2E3"),
+            new("200e1"),
+            new("20E02")
+        ];
+
+        int len = formulas.Length;
+        for (int i = 0; i < formulas.Length; i++) Assert.AreEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
+    }
+
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentSingleVariableTokens_SameHashCode() {
+        Formula[] formulas = [
+            new("ab12"),
+            new("AB12"),
+            new("aB012"),
+            new("Ab00012")
+        ];
+
+        int len = formulas.Length;
+        for (int i = 0; i < formulas.Length; i++) Assert.AreEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
+    }
+
+
+
+
     // --- Testing GetHashCode method with slightly different formulas ---
     // - Tests with slighly different single token formulas -
 
@@ -18,9 +71,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
 
     [TestMethod]
@@ -33,9 +84,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
 
     [TestMethod]
@@ -48,9 +97,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
     
     [TestMethod]
@@ -62,9 +109,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
 
 
@@ -82,9 +127,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
 
     [TestMethod]
@@ -97,9 +140,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
 
     [TestMethod]
@@ -112,9 +153,7 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
     
     [TestMethod]
@@ -126,8 +165,6 @@ public class FormulaHashCodeTests {
         ];
 
         int len = formulas.Length;
-        for (int i = 0; i < formulas.Length; i++) {
-            Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
-        }
+        for (int i = 0; i < formulas.Length; i++) Assert.AreNotEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
     }
 }
