@@ -160,7 +160,7 @@ public class FormulaEqualsTests {
 
 
 
-    // - Tests with two token formulas that are equal -
+    // - Tests with two term formulas with parentheses that are equal -
 
     [TestMethod]
     public void FormulaEquivilency_EqualDualIntegerTokenFormulasWithParens_Equal() {
@@ -196,6 +196,43 @@ public class FormulaEqualsTests {
     [TestMethod]
     public void FormulaEquivilency_EqualDualVariableTokenFormulasWithParens_Equal() {
         Formula[] testedFormulas = [new("(( (a15 - zc29)  ))"), new("(( (A15-Zc29)  ))"), new("(((A15-zC29)))"), new("( ( (a15-ZC29)  ))")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+
+
+
+    // - Tests with multi term formulas with and without parentheses that are equal -
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualMultiTermFormulas_Equal() {
+        Formula[] testedFormulas = [
+            new("45 / 6e2 * ab123 - .4 - 4e-2 + 60"),
+            new("45 /6E2 * aB123 - 0.4 - 0.04 + 060"),
+            new("45.0/ 600 * Ab123 - .4 - 4E-2 + 60"),
+            new("45 / 6e2 * AB0123 - 000.4 - 4E-2 + 0060.0")
+        ];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualMultiTermFormulasWithParens_Equal() {
+        Formula[] testedFormulas = [
+            new("((45 / 6e2) ) * ab123 - (.4 - ((    4e-2 + (60) )))"),
+            new("(  (45 /6E2)) * aB123 - (0.4 - ((0.04 + (060))  ))"),
+            new("((45.0/ 600)) * Ab123 - (.4 - ( (4E-2 + (60 )) ) )"),
+            new("( (45 / 6e2 )) * AB0123 - (   000.4 - ((4E-2 + (0060.0) )))")
+        ];
 
         for (int i = 0; i < testedFormulas.Length; i++) {
             Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
