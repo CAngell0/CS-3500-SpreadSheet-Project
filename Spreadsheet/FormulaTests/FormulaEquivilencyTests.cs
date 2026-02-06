@@ -2,6 +2,8 @@ namespace FormulaTests;
 
 using Formula;
 
+//TODO - Fix modular bug!!!
+
 [TestClass]
 public class FormulaEqualsTests {
 
