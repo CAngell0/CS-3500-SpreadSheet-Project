@@ -240,4 +240,100 @@ public class FormulaEqualsTests {
             Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
         }
     }
+
+
+
+
+
+    // --- TESTS WITH INEQUAL FORMULAS ---
+    // - Tests with single token formulas that are not equal -
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleIntegerTokenFormulas_Inequal() {
+        Formula f1 = new("89");
+        Formula f2 = new("88");
+
+        Assert.IsFalse(f1.Equals(f2));
+        Assert.IsFalse(f1 == f2);
+        Assert.IsTrue(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleDecimalTokenFormulas_Inequal() {
+        Formula f1 = new("32.45");
+        Formula f2 = new("45.63");
+
+        Assert.IsFalse(f1.Equals(f2));
+        Assert.IsFalse(f1 == f2);
+        Assert.IsTrue(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleScientificTokenFormulas_Inequal() {
+        Formula[] testedFormulas = [new("5e2"), new("5000"), new("5E1")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleVariableTokenFormulas_Inequal() {
+        Formula[] testedFormulas = [new("a115"), new("A515"), new("A150")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+
+
+
+    // - Tests with single token formulas with parentheses that are equal -
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleIntegerTokenFormulasWithParens_Inequal() {
+        Formula f1 = new("(((89)))");
+        Formula f2 = new("((89))");
+
+        Assert.IsFalse(f1.Equals(f2));
+        Assert.IsFalse(f1 == f2);
+        Assert.IsTrue(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleDecimalTokenFormulasWithParens_Inequal() {
+        Formula f1 = new("(  (32.45) )");
+        Formula f2 = new("((  32.145)   )");
+
+        Assert.IsFalse(f1.Equals(f2));
+        Assert.IsFalse(f1 == f2);
+        Assert.IsTrue(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleScientificTokenFormulasWithParens_Inequal() {
+        Formula[] testedFormulas = [new("((5e2))   "), new("(  ( (600) ) )"), new("(((5E3)))")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_InequalSingleVariableTokenFormulasWithParens_Inequal() {
+        Formula[] testedFormulas = [new("((a152))"), new("( A15   )"), new("(   ( A15 )   )")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
 }
