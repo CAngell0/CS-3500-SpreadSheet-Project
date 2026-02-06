@@ -2,10 +2,8 @@ namespace FormulaTests;
 
 using Formula;
 
-//TODO - Fix modular bug!!!
-
 [TestClass]
-public class FormulaEqualsTests {
+public class FormulaEquivilencyTests {
 
     [TestMethod]
     public void FormulaEquivilency_SameReferenceFormula_Equal() {
@@ -47,10 +45,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualSingleScientificTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("5e2"), new("500"), new("5E2")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -58,10 +57,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualSingleVariableTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("a15"), new("A15"), new("A15")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -94,10 +94,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualSingleScientificTokenFormulasWithParens_Equal() {
         Formula[] testedFormulas = [new("(((5e2))   )"), new("(  ( (500) ) )"), new("(((5E2)))")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -105,10 +106,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualSingleVariableTokenFormulasWithParens_Equal() {
         Formula[] testedFormulas = [new("((a15))"), new("( (A15   ))"), new("(   ( A15 )   )")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -141,10 +143,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualDualScientificTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("5e2 / 3e1"), new("500 / 30"), new("5E2/3E1")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -152,10 +155,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualDualVariableTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("a15 - zc29"), new("A15-Zc29"), new("A15-zC29"), new("a15-ZC29")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -163,10 +167,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualMixedDualTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("ab12 / .54"), new("AB012/ 0.540"), new("aB12 / 5.4e-1")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -199,10 +204,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualDualScientificTokenFormulasWithParens_Equal() {
         Formula[] testedFormulas = [new("(5e2) / 3e1"), new("(  500) / 30"), new("(5E2   )/3E1")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -210,10 +216,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_EqualDualVariableTokenFormulasWithParens_Equal() {
         Formula[] testedFormulas = [new("(( (a15 - zc29)  ))"), new("(( (A15-Zc29)  ))"), new("(((A15-zC29)))"), new("( ( (a15-ZC29)  ))")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -226,10 +233,11 @@ public class FormulaEqualsTests {
             new("(((5632) / 02000))")
         ];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -247,10 +255,11 @@ public class FormulaEqualsTests {
             new("45 / 6e2 * AB0123 - 000.4 - 4E-2 + 0060.0")
         ];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -263,10 +272,11 @@ public class FormulaEqualsTests {
             new("( (45 / 6e2 )) * AB0123 - (   000.4 - ((4E-2 + (0060.0) )))")
         ];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -301,10 +311,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalSingleScientificTokenFormulas_Inequal() {
         Formula[] testedFormulas = [new("5e2"), new("5000"), new("5E1")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -312,10 +323,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalSingleVariableTokenFormulas_Inequal() {
         Formula[] testedFormulas = [new("a115"), new("A515"), new("A150")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -348,10 +360,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalSingleScientificTokenFormulasWithParens_Inequal() {
         Formula[] testedFormulas = [new("((5e2))   "), new("(  ( (600) ) )"), new("(((5E3)))")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -359,10 +372,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalSingleVariableTokenFormulasWithParens_Inequal() {
         Formula[] testedFormulas = [new("((a152))"), new("( A15   )"), new("(   ( A15 )   )")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -395,10 +409,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalDualScientificTokenFormulas_Inequal() {
         Formula[] testedFormulas = [new("5e2 / .3e1"), new("500 / 30"), new("5E2/3E2")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -406,10 +421,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalDualVariableTokenFormulas_Inequal() {
         Formula[] testedFormulas = [new("a0151 - zc29"), new("A15*Zc29"), new("A15-zC29"), new("ac15/ZC29")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -417,10 +433,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalMixedDualTokenFormulas_Inequal() {
         Formula[] testedFormulas = [new("ab12 - .54"), new("12-d3"), new("aB12 / 5.4e-2")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -453,10 +470,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalDualScientificTokenFormulasWithParens_Inequal() {
         Formula[] testedFormulas = [new("89/23"), new("  500 / 30"), new("(5E2   )-3E1")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -464,10 +482,11 @@ public class FormulaEqualsTests {
     public void FormulaEquivilency_InequalDualVariableTokenFormulasWithParens_Inequal() {
         Formula[] testedFormulas = [new("( (a15 - zc29)  )"), new("A15-Zc29"), new("(((A15-zCf29)))"), new("( ( (a15-ZC29)  ))")];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -480,10 +499,11 @@ public class FormulaEqualsTests {
             new("5632 / 02000")
         ];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -501,10 +521,11 @@ public class FormulaEqualsTests {
             new("45 / 6e2 * Ac0123 - 000.4 - 0.4 + 0060.0")
         ];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 
@@ -518,10 +539,11 @@ public class FormulaEqualsTests {
             new("( (45 / 6e2 )) * AB0123 - (   000.4 - ((4E-2 + (0060.1) )))")
         ];
 
+        int len = testedFormulas.Length;
         for (int i = 0; i < testedFormulas.Length; i++) {
-            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
-            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
-            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i].Equals(testedFormulas[(i + 1) % len]));
+            Assert.IsFalse(testedFormulas[i] == testedFormulas[(i + 1) % len]);
+            Assert.IsTrue(testedFormulas[i] != testedFormulas[(i + 1) % len]);
         }
     }
 }
