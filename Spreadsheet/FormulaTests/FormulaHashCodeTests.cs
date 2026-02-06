@@ -58,6 +58,57 @@ public class FormulaHashCodeTests {
 
 
 
+    // - Tests with equivilent dual token formulas
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentDualIntegerTokens_SameHashCode() {
+        Formula f1 = new("456 + 789");
+        Formula f2 = new("0456 + 0789");
+
+        Assert.AreEqual(f1.GetHashCode(), f2.GetHashCode());
+    }
+    
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentDualDecimalTokens_SameHashCode() {
+        Formula[] formulas = [
+            new("12.34 * 89.01"),
+            new("12.34 * 890.1e-1"),
+            new("12.340 * 89.01"),
+            new("1.234e1 * 89.01"),
+        ];
+
+        int len = formulas.Length;
+        for (int i = 0; i < formulas.Length; i++) Assert.AreEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
+    }
+
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentDualScientificTokens_SameHashCode() {
+        Formula[] formulas = [
+            new("2e3 - 1e1"),
+            new("2000 - 10"),
+            new("2E3 - 1E1"),
+            new("200e1 - .1e2")
+        ];
+
+        int len = formulas.Length;
+        for (int i = 0; i < formulas.Length; i++) Assert.AreEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
+    }
+
+    [TestMethod]
+    public void FormulaGetHasCode_EquivilentDualVariableTokens_SameHashCode() {
+        Formula[] formulas = [
+            new("ab12 / gh7"),
+            new("AB12/gh7"),
+            new("aB012 / GH07"),
+            new("Ab00012 / Gh7")
+        ];
+
+        int len = formulas.Length;
+        for (int i = 0; i < formulas.Length; i++) Assert.AreEqual(formulas[i].GetHashCode(), formulas[(i + 1) % len].GetHashCode());
+    }
+
+
+
+
     // --- Testing GetHashCode method with slightly different formulas ---
     // - Tests with slighly different single token formulas -
 
