@@ -15,6 +15,9 @@ public class FormulaEqualsTests {
         Assert.IsFalse(f1 != f2);
     }
 
+
+
+
     // --- TESTS WITH EQUAL FORMULAS ---
     // - Tests with single token formulas that are equal -
 
@@ -146,6 +149,53 @@ public class FormulaEqualsTests {
     [TestMethod]
     public void FormulaEquivilency_EqualDualVariableTokenFormulas_Equal() {
         Formula[] testedFormulas = [new("a15 - zc29"), new("A15-Zc29"), new("A15-zC29"), new("a15-ZC29")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+
+
+
+    // - Tests with two token formulas that are equal -
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualDualIntegerTokenFormulasWithParens_Equal() {
+        Formula f1 = new("(((89)) + 32)");
+        Formula f2 = new("( ((89) ) + 32  )");
+
+        Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualDualDecimalTokenFormulasWithParens_Equal() {
+        Formula f1 = new("( ((  (( (32.45))) ))) - ( ((( ((.2))  )) ))");
+        Formula f2 = new("((((((32.45))  )))) -((((((.2)))) ))");
+
+        Assert.IsTrue(f1.Equals(f2));
+        Assert.IsTrue(f1 == f2);
+        Assert.IsFalse(f1 != f2);
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualDualScientificTokenFormulasWithParens_Equal() {
+        Formula[] testedFormulas = [new("(5e2) / 3e1"), new("(  500) / 30"), new("(5E2   )/3E1")];
+
+        for (int i = 0; i < testedFormulas.Length; i++) {
+            Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
+            Assert.IsTrue(testedFormulas[i] == testedFormulas[(i + 1) % 3]);
+            Assert.IsFalse(testedFormulas[i] != testedFormulas[(i + 1) % 3]);
+        }
+    }
+
+    [TestMethod]
+    public void FormulaEquivilency_EqualDualVariableTokenFormulasWithParens_Equal() {
+        Formula[] testedFormulas = [new("(( (a15 - zc29)  ))"), new("(( (A15-Zc29)  ))"), new("(((A15-zC29)))"), new("( ( (a15-ZC29)  ))")];
 
         for (int i = 0; i < testedFormulas.Length; i++) {
             Assert.IsTrue(testedFormulas[i].Equals(testedFormulas[(i + 1) % 3]));
