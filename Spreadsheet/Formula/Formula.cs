@@ -305,28 +305,80 @@ public partial class Formula {
     /// </param>
     /// <returns> Either a double or a FormulaError, based on evaluating the formula.</returns>
     public object Evaluate(Lookup lookup) {
-        Stack<string> values = new();
-        Stack<string> operators = new();
+        Stack<double> values = new();
+        Stack<string> opers = new();
 
+        foreach (string token in _tokens) {
+            if (TokenIsOperator(token) || token == "(") {
+                if (token == "+" || token == "-") ApplyMostRecentOperation(values, opers);
+                opers.Push(token);
+            }
 
+            else if (token == ")") {
+                if (opers.Peek() == "+" || opers.Peek() == "-") ApplyMostRecentOperation(values, opers);
+                opers.Pop();
+                if (opers.Peek() == "*" || opers.Peek() == "/") {
+                    // Applies the operation, if there's an erro return it
+                    FormulaError? result = ApplyMostRecentOperation(values, opers);
+                    if (result != null) return result;
+                }
+            }
 
-        // TODO FIXME: Implement the required algorithm here.
-        throw new NotImplementedException();
-    }
+            // If the token is a varibale or number
+            else {
+                double value;
+                if (TokenIsVariable(token)) {
+                    try { value = lookup(token); }
+                    catch (ArgumentException) { return new FormulaError($"Invalid variable name, no value assigned '{token}'"); }
+                }
 
-    private object ApplyMostRecentOperation(Stack<string> values, Stack<string> operators, Lookup lookup) {
-        string[] targetValues = [values.Pop(), values.Pop()];
-        double[] evaluatedValues = new double[2];
-        string oper = operators.Pop();
+                _ = Double.TryParse(token, out value);
+                values.Push(value);
 
-        // Converts the values into complete doubles
-        for (int i = 0; i < targetValues.Length; i++) {
-            if (TokenIsVariable(targetValues[i])) evaluatedValues[i] = lookup(targetValues[i]);
-            else _ = Double.TryParse(targetValues[i], out evaluatedValues[i]);
+                if (opers.Peek() == "*" || opers.Peek() == "/") {
+                    // Applies the operation, if there's an erro return it
+                    FormulaError? result = ApplyMostRecentOperation(values, opers);
+                    if (result != null) return result;
+                }
+            }
         }
 
-        // - Left off here, need to handle argument exception of lookup. Continue developing this method
+        if (opers.Count == 0) return values.Pop();
+        else {
+            ApplyMostRecentOperation(values, opers);
+            return values.Pop();
+        }
+    }
 
+    /// <summary>
+    ///     Takes the top two values and the top operator from the stacks and applies the operation.
+    ///     <remarks>
+    ///         Will pop the values and operators from the stacks. It will not peek, the function pops the elements.
+    ///         Pushes the resulting value to the values stack.
+    ///     </remarks>
+    /// </summary>
+    /// <param name="values"> Stack to pop the values from </param>
+    /// <param name="operators"> Stack to pop the operator </param>
+    /// <returns> 
+    ///     An optional that indicates whether or not there was a divide by zero error.
+    ///     Will be null if there was no error.
+    /// </returns>
+    private static FormulaError? ApplyMostRecentOperation(Stack<double> values, Stack<string> operators) {
+        double[] targetValues = [values.Pop(), values.Pop()];
+        string oper = operators.Pop();
+
+        if (oper == "/" && targetValues[1] <= 0.0000000001) return new FormulaError($"Invalid operation, cannot divide by zero, '{targetValues[0]}' / '{targetValues[1]}'");
+
+        double result = oper switch {
+            "+" => targetValues[0] + targetValues[1],
+            "-" => targetValues[0] - targetValues[1],
+            "*" => targetValues[0] * targetValues[1],
+            "/" => targetValues[0] / targetValues[1],
+            // This should never execute
+            _ => 0,
+        };
+
+        values.Push(result);
 
         return null;
     }
