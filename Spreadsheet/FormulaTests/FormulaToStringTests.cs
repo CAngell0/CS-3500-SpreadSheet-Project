@@ -15,6 +15,7 @@ public class FormulaToStringTests {
     [TestMethod]
     public void FormulaToString_SingleIntegerToken_ReturnsUnchanged() {
         Assert.AreEqual("56", new Formula("56").ToString());
+        Assert.AreEqual("0", new Formula("0000").ToString());
     }
 
     [TestMethod]

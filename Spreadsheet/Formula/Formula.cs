@@ -305,28 +305,67 @@ public partial class Formula {
     /// </param>
     /// <returns> Either a double or a FormulaError, based on evaluating the formula.</returns>
     public object Evaluate(Lookup lookup) {
-        Stack<string> values = new();
-        Stack<string> operators = new();
+        Stack<double> values = new();
+        Stack<string> opers = new();
+
+        foreach (string token in _tokens) {
+            if (TokenIsOperator(token) || token == "(") {
+                if (token == "+" || token == "-") ApplyMostRecentOperation(values, opers);
+                opers.Push(token);
+            }
+            else if (token == ")") {
+                if (opers.Peek() == "*" || opers.Peek() == "/") ApplyMostRecentOperation(values, opers);
+                opers.Pop();
+
+                
+            }
+
+            else {
+                double value;
+                if (TokenIsVariable(token)) {
+                    try { value = lookup(token); }
+                    catch (ArgumentException) { return new FormulaError($"Invalid variable name, no value assigned '{token}'"); }
+                }
+
+                _ = Double.TryParse(token, out value);
+                values.Push(value);
+
+                if (opers.Peek() == "*" || opers.Peek() == "/") {
 
 
+                    if (token == "0" && opers.Peek() == "/") return new FormulaError($"Invalid operation, cannot divide by zero, '{values.Peek()}' / '{token}'");
+                    ApplyMostRecentOperation(values, opers);
+                }
+            }
+        }
 
         // TODO FIXME: Implement the required algorithm here.
         throw new NotImplementedException();
     }
 
-    private object ApplyMostRecentOperation(Stack<string> values, Stack<string> operators, Lookup lookup) {
-        string[] targetValues = [values.Pop(), values.Pop()];
-        double[] evaluatedValues = new double[2];
+    /// <summary>
+    ///     Takes the two values at the top of the values stack and applies the operation that's at the top of the
+    ///     operators stack. Does not catch any errors that may occur.
+    /// </summary>
+    /// <param name="values"> Values stack to get numbers from </param>
+    /// <param name="operators"> Operators stack to get operator from </param>
+    /// <returns> A double from the calculation </returns>
+    private static FormulaError? ApplyMostRecentOperation(Stack<double> values, Stack<string> operators) { // - Just updated method to this
+        double[] targetValues = [values.Pop(), values.Pop()];
         string oper = operators.Pop();
 
-        // Converts the values into complete doubles
-        for (int i = 0; i < targetValues.Length; i++) {
-            if (TokenIsVariable(targetValues[i])) evaluatedValues[i] = lookup(targetValues[i]);
-            else _ = Double.TryParse(targetValues[i], out evaluatedValues[i]);
-        }
+        if (oper == "/" && targetValues[1] <= 0.0000000001) return new FormulaError($"Invalid operation, cannot divide by zero, '{targetValues[0]}' / '{targetValues[1]}'");
 
-        // - Left off here, need to handle argument exception of lookup. Continue developing this method
+        double result = oper switch {
+            "+" => targetValues[0] + targetValues[1],
+            "-" => targetValues[0] - targetValues[1],
+            "*" => targetValues[0] * targetValues[1],
+            "/" => targetValues[0] / targetValues[1],
+            // This should never execute
+            _ => 0,
+        };
 
+        values.Push(result);
 
         return null;
     }
