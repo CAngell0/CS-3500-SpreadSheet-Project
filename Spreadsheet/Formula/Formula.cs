@@ -316,9 +316,9 @@ public partial class Formula {
 
             else if (token == ")") {
                 if (opers.IsEmpty()) continue;
-                if (opers.Peek() == "+" || opers.Peek() == "-") ApplyMostRecentOperation(values, opers);
+                else if (opers.Peek() == "+" || opers.Peek() == "-") ApplyMostRecentOperation(values, opers);
                 opers.Pop();
-                if (opers.Peek() == "*" || opers.Peek() == "/") {
+                if (!opers.IsEmpty() && (opers.Peek() == "*" || opers.Peek() == "/")) {
                     // Applies the operation, if there's an erro return it
                     FormulaError? result = ApplyMostRecentOperation(values, opers);
                     if (result != null) return result;
@@ -337,7 +337,7 @@ public partial class Formula {
                 values.Push(value);
 
                 if (opers.IsEmpty()) continue;
-                if (opers.Peek() == "*" || opers.Peek() == "/") {
+                else if (opers.Peek() == "*" || opers.Peek() == "/") {
                     // Applies the operation, if there's an erro return it
                     FormulaError? result = ApplyMostRecentOperation(values, opers);
                     if (result != null) return result;

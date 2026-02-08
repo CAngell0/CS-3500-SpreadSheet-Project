@@ -24,7 +24,9 @@ public class FormulaEvaluateTests {
 
 
     
-    // --- Tests evaluating single token formulas ---
+    // --- Tests evaluating formulas without parentheses ---
+    // - Tests with single token formulas -
+
     [TestMethod]
     public void FormulaEvaluateMethod_SingleIntegerToken_NumberValue() {
         object result = new Formula("136").Evaluate(lookup);
@@ -64,7 +66,7 @@ public class FormulaEvaluateTests {
 
 
 
-    // --- Tests evaluating two token formulas ---
+    // - Tests evaluating two token formulas -
     [TestMethod]
     public void FormulaEvaluateMethod_DualIntegerTokens_NumberValue() {
         object result = new Formula("89 * 3").Evaluate(lookup);
@@ -113,7 +115,7 @@ public class FormulaEvaluateTests {
 
 
 
-    // --- Tests evaluating two token formulas ---
+    // - Tests evaluating two token formulas -
     [TestMethod]
     public void FormulaEvaluateMethod_MultipleIntegerTokens_NumberValue() {
         object result = new Formula("89 * 3 - 20").Evaluate(lookup);
@@ -157,6 +159,47 @@ public class FormulaEvaluateTests {
 
         double value = (double) result;
         Assert.IsTrue(value.IsEqualTo(100 - 30.6 / 10.6 + 3.14 * 20));
+    }
+
+
+
+
+    // --- Tests evaluating formulas with parentheses ---
+    // - Tests for single token formulas with parentheses -
+    [TestMethod]
+    public void FormulaEvaluateMethod_SingleIntegerTokenWithParens_NumberValue() {
+        object result = new Formula("((136))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(136));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_SingleDecimalTokenWithParens_NumberValue() {
+        object result = new Formula("(45.67)").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(45.67));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_SingleScientificTokenWithParens_NumberValue() {
+        object result = new Formula("((((((2e3))))))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(2000));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_SingleVariableTokenWithParens_NumberValue() {
+        object result = new Formula("(((a1)))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(10));
     }
 }
 
