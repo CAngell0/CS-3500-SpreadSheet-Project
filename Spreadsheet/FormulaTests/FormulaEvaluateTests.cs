@@ -306,6 +306,67 @@ public class FormulaEvaluateTests {
         object result = new Formula("(((56.32 - j1)))").Evaluate(lookup);
         Assert.IsInstanceOfType<FormulaError>(result);
     }
+
+
+
+
+    // - Tests evaluating multi token formulas with parentheses -
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleIntegerTokensWithParens_NumberValue() {
+        object result = new Formula("((((89 * 3 - 20))))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(89 * 3 - 20));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleDecimalTokensWithParens_NumberValue() {
+        object result = new Formula("(((.3 - .88))) / 0.5").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo((0.3 - 0.88) / 0.5));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleScientificTokensWithParens_NumberValue() {
+        object result = new Formula("((2e3) / 1e2 * ((2e-1 - 1E1)))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(2e3 / 1e2 * (2e-1 - 1E1)));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleVariableTokensWithParens_NumberValue() {
+        object result = new Formula("(a1 - b1) * (c1 + b1)").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo((10 - 20) * (100 + 20)));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleMixedTokensWithParens_NumberValue() {
+        object result = new Formula("(((1e2 - D1)) / ((10.6 + 3.14) * B1))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo((100 - 30.6) / ((10.6 + 3.14) * 20)));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleMixedTokensDivideByZeroWithParens_FormulaError() {
+        object result = new Formula("1e2 - D1 / ((10.6 / 0) + 3.14 * B1)").Evaluate(lookup);
+        Assert.IsInstanceOfType<FormulaError>(result);
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleMixedTokensInvalidVariablesWithParens_FormulaError() {
+        object result = new Formula("(1e2 - j7) / ((D1 / 10.6 / 0 + 3.14)) - ac4 * B1").Evaluate(lookup);
+        Assert.IsInstanceOfType<FormulaError>(result);
+    }
 }
 
 
