@@ -315,6 +315,7 @@ public partial class Formula {
             }
 
             else if (token == ")") {
+                if (opers.IsEmpty()) continue;
                 if (opers.Peek() == "+" || opers.Peek() == "-") ApplyMostRecentOperation(values, opers);
                 opers.Pop();
                 if (opers.Peek() == "*" || opers.Peek() == "/") {
@@ -330,11 +331,12 @@ public partial class Formula {
                 if (TokenIsVariable(token)) {
                     try { value = lookup(token); }
                     catch (ArgumentException) { return new FormulaError($"Invalid variable name, no value assigned '{token}'"); }
-                }
+                } 
+                else _ = Double.TryParse(token, out value);
 
-                _ = Double.TryParse(token, out value);
                 values.Push(value);
 
+                if (opers.IsEmpty()) continue;
                 if (opers.Peek() == "*" || opers.Peek() == "/") {
                     // Applies the operation, if there's an erro return it
                     FormulaError? result = ApplyMostRecentOperation(values, opers);
@@ -343,7 +345,7 @@ public partial class Formula {
             }
         }
 
-        if (opers.Count == 0) return values.Pop();
+        if (opers.IsEmpty()) return values.Pop();
         else {
             ApplyMostRecentOperation(values, opers);
             return values.Pop();
@@ -584,4 +586,17 @@ public class FormulaError {
     ///  Gets the reason why this FormulaError was created.
     /// </summary>
     public string Reason { get; private set; }
+}
+
+
+public static class StackExtension {
+    /// <summary>
+    ///     Returns whether the stach is empty. Reads the Count property.
+    /// </summary>
+    /// <typeparam name="T"> Data type that the stack stores </typeparam>
+    /// <param name="stack"> The stack to read from </param>
+    /// <returns> True if stack is empty, false if the stack is not empty </returns>
+    public static bool IsEmpty<T>(this Stack<T> stack) {
+        return stack.Count == 0;
+    }
 }
