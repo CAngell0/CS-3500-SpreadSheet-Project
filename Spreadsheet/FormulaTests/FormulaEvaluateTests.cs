@@ -115,7 +115,7 @@ public class FormulaEvaluateTests {
 
 
 
-    // - Tests evaluating two token formulas -
+    // - Tests evaluating multi token formulas -
     [TestMethod]
     public void FormulaEvaluateMethod_MultipleIntegerTokens_NumberValue() {
         object result = new Formula("89 * 3 - 20").Evaluate(lookup);
@@ -200,6 +200,55 @@ public class FormulaEvaluateTests {
 
         double value = (double) result;
         Assert.IsTrue(value.IsEqualTo(10));
+    }
+
+
+
+
+    // - Tests evaluating dual token formulas with parentheses -
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualIntegerTokensWithParens_NumberValue() {
+        object result = new Formula("(89 * 3)").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(89 * 3));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualDecimalTokensWithParens_NumberValue() {
+        object result = new Formula("(.3) - ((.88))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(0.3 - 0.88));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualScientificTokensWithParens_NumberValue() {
+        object result = new Formula("(2e3 / ((1e2)))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(2e3 / 1e2));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualVariableTokensWithParens_NumberValue() {
+        object result = new Formula("(((((a1))) - ((b1))))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(10 - 20));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualMixedTokensWithParens_NumberValue() {
+        object result = new Formula("(((1e2 - D1)))").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(100 - 30.6));
     }
 }
 

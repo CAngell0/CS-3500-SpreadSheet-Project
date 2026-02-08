@@ -310,7 +310,7 @@ public partial class Formula {
 
         foreach (string token in _tokens) {
             if (TokenIsOperator(token) || token == "(") {
-                if (!opers.IsEmpty() && (token == "+" || token == "-")) ApplyMostRecentOperation(values, opers);
+                if (!opers.IsEmpty() && opers.Peek() != "(" && (token == "+" || token == "-")) ApplyMostRecentOperation(values, opers);
                 opers.Push(token);
             }
 
