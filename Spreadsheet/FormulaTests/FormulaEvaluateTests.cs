@@ -109,6 +109,55 @@ public class FormulaEvaluateTests {
         double value = (double) result;
         Assert.IsTrue(value.IsEqualTo(100 - 30.6));
     }
+
+
+
+
+    // --- Tests evaluating two token formulas ---
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleIntegerTokens_NumberValue() {
+        object result = new Formula("89 * 3 - 20").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(89 * 3 - 20));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleDecimalTokens_NumberValue() {
+        object result = new Formula(".3 - .88 / 0.5").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(0.3 - 0.88 / 0.5));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleScientificTokens_NumberValue() {
+        object result = new Formula("2e3 / 1e2 * 2e-1 - 1E1").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(2e3 / 1e2 * 2e-1 - 1E1));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleVariableTokens_NumberValue() {
+        object result = new Formula("a1 - b1 * c1").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(10 - 20 * 100));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleMixedTokens_NumberValue() {
+        object result = new Formula("1e2 - D1 / 10.6 + 3.14 * B1").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(100 - 30.6 / 10.6 + 3.14 * 20));
+    }
 }
 
 
