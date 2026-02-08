@@ -319,13 +319,13 @@ public partial class Formula {
                 else if (opers.Peek() == "+" || opers.Peek() == "-") ApplyMostRecentOperation(values, opers);
                 opers.Pop();
                 if (!opers.IsEmpty() && (opers.Peek() == "*" || opers.Peek() == "/")) {
-                    // Applies the operation, if there's an erro return it
+                    // Applies the operation, if there's an error return it
                     FormulaError? result = ApplyMostRecentOperation(values, opers);
                     if (result != null) return result;
                 }
             }
 
-            // If the token is a varibale or number
+            // If the token is a variable or number
             else {
                 double value;
                 if (TokenIsVariable(token)) {
@@ -338,7 +338,7 @@ public partial class Formula {
 
                 if (opers.IsEmpty()) continue;
                 else if (opers.Peek() == "*" || opers.Peek() == "/") {
-                    // Applies the operation, if there's an erro return it
+                    // Applies the operation, if there's an error return it
                     FormulaError? result = ApplyMostRecentOperation(values, opers);
                     if (result != null) return result;
                 }
@@ -467,7 +467,6 @@ public partial class Formula {
     ///   </para>
     /// </summary>
     /// <returns> The hashcode for the object. </returns>
-    //TODO - Add testing for this method
     public override int GetHashCode() => _stringifiedFormula.GetHashCode();
     
     /// <summary>
@@ -593,7 +592,7 @@ public class FormulaError {
 
 public static class StackExtension {
     /// <summary>
-    ///     Returns whether the stach is empty. Reads the Count property.
+    ///     Returns whether the stack is empty. Reads the Count property.
     /// </summary>
     /// <typeparam name="T"> Data type that the stack stores </typeparam>
     /// <param name="stack"> The stack to read from </param>

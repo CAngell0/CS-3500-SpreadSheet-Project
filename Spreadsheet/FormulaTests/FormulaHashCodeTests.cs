@@ -8,10 +8,10 @@ using Formula;
 [TestClass]
 public class FormulaHashCodeTests {
 
-    // --- Testing GetHashCode method with equivilent formulas ---
-    // - Tests with equivilent single token formulas
+    // --- Testing GetHashCode method with equivalent formulas ---
+    // - Tests with equivalent single token formulas
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentSingleIntegerTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentSingleIntegerTokens_SameHashCode() {
         Formula f1 = new("456");
         Formula f2 = new("456");
 
@@ -19,7 +19,7 @@ public class FormulaHashCodeTests {
     }
     
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentSingleDecimalTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentSingleDecimalTokens_SameHashCode() {
         Formula[] formulas = [
             new("12.34"),
             new("1234e-2"),
@@ -32,7 +32,7 @@ public class FormulaHashCodeTests {
     }
 
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentSingleScientificTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentSingleScientificTokens_SameHashCode() {
         Formula[] formulas = [
             new("2e3"),
             new("2000"),
@@ -46,7 +46,7 @@ public class FormulaHashCodeTests {
     }
 
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentSingleVariableTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentSingleVariableTokens_SameHashCode() {
         Formula[] formulas = [
             new("ab12"),
             new("AB12"),
@@ -61,9 +61,9 @@ public class FormulaHashCodeTests {
 
 
 
-    // - Tests with equivilent dual token formulas
+    // - Tests with Equivalent dual token formulas
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentDualIntegerTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentDualIntegerTokens_SameHashCode() {
         Formula f1 = new("456 + 789");
         Formula f2 = new("0456 + 0789");
 
@@ -71,7 +71,7 @@ public class FormulaHashCodeTests {
     }
     
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentDualDecimalTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentDualDecimalTokens_SameHashCode() {
         Formula[] formulas = [
             new("12.34 * 89.01"),
             new("12.34 * 890.1e-1"),
@@ -84,7 +84,7 @@ public class FormulaHashCodeTests {
     }
 
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentDualScientificTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentDualScientificTokens_SameHashCode() {
         Formula[] formulas = [
             new("2e3 - 1e1"),
             new("2000 - 10"),
@@ -97,7 +97,7 @@ public class FormulaHashCodeTests {
     }
 
     [TestMethod]
-    public void FormulaGetHasCode_EquivilentDualVariableTokens_SameHashCode() {
+    public void FormulaGetHasCode_EquivalentDualVariableTokens_SameHashCode() {
         Formula[] formulas = [
             new("ab12 / gh7"),
             new("AB12/gh7"),
@@ -113,7 +113,7 @@ public class FormulaHashCodeTests {
 
 
     // --- Testing GetHashCode method with slightly different formulas ---
-    // - Tests with slighly different single token formulas -
+    // - Tests with slightly different single token formulas -
 
     [TestMethod]
     public void FormulaGetHashCode_SlightlyDifferentSingleIntegerTokens_DifferentHashCodes() {
@@ -169,7 +169,7 @@ public class FormulaHashCodeTests {
 
 
 
-    // - Tests with slighly different dual token formulas -
+    // - Tests with slightly different dual token formulas -
 
     [TestMethod]
     public void FormulaGetHashCode_SlightlyDifferentDualIntegerTokens_DifferentHashCodes() {

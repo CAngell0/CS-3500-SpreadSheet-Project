@@ -4,8 +4,6 @@ namespace FormulaTests;
 
 using Formula;
 
-//TODO - Add multi term tests with parens
-
 [TestClass]
 public class FormulaEvaluateTests {
     private Lookup lookup = (variable) => 0;
@@ -25,8 +23,8 @@ public class FormulaEvaluateTests {
 
 
 
-    
-    // --- Tests evaluating formulas without parentheses ---
+
+    // --- TESTS EVALUATING FORMULAS WITHOUT PARENTHESES
     // - Tests with single token formulas -
 
     [TestMethod]
@@ -202,7 +200,7 @@ public class FormulaEvaluateTests {
 
 
 
-    // --- Tests evaluating formulas with parentheses ---
+    // --- TESTS EVALUATING FORMULAS WITH PARENTHESES ---
     // - Tests for single token formulas with parentheses -
     [TestMethod]
     public void FormulaEvaluateMethod_SingleIntegerTokenWithParens_NumberValue() {
@@ -359,6 +357,12 @@ public class FormulaEvaluateTests {
     [TestMethod]
     public void FormulaEvaluateMethod_MultipleMixedTokensDivideByZeroWithParens_FormulaError() {
         object result = new Formula("1e2 - D1 / ((10.6 / 0) + 3.14 * B1)").Evaluate(lookup);
+        Assert.IsInstanceOfType<FormulaError>(result);
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_MultipleMixedTokensDivideByCalculatedZeroWithParens_FormulaError() {
+        object result = new Formula("546 + (b1 - 10.3) / (10.6 - (5.3 * 2)) + d1").Evaluate(lookup);
         Assert.IsInstanceOfType<FormulaError>(result);
     }
 
