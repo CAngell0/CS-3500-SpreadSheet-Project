@@ -21,6 +21,8 @@ public class FormulaEvaluateTests {
         };
     }
 
+
+
     
     // --- Tests evaluating single token formulas ---
     [TestMethod]
@@ -29,7 +31,7 @@ public class FormulaEvaluateTests {
         Assert.IsInstanceOfType<double>(result);
 
         double value = (double) result;
-        Assert.IsTrue(value.Equals(136));
+        Assert.IsTrue(value.IsEqualTo(136));
     }
 
     [TestMethod]
@@ -38,7 +40,7 @@ public class FormulaEvaluateTests {
         Assert.IsInstanceOfType<double>(result);
 
         double value = (double) result;
-        Assert.IsTrue(value.Equals(45.67));
+        Assert.IsTrue(value.IsEqualTo(45.67));
     }
 
     [TestMethod]
@@ -47,7 +49,7 @@ public class FormulaEvaluateTests {
         Assert.IsInstanceOfType<double>(result);
 
         double value = (double) result;
-        Assert.IsTrue(value.Equals(2000));
+        Assert.IsTrue(value.IsEqualTo(2000));
     }
 
     [TestMethod]
@@ -56,6 +58,70 @@ public class FormulaEvaluateTests {
         Assert.IsInstanceOfType<double>(result);
 
         double value = (double) result;
-        Assert.IsTrue(value.Equals(10));
+        Assert.IsTrue(value.IsEqualTo(10));
     }
+
+
+
+
+    // --- Tests evaluating two token formulas ---
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualIntegerTokens_NumberValue() {
+        object result = new Formula("89 * 3").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(89 * 3));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualDecimalTokens_NumberValue() {
+        object result = new Formula(".3 - .88").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(0.3 - 0.88));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualScientificTokens_NumberValue() {
+        object result = new Formula("2e3 / 1e2").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(2e3 / 1e2));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualVariableTokens_NumberValue() {
+        object result = new Formula("a1 - b1").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(10 - 20));
+    }
+
+    [TestMethod]
+    public void FormulaEvaluateMethod_DualMixedTokens_NumberValue() {
+        object result = new Formula("1e2 - D1").Evaluate(lookup);
+        Assert.IsInstanceOfType<double>(result);
+
+        double value = (double) result;
+        Assert.IsTrue(value.IsEqualTo(100 - 30.6));
+    }
+}
+
+
+
+/// <summary>
+///     An extension class for doubles.
+/// </summary>
+public static class DoubleExtension {
+    /// <summary>
+    ///     Compares two double to see if they are approximately equal.
+    /// </summary>
+    /// <param name="d1"> First double to compare with </param>
+    /// <param name="num"> Double to compare against </param>
+    /// <returns> True if the values are within 0.0000001 of each other, false if not. </returns>
+    public static bool IsEqualTo(this double d1, double num) => Math.Abs(d1 - num) <= 0.0000001;
 }

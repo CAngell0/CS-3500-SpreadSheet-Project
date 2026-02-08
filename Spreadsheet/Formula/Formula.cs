@@ -310,7 +310,7 @@ public partial class Formula {
 
         foreach (string token in _tokens) {
             if (TokenIsOperator(token) || token == "(") {
-                if (token == "+" || token == "-") ApplyMostRecentOperation(values, opers);
+                if (!opers.IsEmpty() && (token == "+" || token == "-")) ApplyMostRecentOperation(values, opers);
                 opers.Push(token);
             }
 
@@ -366,8 +366,10 @@ public partial class Formula {
     ///     Will be null if there was no error.
     /// </returns>
     private static FormulaError? ApplyMostRecentOperation(Stack<double> values, Stack<string> operators) {
-        double[] targetValues = [values.Pop(), values.Pop()];
         string oper = operators.Pop();
+        double[] targetValues = new double[2];
+        targetValues[1] = values.Pop();
+        targetValues[0] = values.Pop();
 
         if (oper == "/" && targetValues[1] <= 0.0000000001) return new FormulaError($"Invalid operation, cannot divide by zero, '{targetValues[0]}' / '{targetValues[1]}'");
 
