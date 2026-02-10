@@ -141,6 +141,8 @@ public class Spreadsheet {
     ///   </para>
     /// </returns>
     public IList<string> SetCellContents(string name, double number) {
+        //= Implementation notes...
+        // The returned list needs to follow the order specified in the method doc. A BFS traversal from the given cell would accomplish this
         throw new NotImplementedException();
     }
 
@@ -179,6 +181,9 @@ public class Spreadsheet {
     ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula) {
+        //= Implementation notes...
+        // The CircularException can be detected in the BFS traversal. Since the traversal ends when we reach an endpoint of the graph.
+        // We can simply keep a HashSet of visited cells, and if we visit a cell that's already been visited, a circular dependency is detected
         throw new NotImplementedException();
     }
 
