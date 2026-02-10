@@ -3,4 +3,5 @@
   <Project Path="DependencyGraphTests/DependencyGraphTests.csproj" />
   <Project Path="Formula/Formula.csproj" />
   <Project Path="FormulaTests/FormulaTests.csproj" />
+  <Project Path="Spreadsheet/Spreadsheet.csproj" />
 </Solution>
