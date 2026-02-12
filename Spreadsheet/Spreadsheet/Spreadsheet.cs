@@ -104,7 +104,7 @@ public class Spreadsheet {
     /// <returns>
     ///   A set of the names of all the non-empty cells in the spreadsheet.
     /// </returns>
-    public ISet<string> GetNamesOfAllNonemptyCells() { //!
+    public ISet<string> GetNamesOfAllNonemptyCells() {
         return _sheetData.Keys.ToHashSet();
     }
 
