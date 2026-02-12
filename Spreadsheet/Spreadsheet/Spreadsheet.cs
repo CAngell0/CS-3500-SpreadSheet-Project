@@ -84,6 +84,13 @@ public class InvalidNameException : Exception {
 /// </para>
 /// </summary>
 public class Spreadsheet {
+    private readonly Dictionary<string, Cell> _sheetData;
+    private readonly DependencyGraph _dependencyGraph;
+
+    public Spreadsheet() {
+        _sheetData = new Dictionary<string, Cell>();
+        _dependencyGraph = new DependencyGraph();
+    }
 
     /// <summary>
     ///   Provides a copy of the normalized names of all of the cells in the spreadsheet
