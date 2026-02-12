@@ -285,4 +285,9 @@ public class Spreadsheet {
 
         changed.AddFirst(name);
     }
+
+    private class Cell {
+        public required object Contents {get; set;}
+        public required object Value {get; set;}
+    }
 }
