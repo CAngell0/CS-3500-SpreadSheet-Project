@@ -187,7 +187,7 @@ public class SpreadsheetSetCellContentsTests {
 
         Formula expected = new("2e2/5");
         Assert.IsNotNull(result);
-        Assert.IsInstanceOfType<string>(result);
+        Assert.IsInstanceOfType<Formula>(result);
         Assert.AreEqual(expected, (Formula)result);
     }
 
@@ -333,7 +333,7 @@ public class SpreadsheetSetCellContentsTests {
         object result = spreadsheet.GetCellContents("A5");
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<double>(result);
-        Assert.IsTrue(110.0.Equals((double)result, 0.000001));
+        Assert.IsTrue(110.4.Equals((double)result, 0.000001));
     }
 
     [TestMethod]
@@ -406,7 +406,7 @@ public class SpreadsheetSetCellContentsTests {
 
         Formula expected = new("2e2/5");
         Assert.IsNotNull(result);
-        Assert.IsInstanceOfType<string>(result);
+        Assert.IsInstanceOfType<Formula>(result);
         Assert.AreEqual(expected, (Formula)result);
     }
 

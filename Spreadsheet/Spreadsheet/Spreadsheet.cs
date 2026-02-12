@@ -10,6 +10,7 @@ namespace Spreadsheet;
 
 using Formula;
 using DependencyGraph;
+using System.Text.RegularExpressions;
 
 /// <summary>
 ///   <para>
@@ -87,9 +88,13 @@ public class Spreadsheet {
     private readonly Dictionary<string, Cell> _sheetData;
     private readonly DependencyGraph _dependencyGraph;
 
+    private const string VariableRegExPattern = @"^[A-Z]+\d+$";
+    private readonly Regex _variableRegex;
+
     public Spreadsheet() {
         _sheetData = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
+        _variableRegex = new Regex(VariableRegExPattern);
     }
 
     /// <summary>
@@ -100,7 +105,7 @@ public class Spreadsheet {
     ///   A set of the names of all the non-empty cells in the spreadsheet.
     /// </returns>
     public ISet<string> GetNamesOfAllNonemptyCells() {
-        throw new NotImplementedException();
+        return _sheetData.Keys.ToHashSet();
     }
 
     /// <summary>
@@ -117,17 +122,14 @@ public class Spreadsheet {
     ///   See the class header summary.
     /// </returns>
     public object GetCellContents(string name) {
-        throw new NotImplementedException();
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+
+        if (_sheetData.TryGetValue(name, out Cell? cell)) return cell.Contents;
+        else return "";
     }
 
-    /// <summary>
-    ///  Set the contents of the named cell to the given number.
-    /// </summary>
-    ///
-    /// <exception cref="InvalidNameException">
-    ///   If the name is invalid, throw an InvalidNameException.
-    /// </exception>
-    ///
+    /// <summary> Set the contents of the named cell to the given number. </summary>
+    /// <exception cref="InvalidNameException"> If the name is invalid, throw an InvalidNameException. </exception>
     /// <param name="name"> The name of the cell. </param>
     /// <param name="number"> The new contents of the cell. </param>
     /// <returns>
@@ -141,32 +143,28 @@ public class Spreadsheet {
     ///     all of the cells, i.e., if you re-evaluate each cells in the order of the list,
     ///     the overall spreadsheet will be correctly updated.
     ///   </para>
-    ///   <para>
-    ///     For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
-    ///     list [A1, B1, C1] is returned, i.e., A1 was changed, so then A1 must be
-    ///     evaluated, followed by B1, followed by C1.
-    ///   </para>
     /// </returns>
     public IList<string> SetCellContents(string name, double number) {
-        //= Implementation notes...
-        // The returned list needs to follow the order specified in the method doc. A BFS traversal from the given cell would accomplish this
-        throw new NotImplementedException();
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+
+        if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = number;
+        else _sheetData.Add(name, new Cell(number));
+
+        return GetCellsToRecalculate(name).ToList();
     }
 
-    /// <summary>
-    ///   The contents of the named cell becomes the given text.
-    /// </summary>
-    ///
-    /// <exception cref="InvalidNameException">
-    ///   If the name is invalid, throw an InvalidNameException.
-    /// </exception>
+    /// <summary> The contents of the named cell becomes the given text. </summary>
+    /// <exception cref="InvalidNameException"> If the name is invalid, throw an InvalidNameException. </exception>
     /// <param name="name"> The name of the cell. </param>
     /// <param name="text"> The new contents of the cell. </param>
-    /// <returns>
-    ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
-    /// </returns>
+    /// <returns> The same list as defined in <see cref="SetCellContents(string, double)"/>. </returns>
     public IList<string> SetCellContents(string name, string text) {
-        throw new NotImplementedException();
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+
+        if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = text;
+        else _sheetData.Add(name, new Cell(text));
+
+        return GetCellsToRecalculate(name).ToList();
     }
 
     /// <summary>
@@ -188,10 +186,22 @@ public class Spreadsheet {
     ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
     /// </returns>
     public IList<string> SetCellContents(string name, Formula formula) {
-        //= Implementation notes...
-        // The CircularException can be detected in the BFS traversal. Since the traversal ends when we reach an endpoint of the graph.
-        // We can simply keep a HashSet of visited cells, and if we visit a cell that's already been visited, a circular dependency is detected
-        throw new NotImplementedException();
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+
+        // Perfroms a BFS traversal (same as the GetCellsToRecalculate method)
+        // I needed the visited set in order to check for circular dependencies. That's why I couldn't use GetCellsToRecalculate.
+        LinkedList<string> changed = [];
+        HashSet<string> visited = [];
+        Visit(name, name, visited, changed);
+
+        // Checks if the formula depends on any of the visited cells (checks for a circular dependency)
+        ISet<string> formulaDependents = formula.GetVariables();
+        foreach (string dependent in formulaDependents) if (visited.Contains(dependent)) throw new CircularException();
+
+        if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = formula;
+        else _sheetData.Add(name, new Cell(formula));
+
+        return changed.ToList();
     }
 
     /// <summary>
@@ -214,13 +224,10 @@ public class Spreadsheet {
     ///   <para> The direct dependents of A1 are B1 and C1. </para>
     /// </returns>
     private IEnumerable<string> GetDirectDependents(string name) {
-        throw new NotImplementedException();
+        return _dependencyGraph.GetDependents(name);
     }
 
     /// <summary>
-    ///   <para>
-    ///     This method is implemented for you, but makes use of your GetDirectDependents.
-    ///   </para>
     ///   <para>
     ///     Returns an enumeration of the names of all cells whose values must
     ///     be recalculated, assuming that the contents of the cell referred
@@ -235,31 +242,17 @@ public class Spreadsheet {
     ///     For example, suppose that:
     ///   </para>
     ///   <list type="number">
-    ///     <item>
-    ///       A1 contains 5
-    ///     </item>
-    ///     <item>
-    ///       B1 contains the formula A1 + 2.
-    ///     </item>
-    ///     <item>
-    ///       C1 contains the formula A1 + B1.
-    ///     </item>
-    ///     <item>
-    ///       D1 contains the formula A1 * 7.
-    ///     </item>
-    ///     <item>
-    ///       E1 contains 15
-    ///     </item>
+    ///     <item> A1 contains 5 </item>
+    ///     <item> B1 contains the formula A1 + 2. </item>
+    ///     <item> C1 contains the formula A1 + B1. </item>
+    ///     <item> D1 contains the formula A1 * 7. </item>
+    ///     <item> E1 contains 15 </item>
     ///   </list>
     ///   <para>
     ///     If A1 has changed, then A1, B1, C1, and D1 must be recalculated,
     ///     and they must be recalculated in an order which has A1 first, and B1 before C1
     ///     (there are multiple such valid orders).
     ///     The method will produce one of those enumerations.
-    ///   </para>
-    ///   <para>
-    ///      PLEASE NOTE THAT THIS METHOD DEPENDS ON THE METHOD GetDirectDependents.
-    ///      IT WON'T WORK UNTIL GetDirectDependents IS IMPLEMENTED CORRECTLY.
     ///   </para>
     /// </summary>
     /// <param name="name"> The name of the cell.  Requires that name be a valid cell name.</param>
@@ -275,12 +268,25 @@ public class Spreadsheet {
     }
 
     /// <summary>
-    ///   A helper for the GetCellsToRecalculate method.
-    ///   FIXME: You should fully comment what is going on below using XML tags as appropriate,
-    ///   as well as inline comments in the code.
+    ///     A helper for the GetCellsToRecalculate method and SetCellContents method. Visits all the cells that are dependents of the cell specified in the 'name' parameter and 
+    ///     puts them in the 'changed' linked list paremeter. Some other thing to node:
+    ///     <list type="bullet">
+    ///         <item> Items in the 'changed' linked list are in order of what ones would need to be updated first if the root cell was changed </item>
+    ///         <item> Performs a breath-first-search (BFS) traversal in order to get the correct ordering of cells. </item>
+    ///         <item> The 'visited' holds what cells were visited during its search. </item>
+    ///     </list> 
+    ///     <exception cref="CircularException">
+    ///         If the cell referred to by name is involved in a circular dependency, throws a CircularException.
+    ///     </exception>
     /// </summary>
+    /// <param name="start"> The cell you want to start searching from </param>
+    /// <param name="name"> Should be the same as start </param>
+    /// <param name="visited"> Set used to store what cells have been visited </param>
+    /// <param name="changed"> LinkedList used to store the cells in dependency-order </param>
     private void Visit(string start, string name, ISet<string> visited, LinkedList<string> changed) {
         visited.Add(name);
+
+        // Performs a BFS traversal starting from the cell provided in the params
         foreach (string n in GetDirectDependents(name)) {
             if (n.Equals(start)) {
                 throw new CircularException();
@@ -294,7 +300,18 @@ public class Spreadsheet {
     }
 
     private class Cell {
-        public required object Contents {get; set;}
-        public required object Value {get; set;}
+        public object Contents { get; set; }
+        public Cell(object contents) {
+            Contents = contents;
+        }
     }
 }
+
+// TODO - Add tests for circular exception
+// TODO - Add automatic deletion of cells if set to ""
+// TODO - Make automatically dd dependencies when formula is added
+// TODO - Add file headers
+// TODO - Comment rest of code
+// TODO - Ask questions about...
+//      - Should getting a valid, but empty cell return ""?
+//      - Are we allowed to use the Visit function outside of the GetCellsToRecalculate helper method?

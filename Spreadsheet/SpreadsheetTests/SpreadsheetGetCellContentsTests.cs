@@ -15,28 +15,24 @@ public class SpreadsheetGetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellContents_CorrectNameFromEmptySheet_InvalidNameException() {
+    public void SpreadsheetGetCellContents_CorrectNameFromEmptySheet_EmptyString() {
         Spreadsheet spreadsheet = new();
-        Assert.Throws<InvalidNameException>(() => spreadsheet.GetCellContents("B5"));
+        Assert.AreEqual("", spreadsheet.GetCellContents("B5"));
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellContents_IncorrectNameFromSingleCellSheet_InvalidNameException() {
+    public void SpreadsheetGetCellContents_IncorrectNameFromSingleCellSheet_EmptyString() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", 20);
 
-        Assert.Throws<InvalidNameException>(() => spreadsheet.GetCellContents("B5"));
+        Assert.AreEqual("", spreadsheet.GetCellContents("B5"));
     }
 
     // - Tests that don't throw an exception -
     [TestMethod]
-    public void SpreadsheetGetCellContents_InvalidNameFromEmptySheet_EmptyString() {
+    public void SpreadsheetGetCellContents_InvalidNameFromEmptySheet_InvalidNameException() {
         Spreadsheet spreadsheet = new();
-        object result = spreadsheet.GetCellContents("kb");
-
-        Assert.IsNotNull(result);
-        Assert.IsInstanceOfType<string>(result);
-        Assert.AreEqual("", (string) result);
+        Assert.Throws<InvalidNameException>(() => spreadsheet.GetCellContents("kb"));
     }
 
 
@@ -68,11 +64,12 @@ public class SpreadsheetGetCellContentsTests {
     [TestMethod]
     public void SpreadsheetGetCellContents_FormulaCellFromSingleCellSheet_CorrectValue() {
         Spreadsheet spreadsheet = new();
-        spreadsheet.SetCellContents("A5", "63 + 2e3");
+        spreadsheet.SetCellContents("A5", new Formula("63 + 2e3"));
         object result = spreadsheet.GetCellContents("A5");
 
+        Formula expected = new("63+2000");
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<Formula>(result);
-        Assert.IsTrue(((Formula) result).Equals(new Formula("63+2e3")));
+        Assert.AreEqual(expected, (Formula) result);
     }
 }
