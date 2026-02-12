@@ -6,6 +6,9 @@
 // Update by Profs Kopta and de St. Germain, Fall 2021, Fall 2024
 //     - Updated return types
 //     - Updated documentation
+
+// <author> Carson Angell </author>
+// <date> 2/9/2026 </date>
 namespace Spreadsheet;
 
 using Formula;
