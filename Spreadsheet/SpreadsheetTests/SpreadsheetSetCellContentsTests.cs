@@ -90,7 +90,7 @@ public class SpreadsheetSetCellContentsTests {
 
 
     // --- TESTS ON A SPREADSHEET INSTANCE WITH ONE CELL ---
-    // - Tests that throw an exception -
+    // - Tests that throw a invalid name exception -
     [TestMethod]
     public void SpreadsheetSetCellContents_EmptyStringNameOnSingleCellSheet_InvalidNameException() {
         Spreadsheet spreadsheet = CreateSingleCellSheet();
@@ -102,6 +102,35 @@ public class SpreadsheetSetCellContentsTests {
         Spreadsheet spreadsheet = CreateSingleCellSheet();
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("H", 5));
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", 5));
+    }
+
+
+    // - Tests that throw a circular exception
+    [TestMethod]
+    public void SpreadsheetSetCellContents_AddFormulaThatDependsOnItself_CircularException() {
+        Spreadsheet spreadsheet = new();
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("A1", new Formula("A1 + 2")));
+    }
+
+    [TestMethod]
+    public void SpreadsheetSetCellContents_AddTwoFormulasThatDependOnEachOther_CircularException() {
+        Spreadsheet spreadsheet = new();
+        spreadsheet.SetCellContents("A1", new Formula("B2 * 8"));
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("B2", new Formula("A1 + 2")));
+    }
+
+    [TestMethod]
+    public void SpreadsheetSetCellContents_OverwriteExistingDoubleCellWithFormulaThatDependsOnItself_CircularException() {
+        Spreadsheet spreadsheet = new();
+        spreadsheet.SetCellContents("A1", 100.56);
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("A1", new Formula("A1 + 2")));
+    }
+
+    [TestMethod]
+    public void SpreadsheetSetCellContents_OverwriteExistingStringCellWithFormulaThatDependsOnItself_CircularException() {
+        Spreadsheet spreadsheet = new();
+        spreadsheet.SetCellContents("A1", "Hello World");
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("A1", new Formula("A1 + 2")));
     }
 
 
@@ -309,7 +338,7 @@ public class SpreadsheetSetCellContentsTests {
 
 
     // --- TESTS ON A SPREADSHEET INSTANCE WITH MULTIPLE CELLS ---
-    // - Tests that throw an exception -
+    // - Tests that throw a invalid name exception -
     [TestMethod]
     public void SpreadsheetSetCellContents_EmptyStringNameOnMultiCellSheet_InvalidNameException() {
         Spreadsheet spreadsheet = CreateMultiCellSheet();
@@ -320,7 +349,45 @@ public class SpreadsheetSetCellContentsTests {
     public void SpreadsheetSetCellContents_InvalidCellNameOnMultiCellSheet_InvalidNameException() {
         Spreadsheet spreadsheet = CreateMultiCellSheet();
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("H", 5));
-        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", 5));
+        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", "Test")); 
+        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("h5", new Formula("2+2"))); 
+    }
+
+
+    // - Tests that throw a circular exception -
+    [TestMethod]
+    public void SpreadSheetSetCellContents_NewFormulaDependsOnADependeeFormula_CircularException() {
+        Spreadsheet spreadsheet = CreateMultiCellSheet(); // Should contain the formula that depends on D6
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("D6", new Formula("D9 - 28")));
+    }
+
+    [TestMethod]
+    public void SpreadSheetSetCellContents_BigDependencyCircleWithFormulas_CircularException() {
+        Spreadsheet spreadsheet = CreateMultiCellSheet();
+        spreadsheet.SetCellContents("A1", new Formula("B2 + 56"));
+        spreadsheet.SetCellContents("B2", new Formula("C3 + 2e3"));
+        spreadsheet.SetCellContents("C3", new Formula("D4 * 6"));
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("D4", new Formula("A1 - 9")));
+    }
+
+    [TestMethod]
+    public void SpreadSheetSetCellContents_ImperfectDependencyCircleWithFormulas_CircularException() {
+        Spreadsheet spreadsheet = CreateMultiCellSheet();
+        spreadsheet.SetCellContents("A1", new Formula("B2 + 56"));
+        spreadsheet.SetCellContents("B2", new Formula("C3 + 2e3"));
+        spreadsheet.SetCellContents("C3", new Formula("D4 * 6"));
+        spreadsheet.SetCellContents("D4", new Formula("E5 / 7"));
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("E5", new Formula("C3 - 9")));
+    }
+
+    [TestMethod]
+    public void SpreadSheetSetCellContents_IndirectDependencyCircleWithFormulas_CircularException() {
+        Spreadsheet spreadsheet = CreateMultiCellSheet();
+        spreadsheet.SetCellContents("A1", new Formula("B2 + 56"));
+        spreadsheet.SetCellContents("B2", new Formula("C3 + 2e3"));
+        spreadsheet.SetCellContents("C3", new Formula("F6 * 6 - D4"));
+        spreadsheet.SetCellContents("D4", new Formula("E5 / 7"));
+        Assert.Throws<CircularException>(() => spreadsheet.SetCellContents("E5", new Formula("C3 - 9")));
     }
 
 

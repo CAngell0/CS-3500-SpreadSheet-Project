@@ -104,7 +104,7 @@ public class Spreadsheet {
     /// <returns>
     ///   A set of the names of all the non-empty cells in the spreadsheet.
     /// </returns>
-    public ISet<string> GetNamesOfAllNonemptyCells() {
+    public ISet<string> GetNamesOfAllNonemptyCells() { //!
         return _sheetData.Keys.ToHashSet();
     }
 
@@ -297,7 +297,7 @@ public class Spreadsheet {
 
         // Performs a BFS traversal starting from the cell provided in the params
         foreach (string n in GetDirectDependents(name)) {
-            if (n.Equals(start)) {
+            if (n.Equals(start)) { //!
                 throw new CircularException();
             }
             else if (!visited.Contains(n)) {
@@ -316,11 +316,12 @@ public class Spreadsheet {
     }
 }
 
-// TODO - Add tests for circular exception
-// TODO - Add automatic deletion of cells if set to ""
-// TODO - Make automatically add dependencies when formula is added
+// X TODO - Add tests for circular exception
+// X TODO - Add automatic deletion of cells if set to ""
+// X TODO - Make automatically add dependencies when formula is added
 // TODO - Add file headers
 // TODO - Comment rest of code
 // TODO - Ask questions about...
 //      - Should getting a valid, but empty cell return ""?
 //      - Are we allowed to use the Visit function outside of the GetCellsToRecalculate helper method?
+//      - Should I remove the circular exception throw in Visit since my algorithm checks before it gets added to the graph?
