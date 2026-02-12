@@ -9,17 +9,18 @@ public class SpreadsheetSetCellContentsTests {
     // --- TESTS ON AN EMPTY SPREADSHEET INSTANCE ---
     // - Tests that throw an exception -
     [TestMethod]
-    public void SpreadsheetSetCellContents_OfEmptyStringOnEmptySheet_InvalidNameException() {
+    public void SpreadsheetSetCellContents_EmptyStringNameOnEmptySheet_InvalidNameException() {
         Spreadsheet spreadsheet = new();
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("", 5));
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_InvalidCellNameOnEmptySheet_InvalidNameException() {
+    public void SpreadsheetSetCellContents_InvalidNameOnEmptySheet_InvalidNameException() {
         Spreadsheet spreadsheet = new();
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("H", 5));
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", 5));
     }
+
 
     // - Tests on creating new cells -
     [TestMethod]
@@ -30,7 +31,7 @@ public class SpreadsheetSetCellContentsTests {
         object result = spreadsheet.GetCellContents("A5");
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<double>(result);
-        Assert.AreEqual(110, (double)result);
+        Assert.IsTrue(110.0.Equals((double)result, 0.000001));
     }
 
     [TestMethod]
@@ -62,7 +63,7 @@ public class SpreadsheetSetCellContentsTests {
     // --- TESTS ON A SPREADSHEET INSTANCE WITH ONE CELL ---
     // - Tests that throw an exception -
     [TestMethod]
-    public void SpreadsheetSetCellContents_OfEmptyStringOnSingleCellSheet_InvalidNameException() {
+    public void SpreadsheetSetCellContents_EmptyStringNameOnSingleCellSheet_InvalidNameException() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("B7", 20);
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("", 5));
@@ -76,9 +77,10 @@ public class SpreadsheetSetCellContentsTests {
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", 5));
     }
 
+
     // - Tests on creating new cells -
     [TestMethod]
-    public void SpreadsheetSetCellContents_NewDoubleCellOnSingleCellSheet_ReturnsDouble() {
+    public void SpreadsheetSetCellContents_NewDoubleCellOnSingleCellSheet_SuccessfullyAdds() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("B7", 20);
         spreadsheet.SetCellContents("A5", 110);
@@ -86,11 +88,11 @@ public class SpreadsheetSetCellContentsTests {
         object result = spreadsheet.GetCellContents("A5");
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<double>(result);
-        Assert.AreEqual(110, (double)result);
+        Assert.IsTrue(110.0.Equals((double)result, 0.000001));
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_NewStringCellOnSingleCellSheet_ReturnsString() {
+    public void SpreadsheetSetCellContents_NewStringCellOnSingleCellSheet_SuccessfullyAdds() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("B7", 20);
         spreadsheet.SetCellContents("A5", "Test");
@@ -102,7 +104,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_NewFormulaCellOnSingleCellSheet_ReturnsFormula() {
+    public void SpreadsheetSetCellContents_NewFormulaCellOnSingleCellSheet_SuccessfullyAdds() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("B7", 20);
         spreadsheet.SetCellContents("A5", new Formula("80 + d3"));
@@ -114,9 +116,23 @@ public class SpreadsheetSetCellContentsTests {
         Assert.AreEqual(expected, (Formula)result);
     }
 
+
     // - Tests on overwriting existing cell with the same type of value -
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteDoubleCellWithDoubleOnSingleCellSheet_ReturnsDouble() {
+    public void SpreadsheetSetCellContents_OverwriteDoubleCellSameValueOnSingleCellSheet_NoChange() {
+        Spreadsheet spreadsheet = new();
+        spreadsheet.SetCellContents("A5", 5);
+        spreadsheet.SetCellContents("A5", 5);
+
+        object result = spreadsheet.GetCellContents("A5");
+
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType<double>(result);
+        Assert.IsTrue(5.0.Equals((double)result, 0.000001));
+    }
+
+    [TestMethod]
+    public void SpreadsheetSetCellContents_OverwriteDoubleCellWithDoubleOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", 5);
         spreadsheet.SetCellContents("A5", 59);
@@ -125,11 +141,11 @@ public class SpreadsheetSetCellContentsTests {
 
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<double>(result);
-        Assert.AreEqual(59, (double)result);
+        Assert.IsTrue(59.0.Equals((double)result, 0.000001));
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteStringCellWithStringOnSingleCellSheet_ReturnsString() {
+    public void SpreadsheetSetCellContents_OverwriteStringCellWithStringOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", "Hello");
         spreadsheet.SetCellContents("A5", "World");
@@ -142,7 +158,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteFormulaCellWithFormulaOnSingleCellSheet_ReturnsFormula() {
+    public void SpreadsheetSetCellContents_OverwriteFormulaCellWithFormulaOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", new Formula("3 * 80"));
         spreadsheet.SetCellContents("A5", new Formula("2e2 / 5"));
@@ -152,12 +168,13 @@ public class SpreadsheetSetCellContentsTests {
         Formula expected = new("2e2/5");
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<string>(result);
-        Assert.AreEqual(expected, (Formula) result);
+        Assert.AreEqual(expected, (Formula)result);
     }
+
 
     // - Tests on overwriting existing cell with different type of value -
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteDoubleCellWithStringOnSingleCellSheet_ReturnsString() {
+    public void SpreadsheetSetCellContents_OverwriteDoubleCellWithStringOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", 5);
         spreadsheet.SetCellContents("A5", "Hello");
@@ -170,7 +187,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteDoubleCellWithFormulaOnSingleCellSheet_ReturnsFormula() {
+    public void SpreadsheetSetCellContents_OverwriteDoubleCellWithFormulaOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", 90);
         spreadsheet.SetCellContents("A5", new Formula("6 / 2.78"));
@@ -184,7 +201,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteStringCellWithDoubleOnSingleCellSheet_ReturnsDouble() {
+    public void SpreadsheetSetCellContents_OverwriteStringCellWithDoubleOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", "Hello World");
         spreadsheet.SetCellContents("A5", 56.7);
@@ -193,11 +210,11 @@ public class SpreadsheetSetCellContentsTests {
 
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<double>(result);
-        Assert.AreEqual(56.7, (double)result);
+        Assert.IsTrue(56.7.Equals((double)result, 0.000001));
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteStringCellWithFormulaOnSingleCellSheet_ReturnsFormula() {
+    public void SpreadsheetSetCellContents_OverwriteStringCellWithFormulaOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", "Test");
         spreadsheet.SetCellContents("A5", new Formula("2 * 6 + 5"));
@@ -207,11 +224,11 @@ public class SpreadsheetSetCellContentsTests {
         Formula expected = new("2*6+5");
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<Formula>(result);
-        Assert.AreEqual(expected, (Formula) result);
+        Assert.AreEqual(expected, (Formula)result);
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteFormulaCellWithDoubleOnSingleCellSheet_ReturnsDouble() {
+    public void SpreadsheetSetCellContents_OverwriteFormulaCellWithDoubleOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", new Formula("3 * 80"));
         spreadsheet.SetCellContents("A5", 80);
@@ -220,11 +237,11 @@ public class SpreadsheetSetCellContentsTests {
 
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType<double>(result);
-        Assert.AreEqual(80, (double)result);
+        Assert.IsTrue(80.0.Equals((double)result, 0.000001));
     }
 
     [TestMethod]
-    public void SpreadsheetSetCellContents_OverwriteFormulaCellWithStringOnSingleCellSheet_ReturnsString() {
+    public void SpreadsheetSetCellContents_OverwriteFormulaCellWithStringOnSingleCellSheet_SuccessfullyOverwrites() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", new Formula("3 * 80"));
         spreadsheet.SetCellContents("A5", "Tester");
@@ -236,9 +253,10 @@ public class SpreadsheetSetCellContentsTests {
         Assert.AreEqual("Tester", (string)result);
     }
 
+
     // - Tests on deleting existing cell -
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingDoubleCellOnSingleCellSheet_ReturnsEmptyString() {
+    public void SpreadhseetSetCellContents_DeletingExistingDoubleCellOnSingleCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", 5);
         spreadsheet.SetCellContents("A5", ""); // Should remove the cell from the backend data structure...
@@ -251,7 +269,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingStringCellOnSingleCellSheet_ReturnsEmptyString() {
+    public void SpreadhseetSetCellContents_DeletingExistingStringCellOnSingleCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", "Tester");
         spreadsheet.SetCellContents("A5", ""); // Should remove the cell from the backend data structure...
@@ -264,7 +282,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingFormulaCellOnSingleCellSheet_ReturnsEmptyString() {
+    public void SpreadhseetSetCellContents_DeletingExistingFormulaCellOnSingleCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = new();
         spreadsheet.SetCellContents("A5", new Formula("2+2"));
         spreadsheet.SetCellContents("A5", ""); // Should remove the cell from the backend data structure...
