@@ -147,8 +147,11 @@ public class Spreadsheet {
     public IList<string> SetCellContents(string name, double number) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = number;
-        else _sheetData.Add(name, new Cell(number));
+        if (!_sheetData.TryGetValue(name, out Cell? cell)) _sheetData.Add(name, new Cell(number));
+        else {
+            if (cell.Contents is Formula) _dependencyGraph.ReplaceDependees(name, []);
+            cell.Contents = number;
+        }
 
         return GetCellsToRecalculate(name).ToList();
     }
@@ -161,8 +164,12 @@ public class Spreadsheet {
     public IList<string> SetCellContents(string name, string text) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = text;
-        else _sheetData.Add(name, new Cell(text));
+        if (!_sheetData.TryGetValue(name, out Cell? cell)) _sheetData.Add(name, new Cell(text));
+        else {
+            if (cell.Contents is Formula) _dependencyGraph.ReplaceDependees(name, []);
+            if (text.Equals("")) _sheetData.Remove(name);
+            else cell.Contents = text;
+        }
 
         return GetCellsToRecalculate(name).ToList();
     }
@@ -195,11 +202,13 @@ public class Spreadsheet {
         Visit(name, name, visited, changed);
 
         // Checks if the formula depends on any of the visited cells (checks for a circular dependency)
-        ISet<string> formulaDependents = formula.GetVariables();
-        foreach (string dependent in formulaDependents) if (visited.Contains(dependent)) throw new CircularException();
+        ISet<string> formulaDependees = formula.GetVariables();
+        foreach (string dependee in formulaDependees) if (visited.Contains(dependee)) throw new CircularException();
 
         if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = formula;
         else _sheetData.Add(name, new Cell(formula));
+
+        _dependencyGraph.ReplaceDependees(name, formulaDependees);
 
         return changed.ToList();
     }
@@ -309,7 +318,7 @@ public class Spreadsheet {
 
 // TODO - Add tests for circular exception
 // TODO - Add automatic deletion of cells if set to ""
-// TODO - Make automatically dd dependencies when formula is added
+// TODO - Make automatically add dependencies when formula is added
 // TODO - Add file headers
 // TODO - Comment rest of code
 // TODO - Ask questions about...

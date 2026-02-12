@@ -174,7 +174,8 @@ public class DependencyGraph {
         foreach (string dep in dependentsToRemove) RemoveFromDependeeMap(nodeName, dep);
         foreach (string dep in dependentsToAdd) AddToDependeeMap(nodeName, dep);
 
-        _dependentMap[nodeName] = newDepSet;
+        if (newDepSet.Count != 0) _dependentMap[nodeName] = newDepSet;
+        else _dependentMap.Remove(nodeName);
         Size += dependentsToAdd.Length - dependentsToRemove.Length;
     }
 
@@ -197,7 +198,8 @@ public class DependencyGraph {
         foreach (string dep in dependeesToRemove) RemoveFromDependentMap(dep, nodeName);
         foreach (string dep in dependeesToAdd) AddToDependentMap(dep, nodeName);
 
-        _dependeeMap[nodeName] = newDepSet;
+        if (newDepSet.Count != 0) _dependeeMap[nodeName] = newDepSet;
+        else _dependeeMap.Remove(nodeName);
         Size += dependeesToAdd.Length - dependeesToRemove.Length;
     }
 

@@ -175,6 +175,14 @@ public class DependencyGraphTests {
         Assert.Contains("C4", testedDependees);
     }
 
+    [TestMethod]
+    public void DependencyGraphReplaceDependees_OneDependencyPairReplaceWithEmptyDependees_EmptyGraph() {
+        DependencyGraph graph = CreateDependencyGraph([ ["A1", "B2"] ]);
+        graph.ReplaceDependees("B2", []);
+
+        Assert.AreEqual(0, graph.Size);
+    }
+
 
 
 
@@ -342,6 +350,23 @@ public class DependencyGraphTests {
             Assert.HasCount(1, dependeesOfNewDep);
             Assert.Contains("A1", dependeesOfNewDep);
         }
+    }
+
+    // --- Tests with multiple dependees and one depenent ---
+    [TestMethod]
+    public void DependencyGraphReplaceDependees_ReplaceMultipleDependeesWithEmptyDependees_EmptyGraph() {
+        DependencyGraph graph = CreateDependencyGraph([ ["B2", "A1"], ["C3", "A1"], ["D4", "A1"] ]);
+        graph.ReplaceDependees("A1", []);
+
+        Assert.AreEqual(0, graph.Size);
+    }
+
+    [TestMethod]
+    public void DependencyGraphReplaceDependees_ReplaceMultipleDependeesWithEmptyDependeesWithOneLeftOver_SizeOneGraph() {
+        DependencyGraph graph = CreateDependencyGraph([ ["B2", "A1"], ["C3", "A1"], ["D4", "A1"], ["A1", "E5"] ]);
+        graph.ReplaceDependees("A1", []);
+
+        Assert.AreEqual(1, graph.Size);
     }
 
 
