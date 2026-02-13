@@ -88,14 +88,17 @@ public class InvalidNameException : Exception {
 /// </para>
 /// </summary>
 public class Spreadsheet {
-    private readonly Dictionary<string, Cell> _sheetData;
+    /// <summary> Stores cells with content inside them. Uses the Cell wrapper class for the values, and cell names for the keys. </summary>
+    private readonly Dictionary<string, Cell> _cells;
+    /// <summary> Dependency graph to manage formula dependencies in the spreadsheet </summary>
     private readonly DependencyGraph _dependencyGraph;
-
+    /// <summary> Variable Regex pattern that matches to strings with only one cannonical variable (ie. "A1", "BC23", etc.) </summary>
     private const string VariableRegExPattern = @"^[A-Z]+\d+$";
+    /// <summary> Regex object that corresponds to the regex pattern above. </summary>
     private readonly Regex _variableRegex;
 
     public Spreadsheet() {
-        _sheetData = new Dictionary<string, Cell>();
+        _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
         _variableRegex = new Regex(VariableRegExPattern);
     }
@@ -108,7 +111,7 @@ public class Spreadsheet {
     ///   A set of the names of all the non-empty cells in the spreadsheet.
     /// </returns>
     public ISet<string> GetNamesOfAllNonemptyCells() {
-        return _sheetData.Keys.ToHashSet();
+        return _cells.Keys.ToHashSet();
     }
 
     /// <summary>
@@ -127,7 +130,7 @@ public class Spreadsheet {
     public object GetCellContents(string name) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (_sheetData.TryGetValue(name, out Cell? cell)) return cell.Contents;
+        if (_cells.TryGetValue(name, out Cell? cell)) return cell.Contents;
         else return "";
     }
 
@@ -150,7 +153,10 @@ public class Spreadsheet {
     public IList<string> SetCellContents(string name, double number) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (!_sheetData.TryGetValue(name, out Cell? cell)) _sheetData.Add(name, new Cell(number));
+        // Adds the cell if it wasn't already there
+        if (!_cells.TryGetValue(name, out Cell? cell)) _cells.Add(name, new Cell(number));
+
+        // Sets the cells contents, updates dependees
         else {
             if (cell.Contents is Formula) _dependencyGraph.ReplaceDependees(name, []);
             cell.Contents = number;
@@ -167,10 +173,12 @@ public class Spreadsheet {
     public IList<string> SetCellContents(string name, string text) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (!_sheetData.TryGetValue(name, out Cell? cell)) _sheetData.Add(name, new Cell(text));
+        // Adds the cell if it wasn't already there
+        if (!_cells.TryGetValue(name, out Cell? cell)) _cells.Add(name, new Cell(text));
+        // Sets the cells contents, updates dependees and removes the cell if it was set to an empty string
         else {
             if (cell.Contents is Formula) _dependencyGraph.ReplaceDependees(name, []);
-            if (text.Equals("")) _sheetData.Remove(name);
+            if (text.Equals("")) _cells.Remove(name);
             else cell.Contents = text;
         }
 
@@ -208,9 +216,11 @@ public class Spreadsheet {
         ISet<string> formulaDependees = formula.GetVariables();
         foreach (string dependee in formulaDependees) if (visited.Contains(dependee)) throw new CircularException();
 
-        if (_sheetData.TryGetValue(name, out Cell? cell)) cell.Contents = formula;
-        else _sheetData.Add(name, new Cell(formula));
+        // Sets the cell's contents in the dictionary
+        if (_cells.TryGetValue(name, out Cell? cell)) cell.Contents = formula;
+        else _cells.Add(name, new Cell(formula));
 
+        // Replaces the dependees of the cell in the dependency graph
         _dependencyGraph.ReplaceDependees(name, formulaDependees);
 
         return changed.ToList();
@@ -311,6 +321,10 @@ public class Spreadsheet {
         changed.AddFirst(name);
     }
 
+    /// <summary>
+    ///     Stored in the spreadsheet dictionaries as its keys. Represents a singular cell
+    ///     with contents in it.
+    /// </summary>
     private class Cell {
         public object Contents { get; set; }
         public Cell(object contents) {
@@ -322,7 +336,7 @@ public class Spreadsheet {
 // X TODO - Add tests for circular exception
 // X TODO - Add automatic deletion of cells if set to ""
 // X TODO - Make automatically add dependencies when formula is added
-// TODO - Add file headers
+// X TODO - Add file headers
 // TODO - Comment rest of code
 // TODO - Ask questions about...
 //      - Should getting a valid, but empty cell return ""?

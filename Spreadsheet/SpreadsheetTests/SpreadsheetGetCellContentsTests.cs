@@ -10,13 +10,21 @@ using Formula;
 public class SpreadsheetGetCellContentsTests {
 
     // --- TESTS ON AN EMPTY SPREADSHEET INSTANCE ---
-    // - Tests that throw an exception -
+    // - Tests that throw an invalid name exception -
     [TestMethod]
     public void SpreadsheetGetCellContents_EmptyStringNameFromEmptySheet_InvalidNameException() {
         Spreadsheet spreadsheet = new();
         Assert.Throws<InvalidNameException>(() => spreadsheet.GetCellContents(""));
     }
 
+    [TestMethod]
+    public void SpreadsheetGetCellContents_InvalidNameFromEmptySheet_InvalidNameException() {
+        Spreadsheet spreadsheet = new();
+        Assert.Throws<InvalidNameException>(() => spreadsheet.GetCellContents("kb"));
+    }
+
+
+    // - Tests that don't throw an exception -
     [TestMethod]
     public void SpreadsheetGetCellContents_CorrectNameFromEmptySheet_EmptyString() {
         Spreadsheet spreadsheet = new();
@@ -29,13 +37,6 @@ public class SpreadsheetGetCellContentsTests {
         spreadsheet.SetCellContents("A5", 20);
 
         Assert.AreEqual("", spreadsheet.GetCellContents("B5"));
-    }
-
-    // - Tests that don't throw an exception -
-    [TestMethod]
-    public void SpreadsheetGetCellContents_InvalidNameFromEmptySheet_InvalidNameException() {
-        Spreadsheet spreadsheet = new();
-        Assert.Throws<InvalidNameException>(() => spreadsheet.GetCellContents("kb"));
     }
 
 

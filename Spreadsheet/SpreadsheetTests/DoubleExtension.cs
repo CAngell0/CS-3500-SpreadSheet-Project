@@ -3,6 +3,10 @@
 
 namespace SpreadsheetTests;
 
+/// <summary>
+///     Extension class to add functionality to the 'double' type.
+///     Only used for unit tests for compare double values safely.
+/// </summary>
 public static class DoubleExtension {
     /// <summary>
     ///     Compares the current double with the target double to see if they are equal.

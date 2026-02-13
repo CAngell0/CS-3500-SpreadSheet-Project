@@ -8,12 +8,27 @@ using Formula;
 
 [TestClass]
 public class SpreadsheetSetCellContentsTests {
+    /// <summary> Helper method that creates a spreadsheet with only one cell. </summary>
+    /// <returns> 
+    ///     Newly initialized spreadshet with the following cells:
+    ///     <list type="bullet">
+    ///         <item>Name: "B7"  |  Value: (double) 20</item>
+    ///     </list> 
+    /// </returns>
     private static Spreadsheet CreateSingleCellSheet() {
         Spreadsheet sheet = new();
         sheet.SetCellContents("B7", 20);
         return sheet;
     }
 
+    /// <summary> 
+    ///     Helper method that creates a spreadsheet with only one cell. The cell that's in
+    ///     the spreadsheet is made with the two parameters. Only that cell will be inside 
+    ///     the spreadsheet. Assumes that the cell contents is either a string, double, or Formula.
+    /// </summary>
+    /// <param name="cellName"> The name of the cell </param>
+    /// <param name="contents"> The contents of the cell </param>
+    /// <returns> Newly initialized spreadshet with the provided cell </returns>
     private static Spreadsheet CreateSingleCellSheet(string cellName, object contents) {
         Spreadsheet sheet = new();
         if (contents is double doub) sheet.SetCellContents(cellName, doub);
@@ -22,6 +37,15 @@ public class SpreadsheetSetCellContentsTests {
         return sheet;
     }
 
+    /// <summary> Helper method that creates a spreadsheet with multiple cells inside it. </summary>
+    /// <returns>
+    ///     Newly initialized spreadshet with the following cells:
+    ///     <list type="bullet">
+    ///         <item>Name: "B7"  |  Value: (double) 20</item>
+    ///         <item>Name: "C5"  |  Value: (string) "Hello World"</item>
+    ///         <item>Name: "D9"  |  Value: (Formula) "56 * 70.3 + d6"</item>
+    ///     </list> 
+    /// </returns>
     private static Spreadsheet CreateMultiCellSheet() {
         Spreadsheet sheet = new();
         sheet.SetCellContents("B7", 20);
@@ -30,6 +54,21 @@ public class SpreadsheetSetCellContentsTests {
         return sheet;
     }
 
+    /// <summary>
+    ///     A helper method that creates a spreadsheet with multiple cells. Plus one provided
+    ///     in the parameters. Assumes that the cell contents is either a string, double, or Formula.
+    /// </summary>
+    /// <param name="additionalCellName"> Name of the additional cell that's added to the sheet </param>
+    /// <param name="contents"> Contents of the cell </param>
+    /// <returns>
+    ///     Newly initialized spreadshet with the following cells:
+    ///     <list type="bullet">
+    ///         <item>Name: "B7"  |  Value: (double) 20</item>
+    ///         <item>Name: "C5"  |  Value: (string) "Hello World"</item>
+    ///         <item>Name: "D9"  |  Value: (Formula) "56 * 70.3 + d6"</item>
+    ///         <item>Name: *additionalCellName*  |  Value: (*typeof(contents)*) *contents*</item>
+    ///     </list> 
+    /// </returns>
     private static Spreadsheet CreateMultiCellSheet(string additionalCellName, object contents) {
         Spreadsheet sheet = CreateMultiCellSheet();
         if (contents is double doub) sheet.SetCellContents(additionalCellName, doub);
@@ -37,6 +76,9 @@ public class SpreadsheetSetCellContentsTests {
         else if (contents is Formula formula) sheet.SetCellContents(additionalCellName, formula); 
         return sheet;
     }
+
+
+    
 
     // --- TESTS ON AN EMPTY SPREADSHEET INSTANCE ---
     // - Tests that throw an exception -
