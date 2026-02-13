@@ -332,13 +332,3 @@ public class Spreadsheet {
         }
     }
 }
-
-// X TODO - Add tests for circular exception
-// X TODO - Add automatic deletion of cells if set to ""
-// X TODO - Make automatically add dependencies when formula is added
-// X TODO - Add file headers
-// TODO - Comment rest of code
-// TODO - Ask questions about...
-//      - Should getting a valid, but empty cell return ""?
-//      - Are we allowed to use the Visit function outside of the GetCellsToRecalculate helper method?
-//      - Should I remove the circular exception throw in Visit since my algorithm checks before it gets added to the graph?
