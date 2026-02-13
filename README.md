@@ -5,7 +5,7 @@ Throughout my CS 3500 Software Practice I class, I will be developing and workin
 - Author:	  **Carson Angell**
 - Creation Date:  **Jan 15th 2026**
 - Project: **Spreadsheet Project**
-- Current Assignment: **PS4**
+- Current Assignment: **PS5**
 
-Currently, I am working on implementing the evaluate method to run formula calculations.
+We're now adding the ability to store and manipulate cell's contents.
 
