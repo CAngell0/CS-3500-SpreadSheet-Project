@@ -113,12 +113,10 @@ public class Spreadsheet {
     }
 
     /// <summary>
-    /// Constructs a spreadsheet using the saved data in the file referred to by
-    /// the given filename.
-    /// <see cref="Save(string)"/>
+    ///     Constructs a spreadsheet using the saved data in the file referred to bythe given filename. <see cref="Save(string)"/>
     /// </summary>
     /// <exception cref="SpreadsheetReadWriteException">
-    ///   Thrown if the file can not be loaded into a spreadsheet for any reason
+    ///     Thrown if the file can not be loaded into a spreadsheet for any reason
     /// </exception>
     /// <param name="filename">The path to the file containing the spreadsheet to load</param>
     public Spreadsheet(string filename) { //TODO - Implement this method
@@ -427,13 +425,13 @@ public class Spreadsheet {
     }
 
     /// <summary>
-    /// Saves this spreadsheet to a file
+    ///     Saves this spreadsheet to a file
     /// </summary>
     /// <param name="filename"> The name (with path) of the file to save to.</param>
     /// <exception cref="SpreadsheetReadWriteException">
-    ///   If there are any problems opening, writing, or closing the file,
-    ///   the method should throw a SpreadsheetReadWriteException with an
-    ///   explanatory message.
+    ///     If there are any problems opening, writing, or closing the file,
+    ///     the method should throw a SpreadsheetReadWriteException with an
+    ///      explanatory message.
     /// </exception>
     public void Save(string filename) { //TODO - Implement this method
         throw new NotImplementedException();
@@ -441,17 +439,17 @@ public class Spreadsheet {
 
 
     /// <summary>
-    ///   <para>
-    ///     Return the value of the named cell, as defined by
-    ///     <see cref="GetCellValue(string)"/>.
-    ///   </para>
+    ///     <para>
+    ///         Return the value of the named cell, as defined by
+    ///         <see cref="GetCellValue(string)"/>.
+    ///     </para>
     /// </summary>
     /// <param name="name"> The cell in question. </param>
     /// <returns>
-    ///   <see cref="GetCellValue(string)"/>
+    ///     <see cref="GetCellValue(string)"/>
     /// </returns>
     /// <exception cref="InvalidNameException">
-    ///   If the provided name is invalid, throws an InvalidNameException.
+    ///     If the provided name is invalid, throws an InvalidNameException.
     /// </exception>
     public object this[string name] { //TODO - Implement this method
         get { throw new NotImplementedException(); }
