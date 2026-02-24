@@ -391,8 +391,16 @@ public class DependencyGraphTests {
 
 
     /// <summary>
-    ///         Explain carefully what this code tests.
-    ///          Also, update in-line comments as appropriate.
+    ///     Performs hundreds of different operations on the DependencyGraph class. All including:
+    ///     <list type="bullet">
+    ///         <item>Adding Dependencies</item>
+    ///         <item>Removing Dependencies</item>
+    ///         <item>Removing Dependencies Again</item>
+    ///         <item>Removing Dependencies Again</item>
+    ///     </list>
+    ///     As the name suggests, it stress tests the DependencyGraph with hundreds of cells
+    ///     being added and removed from the data structure. And asserting that it's doing
+    ///     all of these operations correctly.
     /// </summary>
     [TestMethod]
     [Timeout(2000, CooperativeCancellation = true)]  // 2 second run time limit

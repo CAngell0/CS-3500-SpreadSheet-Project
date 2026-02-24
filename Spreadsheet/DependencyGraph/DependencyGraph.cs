@@ -59,7 +59,7 @@ public class DependencyGraph {
     ///     Does not contain dependent -> dependee relationships.
     /// </summary>
     private Dictionary<string, HashSet<string>> _dependentMap;
-     /// <summary>
+    /// <summary>
     ///     A map holding the dependent -> dependee relationships.
     ///     Does not contain dependee -> dependent relationships.
     /// </summary>

@@ -106,6 +106,9 @@ public class Spreadsheet {
     /// </summary>
     public bool Changed { get; private set; }
 
+    /// <summary>
+    ///     Constructs a spreadsheet with no cells stored in it.
+    /// </summary>
     public Spreadsheet() {
         _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();

@@ -1,6 +1,8 @@
 // <author> Carson Angell </author>
 // <date> 2/11/2026 </date>
 
+// Unit tests for the GetCellContents method in the Spreadsheet class.
+
 namespace SpreadsheetTests;
 
 using Spreadsheet;

@@ -59,9 +59,11 @@ public partial class Formula {
     private readonly List<string> _tokens;
     private readonly HashSet<string> _variables;
 
-    // These Regex member objects correspond to the patterns above
+    // Regex object the utilizes the VariableRegExPattern
     private readonly Regex _variableRegex;
+    // Regex object the utilizes the OperatorRegExPattern
     private readonly Regex _operatorRegex;
+    // Regex object the utilizes the LeadingZeroInVariableRegExPattern
     private readonly Regex _leadingZeroVarRegex;
 
     // Holds the canonical string version of the formula
