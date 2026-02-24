@@ -49,6 +49,6 @@ public class SpreadsheetConstructorTests {
     [TestMethod]
     public void SpreadsheetFileConstructor_ReadingNonExistentFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("/this/file/does/not/exist.json"));
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("./this/file/does/not/exist.json"));
     }
 }
