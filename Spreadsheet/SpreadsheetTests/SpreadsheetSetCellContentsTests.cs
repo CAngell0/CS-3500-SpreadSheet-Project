@@ -32,8 +32,8 @@ public class SpreadsheetSetCellContentsTests {
     private static Spreadsheet CreateSingleCellSheet(string cellName, object contents) {
         Spreadsheet sheet = new();
         if (contents is double doub) sheet.SetCellContents(cellName, doub);
-        else if (contents is string str) sheet.SetCellContents(cellName, str); 
-        else if (contents is Formula formula) sheet.SetCellContents(cellName, formula); 
+        else if (contents is string str) sheet.SetCellContents(cellName, str);
+        else if (contents is Formula formula) sheet.SetCellContents(cellName, formula);
         return sheet;
     }
 
@@ -72,13 +72,13 @@ public class SpreadsheetSetCellContentsTests {
     private static Spreadsheet CreateMultiCellSheet(string additionalCellName, object contents) {
         Spreadsheet sheet = CreateMultiCellSheet();
         if (contents is double doub) sheet.SetCellContents(additionalCellName, doub);
-        else if (contents is string str) sheet.SetCellContents(additionalCellName, str); 
-        else if (contents is Formula formula) sheet.SetCellContents(additionalCellName, formula); 
+        else if (contents is string str) sheet.SetCellContents(additionalCellName, str);
+        else if (contents is Formula formula) sheet.SetCellContents(additionalCellName, formula);
         return sheet;
     }
 
 
-    
+
 
     // --- TESTS ON AN EMPTY SPREADSHEET INSTANCE ---
     // - Tests that throw an exception -
@@ -97,6 +97,13 @@ public class SpreadsheetSetCellContentsTests {
 
 
     // - Tests on creating new cells -
+
+    public void SpreadsheetSetCellContents_SetCellWithEmptyString_EmptySheet() {
+        Spreadsheet sheet = new Spreadsheet();
+        sheet.SetCellContents("B1", "");
+        Assert.IsFalse(sheet.GetNamesOfAllNonemptyCells().Any());
+    }
+
     [TestMethod]
     public void SpreadsheetSetCellContents_NewDoubleCellOnEmptySheet_ReturnsDouble() {
         Spreadsheet spreadsheet = new();
@@ -394,8 +401,8 @@ public class SpreadsheetSetCellContentsTests {
     public void SpreadsheetSetCellContents_InvalidCellNameOnMultiCellSheet_InvalidNameException() {
         Spreadsheet spreadsheet = CreateMultiCellSheet();
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("H", 5));
-        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", "Test")); 
-        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("h5", new Formula("2+2"))); 
+        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("8", "Test"));
+        Assert.Throws<InvalidNameException>(() => spreadsheet.SetCellContents("h5", new Formula("2+2")));
     }
 
 

@@ -281,7 +281,9 @@ public class Spreadsheet {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
         // Adds the cell if it wasn't already there
-        if (!_cells.TryGetValue(name, out Cell? cell)) _cells.Add(name, new Cell(text));
+        if (!_cells.TryGetValue(name, out Cell? cell)) {
+            if (!text.Equals("")) _cells.Add(name, new Cell(text));
+        }
         // Sets the cells contents, updates dependees and removes the cell if it was set to an empty string
         else {
             if (cell.Contents is Formula) _dependencyGraph.ReplaceDependees(name, []);
