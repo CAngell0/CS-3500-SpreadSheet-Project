@@ -97,10 +97,30 @@ public class Spreadsheet {
     /// <summary> Regex object that corresponds to the regex pattern above. </summary>
     private readonly Regex _variableRegex;
 
+    /// <summary>
+    /// True if this spreadsheet has been changed since it was
+    /// created or saved (whichever happened most recently),
+    /// False otherwise.
+    /// </summary>
+    public bool Changed { get; private set; }
+
     public Spreadsheet() {
         _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
         _variableRegex = new Regex(VariableRegExPattern);
+    }
+
+    /// <summary>
+    /// Constructs a spreadsheet using the saved data in the file referred to by
+    /// the given filename.
+    /// <see cref="Save(string)"/>
+    /// </summary>
+    /// <exception cref="SpreadsheetReadWriteException">
+    ///   Thrown if the file can not be loaded into a spreadsheet for any reason
+    /// </exception>
+    /// <param name="filename">The path to the file containing the spreadsheet to load</param>
+    public Spreadsheet(string filename) { //TODO - Implement this method
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -134,6 +154,89 @@ public class Spreadsheet {
         else return "";
     }
 
+    /// <summary>
+    ///   <para>
+    ///     Return the value of the named cell.
+    ///   </para>
+    /// </summary>
+    /// <param name="name"> The cell in question. </param>
+    /// <returns>
+    ///   Returns the value (as opposed to the contents) of the named cell.  The return
+    ///   value should be either a string, a double, or a CS3500.Formula.FormulaError.
+    /// </returns>
+    /// <exception cref="InvalidNameException">
+    ///   If the provided name is invalid, throws an InvalidNameException.
+    /// </exception>
+    public object GetCellValue(string name) { //TODO - Implement this method
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Set the contents of the named cell to be the provided string
+    ///     which will either represent (1) a string, (2) a number, or
+    ///     (3) a formula (based on the prepended '=' character).
+    ///   </para>
+    ///   <para>
+    ///     Rules of parsing the input string:
+    ///   </para>
+    ///   <list type="bullet">
+    ///     <item>
+    ///       <para>
+    ///         If 'content' parses as a double, the contents of the named
+    ///         cell becomes that double.
+    ///       </para>
+    ///     </item>
+    ///     <item>
+    ///         If the string does not begin with an '=', the contents of the
+    ///         named cell becomes 'content'.
+    ///     </item>
+    ///     <item>
+    ///       <para>
+    ///         If 'content' begins with the character '=', an attempt is made
+    ///         to parse the remainder of content into a Formula f using the Formula
+    ///         constructor.  There are then three possibilities:
+    ///       </para>
+    ///       <list type="number">
+    ///         <item>
+    ///           If the remainder of content cannot be parsed into a Formula, a
+    ///           CS3500.Formula.FormulaFormatException is thrown.
+    ///         </item>
+    ///         <item>
+    ///           Otherwise, if changing the contents of the named cell to be f
+    ///           would cause a circular dependency, a CircularException is thrown,
+    ///           and no change is made to the spreadsheet.
+    ///         </item>
+    ///         <item>
+    ///           Otherwise, the contents of the named cell becomes f.
+    ///         </item>
+    ///       </list>
+    ///     </item>
+    ///   </list>
+    /// </summary>
+    /// <returns>
+    ///   <para>
+    ///     The method returns a list consisting of the name plus the names
+    ///     of all other cells whose value depends, directly or indirectly,
+    ///     on the named cell. The order of the list should be any order
+    ///     such that if cells are re-evaluated in that order, their dependencies
+    ///     are satisfied by the time they are evaluated.
+    ///   </para>
+    ///   <example>
+    ///     For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
+    ///     list {A1, B1, C1} is returned.
+    ///   </example>
+    /// </returns>
+    /// <exception cref="InvalidNameException">
+    ///     If name is invalid, throws an InvalidNameException.
+    /// </exception>
+    /// <exception cref="CircularException">
+    ///     If a formula would result in a circular dependency, throws CircularException.
+    /// </exception>
+    public IList<string> SetContentsOfCell(string name, string content) { //TODO - Implement this method
+        throw new NotImplementedException();
+    }
+
     /// <summary> Set the contents of the named cell to the given number. </summary>
     /// <exception cref="InvalidNameException"> If the name is invalid, throw an InvalidNameException. </exception>
     /// <param name="name"> The name of the cell. </param>
@@ -150,7 +253,7 @@ public class Spreadsheet {
     ///     the overall spreadsheet will be correctly updated.
     ///   </para>
     /// </returns>
-    public IList<string> SetCellContents(string name, double number) {
+    private IList<string> SetCellContents(string name, double number) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
         // Adds the cell if it wasn't already there
@@ -170,7 +273,7 @@ public class Spreadsheet {
     /// <param name="name"> The name of the cell. </param>
     /// <param name="text"> The new contents of the cell. </param>
     /// <returns> The same list as defined in <see cref="SetCellContents(string, double)"/>. </returns>
-    public IList<string> SetCellContents(string name, string text) {
+    private IList<string> SetCellContents(string name, string text) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
         // Adds the cell if it wasn't already there
@@ -203,7 +306,7 @@ public class Spreadsheet {
     /// <returns>
     ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
     /// </returns>
-    public IList<string> SetCellContents(string name, Formula formula) {
+    private IList<string> SetCellContents(string name, Formula formula) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
         // Perfroms a BFS traversal (same as the GetCellsToRecalculate method)
@@ -322,6 +425,38 @@ public class Spreadsheet {
     }
 
     /// <summary>
+    /// Saves this spreadsheet to a file
+    /// </summary>
+    /// <param name="filename"> The name (with path) of the file to save to.</param>
+    /// <exception cref="SpreadsheetReadWriteException">
+    ///   If there are any problems opening, writing, or closing the file,
+    ///   the method should throw a SpreadsheetReadWriteException with an
+    ///   explanatory message.
+    /// </exception>
+    public void Save(string filename) { //TODO - Implement this method
+        throw new NotImplementedException();
+    }
+
+
+    /// <summary>
+    ///   <para>
+    ///     Return the value of the named cell, as defined by
+    ///     <see cref="GetCellValue(string)"/>.
+    ///   </para>
+    /// </summary>
+    /// <param name="name"> The cell in question. </param>
+    /// <returns>
+    ///   <see cref="GetCellValue(string)"/>
+    /// </returns>
+    /// <exception cref="InvalidNameException">
+    ///   If the provided name is invalid, throws an InvalidNameException.
+    /// </exception>
+    public object this[string name] { //TODO - Implement this method
+        get { throw new NotImplementedException(); }
+    }
+
+
+    /// <summary>
     ///     Stored in the spreadsheet dictionaries as its keys. Represents a singular cell
     ///     with contents in it.
     /// </summary>
@@ -331,4 +466,20 @@ public class Spreadsheet {
             Contents = contents;
         }
     }
+}
+
+/// <summary>
+/// <para>
+///   Thrown to indicate that a read or write attempt has failed with
+///   an expected error message informing the user of what went wrong.
+/// </para>
+/// </summary>
+public class SpreadsheetReadWriteException : Exception {
+    /// <summary>
+    ///   <para>
+    ///     Creates the exception with a message defining what went wrong.
+    ///   </para>
+    /// </summary>
+    /// <param name="msg"> An informative message to the user. </param>
+    public SpreadsheetReadWriteException(string msg) : base(msg) { }
 }
