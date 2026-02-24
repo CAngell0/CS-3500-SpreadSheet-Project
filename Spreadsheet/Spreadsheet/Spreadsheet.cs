@@ -110,6 +110,7 @@ public class Spreadsheet {
         _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
         _variableRegex = new Regex(VariableRegExPattern);
+        Changed = false;
     }
 
     /// <summary>
