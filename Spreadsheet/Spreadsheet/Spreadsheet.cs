@@ -101,6 +101,8 @@ public class Spreadsheet {
     /// <summary> Regex object that corresponds to the regex pattern above. </summary>
     private readonly Regex _variableRegex;
 
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
+
     /// <summary>
     /// True if this spreadsheet has been changed since it was
     /// created or saved (whichever happened most recently),
@@ -115,6 +117,7 @@ public class Spreadsheet {
         _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
         _variableRegex = new Regex(VariableRegExPattern);
+        _jsonSerializerOptions = new() { WriteIndented = true };
         Changed = false;
     }
 
@@ -129,6 +132,7 @@ public class Spreadsheet {
         _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
         _variableRegex = new Regex(VariableRegExPattern);
+        _jsonSerializerOptions = new() { WriteIndented = true };
         Changed = false;
 
         StringBuilder builder = new();
@@ -159,6 +163,36 @@ public class Spreadsheet {
     }
 
     /// <summary>
+    ///     Saves this spreadsheet to a file
+    /// </summary>
+    /// <param name="filename"> The name (with path) of the file to save to.</param>
+    /// <exception cref="SpreadsheetReadWriteException">
+    ///     If there are any problems opening, writing, or closing the file,
+    ///     the method should throw a SpreadsheetReadWriteException with an
+    ///      explanatory message.
+    /// </exception>
+    public void Save(string filename) { //TODO - Implement this method
+        // Convert current cell data into the model data for JSON serialization
+        Dictionary<string, CellJSON> cellsJSON = [];
+        foreach (KeyValuePair<string, Cell> cell in _cells) {
+            if (cell.Value.Contents is Formula formula) cellsJSON.Add(cell.Key, new CellJSON('=' + formula.ToString()));
+            else if (cell.Value.Contents is double doub) cellsJSON.Add(cell.Key, new CellJSON(doub.ToString()));
+            else cellsJSON.Add(cell.Key, new CellJSON((string) cell.Value.Contents));
+        }
+        SheetJSON jsonData = new(cellsJSON);
+
+        // Write the JSON to the file
+        try {
+            using FileStream writer = File.Create(filename);
+            JsonSerializer.Serialize(writer, jsonData, _jsonSerializerOptions);
+        }
+        catch (DirectoryNotFoundException) { throw new SpreadsheetReadWriteException($"Directory for '${filename}' was not found. Please ensure it exists."); }
+        catch (UnauthorizedAccessException) { throw new SpreadsheetReadWriteException($"The spreadsheet does not have sufficietnt access to write to this file. '{filename}'"); }
+
+        catch (Exception err) { throw new SpreadsheetReadWriteException($"An unexpected error occurred: {err.Message}"); }
+    }
+
+    /// <summary>
     ///   Provides a copy of the normalized names of all of the cells in the spreadsheet
     ///   that contain information (i.e., non-empty cells).
     /// </summary>
@@ -167,43 +201,6 @@ public class Spreadsheet {
     /// </returns>
     public ISet<string> GetNamesOfAllNonemptyCells() {
         return _cells.Keys.ToHashSet();
-    }
-
-    /// <summary>
-    ///   Returns the contents (as opposed to the value) of the named cell.
-    /// </summary>
-    ///
-    /// <exception cref="InvalidNameException">
-    ///   Thrown if the name is invalid.
-    /// </exception>
-    ///
-    /// <param name="name">The name of the spreadsheet cell to query. </param>
-    /// <returns>
-    ///   The contents as either a string, a double, or a Formula.
-    ///   See the class header summary.
-    /// </returns>
-    public object GetCellContents(string name) {
-        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
-
-        if (_cells.TryGetValue(name, out Cell? cell)) return cell.Contents;
-        else return "";
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Return the value of the named cell.
-    ///   </para>
-    /// </summary>
-    /// <param name="name"> The cell in question. </param>
-    /// <returns>
-    ///   Returns the value (as opposed to the contents) of the named cell.  The return
-    ///   value should be either a string, a double, or a CS3500.Formula.FormulaError.
-    /// </returns>
-    /// <exception cref="InvalidNameException">
-    ///   If the provided name is invalid, throws an InvalidNameException.
-    /// </exception>
-    public object GetCellValue(string name) { //TODO - Implement this method
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -460,15 +457,39 @@ public class Spreadsheet {
     }
 
     /// <summary>
-    ///     Saves this spreadsheet to a file
+    ///   Returns the contents (as opposed to the value) of the named cell.
     /// </summary>
-    /// <param name="filename"> The name (with path) of the file to save to.</param>
-    /// <exception cref="SpreadsheetReadWriteException">
-    ///     If there are any problems opening, writing, or closing the file,
-    ///     the method should throw a SpreadsheetReadWriteException with an
-    ///      explanatory message.
+    ///
+    /// <exception cref="InvalidNameException">
+    ///   Thrown if the name is invalid.
     /// </exception>
-    public void Save(string filename) { //TODO - Implement this method
+    ///
+    /// <param name="name">The name of the spreadsheet cell to query. </param>
+    /// <returns>
+    ///   The contents as either a string, a double, or a Formula.
+    ///   See the class header summary.
+    /// </returns>
+    public object GetCellContents(string name) {
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+
+        if (_cells.TryGetValue(name, out Cell? cell)) return cell.Contents;
+        else return "";
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Return the value of the named cell.
+    ///   </para>
+    /// </summary>
+    /// <param name="name"> The cell in question. </param>
+    /// <returns>
+    ///   Returns the value (as opposed to the contents) of the named cell.  The return
+    ///   value should be either a string, a double, or a CS3500.Formula.FormulaError.
+    /// </returns>
+    /// <exception cref="InvalidNameException">
+    ///   If the provided name is invalid, throws an InvalidNameException.
+    /// </exception>
+    public object GetCellValue(string name) { //TODO - Implement this method
         throw new NotImplementedException();
     }
 

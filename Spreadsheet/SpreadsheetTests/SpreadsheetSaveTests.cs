@@ -4,42 +4,46 @@ using Spreadsheet;
 using Formula;
 
 using System.IO;
+using Spreadsheet.Model;
+
+using System.Text.Json;
 
 [TestClass]
 public class SpreadsheetSaveTests {
-    private readonly string TestingFilePath = "./json/Output.json";
+    private static readonly string TestingFileName = "testSheet.json";
 
     [TestMethod]
+    [DoNotParallelize]
     public void SpreadsheetSaveMethod_BuildAndSaveSpreadsheet_SavesCorrectly() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "56");
         sheet.SetContentsOfCell("B2", "=A1 * 2");
         sheet.SetContentsOfCell("C3", "Hello World!");
 
-        sheet.Save(TestingFilePath);
-        Assert.IsTrue(File.Exists(TestingFilePath));
+        sheet.Save(TestingFileName);
+        Assert.IsTrue(File.Exists(TestingFileName));
 
-        Spreadsheet retrievedSheet = new(TestingFilePath);
+        Spreadsheet retrievedSheet = new(TestingFileName);
         Assert.IsNotNull(retrievedSheet);
         Assert.AreEqual(56, (double) retrievedSheet.GetCellContents("A1"));
         Assert.AreEqual(new Formula("A1 * 2"), (Formula) retrievedSheet.GetCellContents("B2"));
         Assert.AreEqual("Hello World!", (string) retrievedSheet.GetCellContents("C3"));
-
-        File.Delete(TestingFilePath);
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void SpreadsheetSaveMethod_SaveEmptySpreadsheet_SavesCorrectly() {
         Spreadsheet sheet = new();
-        sheet.Save(TestingFilePath);
+        sheet.Save(TestingFileName);
 
-        Assert.IsTrue(File.Exists(TestingFilePath));
+        Assert.IsTrue(File.Exists(TestingFileName));
 
-        string expectedJSON = "{\"Cells\":{}}";
-        string retrievedJSON = File.ReadAllText(TestingFilePath);
-        Assert.AreEqual(expectedJSON, retrievedJSON);
+        string retrievedJSONString = File.ReadAllText(TestingFileName);
+        SheetJSON? retrievedJSON = JsonSerializer.Deserialize<SheetJSON>(retrievedJSONString);
 
-        File.Delete(TestingFilePath);
+        Assert.IsNotNull(retrievedJSON);
+        Assert.IsNotNull(retrievedJSON.Cells);
+        Assert.IsEmpty(retrievedJSON.Cells);
     }
 
     [TestMethod]
