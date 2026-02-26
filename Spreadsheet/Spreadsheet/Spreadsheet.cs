@@ -13,6 +13,7 @@ namespace Spreadsheet;
 
 using Formula;
 using DependencyGraph;
+using global::Spreadsheet.Model;
 
 using System.Text.RegularExpressions;
 using System.Text.Json;
@@ -457,18 +458,6 @@ public class Spreadsheet {
     /// </exception>
     public object this[string name] { //TODO - Implement this method
         get { throw new NotImplementedException(); }
-    }
-
-
-    /// <summary>
-    ///     Stored in the spreadsheet dictionaries as its keys. Represents a singular cell
-    ///     with contents in it.
-    /// </summary>
-    private class Cell {
-        public object Contents { get; set; }
-        public Cell(object contents) {
-            Contents = contents;
-        }
     }
 }
 
