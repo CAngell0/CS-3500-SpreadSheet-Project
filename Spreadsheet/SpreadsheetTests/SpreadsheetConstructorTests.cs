@@ -3,8 +3,6 @@ namespace SpreadsheetTests;
 using Spreadsheet;
 using Formula;
 
-//TODO - Tests should not rely on existing files. Make new ones with text and then test them.
-//TODO - Do not use sub directories, save the file in the current directory
 //TODO - Add stress test or two
 
 [TestClass]
@@ -59,9 +57,4 @@ public class SpreadsheetConstructorTests {
         Spreadsheet sheet;
         Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("/this/file/does/not/exist.json"));
     }
-
-    // [AssemblyCleanup]
-    // public static void AssemblyCleanup() {
-    //     File.Delete(TestingFileName);
-    // }
 }
