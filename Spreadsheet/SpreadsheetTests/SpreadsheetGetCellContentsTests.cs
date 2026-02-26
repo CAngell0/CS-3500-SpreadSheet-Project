@@ -36,7 +36,7 @@ public class SpreadsheetGetCellContentsTests {
     [TestMethod]
     public void SpreadsheetGetCellContents_IncorrectNameFromSingleCellSheet_EmptyString() {
         Spreadsheet spreadsheet = new();
-        spreadsheet.SetCellContents("A5", 20);
+        spreadsheet.SetContentsOfCell("A5", "20");
 
         Assert.AreEqual("", spreadsheet.GetCellContents("B5"));
     }
@@ -48,7 +48,7 @@ public class SpreadsheetGetCellContentsTests {
     [TestMethod]
     public void SpreadsheetGetCellContents_DoubleCellFromSingleCellSheet_CorrectValue() {
         Spreadsheet spreadsheet = new();
-        spreadsheet.SetCellContents("A5", 20);
+        spreadsheet.SetContentsOfCell("A5", "20");
         object result = spreadsheet.GetCellContents("A5");
 
         Assert.IsNotNull(result);
@@ -59,7 +59,7 @@ public class SpreadsheetGetCellContentsTests {
     [TestMethod]
     public void SpreadsheetGetCellContents_StringCellFromSingleCellSheet_CorrectValue() {
         Spreadsheet spreadsheet = new();
-        spreadsheet.SetCellContents("A5", "Hello World");
+        spreadsheet.SetContentsOfCell("A5", "Hello World");
         object result = spreadsheet.GetCellContents("A5");
 
         Assert.IsNotNull(result);
@@ -70,7 +70,7 @@ public class SpreadsheetGetCellContentsTests {
     [TestMethod]
     public void SpreadsheetGetCellContents_FormulaCellFromSingleCellSheet_CorrectValue() {
         Spreadsheet spreadsheet = new();
-        spreadsheet.SetCellContents("A5", new Formula("63 + 2e3"));
+        spreadsheet.SetContentsOfCell("A5", "=63 + 2e3");
         object result = spreadsheet.GetCellContents("A5");
 
         Formula expected = new("63+2000");

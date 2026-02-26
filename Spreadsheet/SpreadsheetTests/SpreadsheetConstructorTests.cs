@@ -9,9 +9,10 @@ using Formula;
 
 [TestClass]
 public class SpreadsheetConstructorTests {
-    private readonly string CorrectSpreadsheetPath = "./json/CorrectSpreadsheet.json";
-    private readonly string CyclicalSpreadsheetPath = "./json/CorrectSpreadsheet.json";
-    private readonly string InvalidNameSpreadsheetPath = "./json/CorrectSpreadsheet.json";
+    private static readonly string CorrectSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"}}}";
+    private static readonly string CyclicalSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"=B3 * 2 + G8\"},\"F6\":{\"StringForm\":\"=E6 - 2\"},\"G7\":{\"StringForm\":\"=F7 / 10\"}}}";
+    private static readonly string InvalidNameSheetJSON = "{\"Cells\":{\"8\":{\"StringForm\":\"=5 * 8\"},\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"},\"G\":{\"StringForm\":\"62\"}}}";
+    private static readonly string TestingFileName = "testSheet.json";
 
     [TestMethod]
     public void SpreadsheetEmptyConstructor_InitializingSpreadsheet_IsEmpty() {
@@ -23,7 +24,8 @@ public class SpreadsheetConstructorTests {
 
     [TestMethod]
     public void SpreadsheetFileConstructor_ReadingCorrectFile_DataRetrieved() {
-        Spreadsheet sheet = new(CorrectSpreadsheetPath);
+        File.WriteAllText(TestingFileName, CorrectSheetJSON);
+        Spreadsheet sheet = new(TestingFileName);
 
         Dictionary<string, object> expectedContents = [];
         expectedContents["A1"] = 5.0;
@@ -41,18 +43,25 @@ public class SpreadsheetConstructorTests {
     [TestMethod]
     public void SpreadsheetFileConstructor_ReadingCyclicalFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(CyclicalSpreadsheetPath));
+        File.WriteAllText(TestingFileName, CyclicalSheetJSON);
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(TestingFileName));
     }
 
     [TestMethod]
     public void SpreadsheetFileConstructor_ReadingInvalidNameFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(InvalidNameSpreadsheetPath));
+        File.WriteAllText(TestingFileName, InvalidNameSheetJSON);
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(TestingFileName));
     }
 
     [TestMethod]
     public void SpreadsheetFileConstructor_ReadingNonExistentFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("./this/file/does/not/exist.json"));
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("/this/file/does/not/exist.json"));
     }
+
+    // [AssemblyCleanup]
+    // public static void AssemblyCleanup() {
+    //     File.Delete(TestingFileName);
+    // }
 }
