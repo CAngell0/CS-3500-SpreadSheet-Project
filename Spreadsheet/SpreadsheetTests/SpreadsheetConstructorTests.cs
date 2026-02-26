@@ -8,7 +8,7 @@ using Formula;
 [TestClass]
 public class SpreadsheetConstructorTests {
     private static readonly string CorrectSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"}}}";
-    private static readonly string CyclicalSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"=B3 * 2 + G8\"},\"F6\":{\"StringForm\":\"=E6 - 2\"},\"G7\":{\"StringForm\":\"=F7 / 10\"}}}";
+    private static readonly string CyclicalSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"=B2 * 2 + G7\"},\"F6\":{\"StringForm\":\"=E5 - 2\"},\"G7\":{\"StringForm\":\"=F6 / 10\"}}}";
     private static readonly string InvalidNameSheetJSON = "{\"Cells\":{\"8\":{\"StringForm\":\"=5 * 8\"},\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"},\"G\":{\"StringForm\":\"62\"}}}";
     private static readonly string TestingFileName = "testSheet.json";
 
@@ -21,7 +21,9 @@ public class SpreadsheetConstructorTests {
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void SpreadsheetFileConstructor_ReadingCorrectFile_DataRetrieved() {
+        File.Delete(TestingFileName);
         File.WriteAllText(TestingFileName, CorrectSheetJSON);
         Spreadsheet sheet = new(TestingFileName);
 
@@ -39,15 +41,19 @@ public class SpreadsheetConstructorTests {
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void SpreadsheetFileConstructor_ReadingCyclicalFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
+        File.Delete(TestingFileName);
         File.WriteAllText(TestingFileName, CyclicalSheetJSON);
         Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(TestingFileName));
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void SpreadsheetFileConstructor_ReadingInvalidNameFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
+        File.Delete(TestingFileName);
         File.WriteAllText(TestingFileName, InvalidNameSheetJSON);
         Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(TestingFileName));
     }

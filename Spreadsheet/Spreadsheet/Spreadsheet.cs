@@ -17,6 +17,7 @@ using global::Spreadsheet.Model;
 
 using System.Text.RegularExpressions;
 using System.Text.Json;
+using System.Text;
 
 /// <summary>
 ///   <para>
@@ -125,7 +126,36 @@ public class Spreadsheet {
     /// </exception>
     /// <param name="filename">The path to the file containing the spreadsheet to load</param>
     public Spreadsheet(string filename) { //TODO - Implement this method
-        throw new NotImplementedException();
+        _cells = new Dictionary<string, Cell>();
+        _dependencyGraph = new DependencyGraph();
+        _variableRegex = new Regex(VariableRegExPattern);
+        Changed = false;
+
+        StringBuilder builder = new();
+
+        try {
+            // Read the raw file data
+            using StreamReader reader = new(filename);
+            string? line;
+            while ((line = reader.ReadLine()) != null) builder.Append(line);
+
+            // Deserialize it and check for nulls or incorrect JSON structure
+            SheetJSON? deserialized = JsonSerializer.Deserialize<SheetJSON>(builder.ToString()) ?? throw new SpreadsheetReadWriteException("Invalid JSON structure in spreadsheet data");
+            if (deserialized.Cells == null) throw new SpreadsheetReadWriteException("Invalid JSON structure in spreadsheet data");
+
+            // Load the data into the spreadsheet
+            foreach (KeyValuePair<string, CellJSON> cellJSON in deserialized.Cells) SetContentsOfCell(cellJSON.Key, cellJSON.Value.StringForm);
+        }
+        // Catch file reading errors
+        catch (ArgumentException) { throw new SpreadsheetReadWriteException($"File path '${filename}' contains invalid characters."); }
+        catch (FileNotFoundException) { throw new SpreadsheetReadWriteException($"File '${filename}' was not found. Please ensure it exists."); }
+        catch (UnauthorizedAccessException) { throw new SpreadsheetReadWriteException($"The spreadsheet does not have access to this file. '{filename}'"); }
+
+        catch (JsonException err) { throw new SpreadsheetReadWriteException($"Error deserializing spreadsheet data JSON: {err.Message}"); }
+
+        // Catch any other errors
+        catch (SpreadsheetReadWriteException) { throw; }
+        catch (Exception err) { throw new SpreadsheetReadWriteException($"An unexpected error occurred: {err.Message}"); }
     }
 
     /// <summary>
@@ -238,7 +268,7 @@ public class Spreadsheet {
     /// <exception cref="CircularException">
     ///     If a formula would result in a circular dependency, throws CircularException.
     /// </exception>
-    public IList<string> SetContentsOfCell(string name, string content) { //TODO - Implement this method
+    public IList<string> SetContentsOfCell(string name, string content) { //TODO - Implement this method to evaluate the cell values
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
         if (Double.TryParse(content, out double contentAsDouble)) return SetCellContents(name, contentAsDouble);
