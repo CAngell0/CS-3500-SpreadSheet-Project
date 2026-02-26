@@ -42,7 +42,7 @@ public class SpreadsheetGetCellValueTests {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "=10 * 3");
         sheet.SetContentsOfCell("B2", "=20 / 2");
-        sheet.SetContentsOfCell("C3", "3 + 7");
+        sheet.SetContentsOfCell("C3", "=3 + 7");
         sheet.SetContentsOfCell("D4", "=A1 + B2 - C3");
         Assert.AreEqual(30, (double) sheet.GetCellValue("D4"));
     }
@@ -74,7 +74,7 @@ public class SpreadsheetGetCellValueTests {
         Assert.AreEqual(30, (double) sheet.GetCellValue("A1"));
         Assert.AreEqual(20, (double) sheet.GetCellValue("B2"));
         Assert.AreEqual(35, (double) sheet.GetCellValue("D4"));
-        Assert.AreEqual(350, (double) sheet.GetCellValue("C3"));
+        Assert.AreEqual(-330, (double) sheet.GetCellValue("C3"));
         Assert.AreEqual(17.5, (double) sheet.GetCellValue("F5"));
     }
 
@@ -92,7 +92,7 @@ public class SpreadsheetGetCellValueTests {
     public void SpreadsheetGetCellValue_CellWithScientificDoubleValue_StringReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "2e3");
-        Assert.AreEqual(200, (double) sheet.GetCellValue("A1"));
+        Assert.AreEqual(2000, (double) sheet.GetCellValue("A1"));
     }
 
 

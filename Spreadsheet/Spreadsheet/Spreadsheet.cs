@@ -100,8 +100,16 @@ public class Spreadsheet {
     private const string VariableRegExPattern = @"^[A-Z]+\d+$";
     /// <summary> Regex object that corresponds to the regex pattern above. </summary>
     private readonly Regex _variableRegex;
-
+    /// <summary> 
+    ///     Options for the JSON serialization when writing spreadsheet files. Right now
+    ///     it's set to write with indentation.
+    /// </summary>
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    /// <summary>
+    ///     Lookup delegate that takes the value from the _cells dictionary and returns
+    ///     it for re-evaluation in SetContentsOfCell.
+    /// </summary>
+    private readonly Lookup _lookup;
 
     /// <summary>
     /// True if this spreadsheet has been changed since it was
@@ -119,6 +127,16 @@ public class Spreadsheet {
         _variableRegex = new Regex(VariableRegExPattern);
         _jsonSerializerOptions = new() { WriteIndented = true };
         Changed = false;
+
+        // Lookup delegate that takes the value from the _cells dictionary
+        _lookup = (name) => {
+            if (!_cells.TryGetValue(name, out Cell? cell)) throw new ArgumentException($"Invalid variable name, no value assigned to '{name}'");
+            else {
+                if (cell.Value is string) throw new ArgumentException($"Cannot apply numeric operation to a cell with text, cell: '{name}'");
+                else if (cell.Value is FormulaError) throw new ArgumentException($"Downstream formula error, please resolve the original cell: ");
+                else return (double) cell.Value;
+            }
+        };
     }
 
     /// <summary>
@@ -128,13 +146,7 @@ public class Spreadsheet {
     ///     Thrown if the file can not be loaded into a spreadsheet for any reason
     /// </exception>
     /// <param name="filename">The path to the file containing the spreadsheet to load</param>
-    public Spreadsheet(string filename) { //TODO - Implement this method
-        _cells = new Dictionary<string, Cell>();
-        _dependencyGraph = new DependencyGraph();
-        _variableRegex = new Regex(VariableRegExPattern);
-        _jsonSerializerOptions = new() { WriteIndented = true };
-        Changed = false;
-
+    public Spreadsheet(string filename) : this() {
         StringBuilder builder = new();
 
         try {
@@ -171,7 +183,7 @@ public class Spreadsheet {
     ///     the method should throw a SpreadsheetReadWriteException with an
     ///      explanatory message.
     /// </exception>
-    public void Save(string filename) { //TODO - Implement this method
+    public void Save(string filename) {
         // Convert current cell data into the model data for JSON serialization
         Dictionary<string, CellJSON> cellsJSON = [];
         foreach (KeyValuePair<string, Cell> cell in _cells) {
@@ -265,12 +277,25 @@ public class Spreadsheet {
     /// <exception cref="CircularException">
     ///     If a formula would result in a circular dependency, throws CircularException.
     /// </exception>
-    public IList<string> SetContentsOfCell(string name, string content) { //TODO - Implement this method to evaluate the cell values
+    public IList<string> SetContentsOfCell(string name, string content) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (Double.TryParse(content, out double contentAsDouble)) return SetCellContents(name, contentAsDouble);
-        else if (!content.Equals("") && content.First() == '=') return SetCellContents(name, new Formula(content[1..]));
-        else return SetCellContents(name, content);
+        List<string> cellDependents;
+
+        // Sets the cell' contents based on what kind of content it is
+        if (Double.TryParse(content, out double contentAsDouble)) cellDependents = (List<string>) SetCellContents(name, contentAsDouble);
+        else if (!content.Equals("") && content.First() == '=') cellDependents = (List<string>) SetCellContents(name, new Formula(content[1..]));
+        else cellDependents = (List<string>) SetCellContents(name, content);
+
+        // Re-evaluates dependent cells.
+        foreach (string dependent in cellDependents) {
+            Cell cell = _cells.GetValueOrDefault(dependent) ?? new Cell("");
+
+            if (cell.Contents is not Formula) cell.Value = cell.Contents;
+            else cell.Value = ((Formula) cell.Contents).Evaluate(_lookup);
+        }
+
+        return cellDependents;
     }
 
     /// <summary> Set the contents of the named cell to the given number. </summary>
@@ -489,8 +514,10 @@ public class Spreadsheet {
     /// <exception cref="InvalidNameException">
     ///   If the provided name is invalid, throws an InvalidNameException.
     /// </exception>
-    public object GetCellValue(string name) { //TODO - Implement this method
-        throw new NotImplementedException();
+    public object GetCellValue(string name) { //TODO - Ask what the default value ofa  cell should be if its empty
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+        if (_cells.TryGetValue(name, out Cell? cell)) return cell.Value;
+        else return "";
     }
 
 
@@ -508,7 +535,7 @@ public class Spreadsheet {
     ///     If the provided name is invalid, throws an InvalidNameException.
     /// </exception>
     public object this[string name] { //TODO - Implement this method
-        get { throw new NotImplementedException(); }
+        get { return GetCellValue(name); }
     }
 }
 

@@ -332,7 +332,7 @@ public partial class Formula {
                 double value;
                 if (TokenIsVariable(token)) {
                     try { value = lookup(token); }
-                    catch (ArgumentException) { return new FormulaError($"Invalid variable name, no value assigned '{token}'"); }
+                    catch (ArgumentException err) { return new FormulaError(err.Message); }
                 } 
                 else _ = Double.TryParse(token, out value);
 
