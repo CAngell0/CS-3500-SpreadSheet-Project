@@ -238,7 +238,11 @@ public class Spreadsheet {
     ///     If a formula would result in a circular dependency, throws CircularException.
     /// </exception>
     public IList<string> SetContentsOfCell(string name, string content) { //TODO - Implement this method
-        throw new NotImplementedException();
+        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+
+        if (Double.TryParse(content, out double contentAsDouble)) return SetCellContents(name, contentAsDouble);
+        else if (!content.Equals("") && content.First() == '=') return SetCellContents(name, new Formula(content[1..]));
+        else return SetCellContents(name, content);
     }
 
     /// <summary> Set the contents of the named cell to the given number. </summary>
@@ -258,8 +262,6 @@ public class Spreadsheet {
     ///   </para>
     /// </returns>
     private IList<string> SetCellContents(string name, double number) {
-        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
-
         // Adds the cell if it wasn't already there
         if (!_cells.TryGetValue(name, out Cell? cell)) _cells.Add(name, new Cell(number));
 
@@ -278,8 +280,6 @@ public class Spreadsheet {
     /// <param name="text"> The new contents of the cell. </param>
     /// <returns> The same list as defined in <see cref="SetCellContents(string, double)"/>. </returns>
     private IList<string> SetCellContents(string name, string text) {
-        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
-
         // Adds the cell if it wasn't already there
         if (!_cells.TryGetValue(name, out Cell? cell)) {
             if (!text.Equals("")) _cells.Add(name, new Cell(text));
@@ -313,8 +313,6 @@ public class Spreadsheet {
     ///   The same list as defined in <see cref="SetCellContents(string, double)"/>.
     /// </returns>
     private IList<string> SetCellContents(string name, Formula formula) {
-        if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
-
         // Perfroms a BFS traversal (same as the GetCellsToRecalculate method)
         // I needed the visited set in order to check for circular dependencies. That's why I couldn't use GetCellsToRecalculate.
         LinkedList<string> changed = [];
