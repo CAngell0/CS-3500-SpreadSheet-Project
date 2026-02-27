@@ -18,6 +18,7 @@ using global::Spreadsheet.Model;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text;
+using System.Text.Encodings.Web;
 
 /// <summary>
 ///   <para>
@@ -102,7 +103,7 @@ public class Spreadsheet {
     private readonly Regex _variableRegex;
     /// <summary> 
     ///     Options for the JSON serialization when writing spreadsheet files. Right now
-    ///     it's set to write with indentation.
+    ///     it's set to write with indentation and not encode unicode characters.
     /// </summary>
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     /// <summary>
@@ -125,7 +126,10 @@ public class Spreadsheet {
         _cells = new Dictionary<string, Cell>();
         _dependencyGraph = new DependencyGraph();
         _variableRegex = new Regex(VariableRegExPattern);
-        _jsonSerializerOptions = new() { WriteIndented = true };
+        _jsonSerializerOptions = new() { 
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
+        };
         Changed = false;
 
         // Lookup delegate that takes the value from the _cells dictionary
@@ -199,7 +203,7 @@ public class Spreadsheet {
             JsonSerializer.Serialize(writer, jsonData, _jsonSerializerOptions);
         }
         catch (DirectoryNotFoundException) { throw new SpreadsheetReadWriteException($"Directory for '${filename}' was not found. Please ensure it exists."); }
-        catch (UnauthorizedAccessException) { throw new SpreadsheetReadWriteException($"The spreadsheet does not have sufficietnt access to write to this file. '{filename}'"); }
+        catch (UnauthorizedAccessException) { throw new SpreadsheetReadWriteException($"The spreadsheet does not have sufficient access to write to this file. '{filename}'"); }
 
         catch (Exception err) { throw new SpreadsheetReadWriteException($"An unexpected error occurred: {err.Message}"); }
     }
@@ -534,7 +538,7 @@ public class Spreadsheet {
     /// <exception cref="InvalidNameException">
     ///     If the provided name is invalid, throws an InvalidNameException.
     /// </exception>
-    public object this[string name] { //TODO - Implement this method
+    public object this[string name] {
         get { return GetCellValue(name); }
     }
 }
