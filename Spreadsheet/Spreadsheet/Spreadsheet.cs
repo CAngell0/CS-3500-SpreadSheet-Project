@@ -137,7 +137,7 @@ public class Spreadsheet {
             if (!_cells.TryGetValue(name, out Cell? cell)) throw new ArgumentException($"Invalid variable name, no value assigned to '{name}'");
             else {
                 if (cell.Value is string) throw new ArgumentException($"Cannot apply numeric operation to a cell with text, cell: '{name}'");
-                else if (cell.Value is FormulaError) throw new ArgumentException($"Downstream formula error, please resolve the original cell: ");
+                else if (cell.Value is FormulaError) throw new ArgumentException($"Downstream formula error, please resolve the original cell error: {((FormulaError) cell.Value).Reason}");
                 else return (double) cell.Value;
             }
         };

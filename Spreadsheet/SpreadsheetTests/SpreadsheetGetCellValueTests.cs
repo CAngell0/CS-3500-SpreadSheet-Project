@@ -3,6 +3,8 @@ namespace SpreadsheetTests;
 using Formula;
 using Spreadsheet;
 
+using System.Text;
+
 //TODO - Add stress test or two (if this method involves evaluating)
 // - Remember: A formula error can be cause by a divide by zero or *when the sheet does not have data for that cell*
 
@@ -13,6 +15,16 @@ public class SpreadsheetGetCellValueTests {
         Spreadsheet sheet = new();
         Assert.AreEqual("", (string) sheet.GetCellValue("A1"));
     }
+
+    [TestMethod]
+    public void SpreadsheetGetCellValue_FromExplicitEmptyCell_EmptyStringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "");
+        Assert.AreEqual("", (string) sheet.GetCellValue("A1"));
+    }
+
+
+
 
     // --- TESTS WITH CELLS THAT HAVE DOUBLE VALUES FROM A FORMULA ---
     [TestMethod]
@@ -80,12 +92,27 @@ public class SpreadsheetGetCellValueTests {
 
 
 
+
     // --- TESTS WITH CELLS THAT HAVE STATIC DOUBLE VALUES ---
+    [TestMethod]
+    public void SpreadsheetGetCellValue_CellWithDoubleIntegerValue_StringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "93");
+        Assert.AreEqual(93, (double) sheet.GetCellValue("A1"));
+    }
+
     [TestMethod]
     public void SpreadsheetGetCellValue_CellWithDoubleValue_StringReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "5.3");
         Assert.AreEqual(5.3, (double) sheet.GetCellValue("A1"));
+    }
+
+    [TestMethod]
+    public void SpreadsheetGetCellValue_CellWithDoubleValueThatHasLongDecimal_StringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "5.3567687931");
+        Assert.AreEqual(5.3567687931, (double) sheet.GetCellValue("A1"));
     }
 
     [TestMethod]
@@ -142,6 +169,33 @@ public class SpreadsheetGetCellValueTests {
         sheet.SetContentsOfCell("C3", "=(B2 + 5) - 2");
         sheet.SetContentsOfCell("D4", "=C3 - 1");
         Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("D4"));
+    }
+
+    [TestMethod]
+    public void SpreadsheetGetCellValue_FormulaDependentOnStringCell_FormulaErrorReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "Hello World!");
+        sheet.SetContentsOfCell("B2", "=A1 + 60");
+        Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("B2"));
+    }
+
+    [TestMethod]
+    public void SpreadsheetGetCellValue_FormulaDependentOnOnlyStringCells_FormulaErrorReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "Hello World!");
+        sheet.SetContentsOfCell("B2", "This is a spreadsheet!");
+        sheet.SetContentsOfCell("C3", "=A1 + B2");
+        Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("C3"));
+    }
+
+    [TestMethod]
+    public void SpreadsheetGetCellValue_FormulaDependentOnFormulaErrorCell_FormulaErrorReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "Hello World!");
+        sheet.SetContentsOfCell("B2", "=A1 + 60");
+        sheet.SetContentsOfCell("C3", "=B2 * 80");
+        Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("B2"));
+        Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("C3"));
     }
 
 
