@@ -224,4 +224,34 @@ public class SpreadsheetGetCellValueTests {
         sheet.SetContentsOfCell("C3", "Hello");
         Assert.Throws<InvalidNameException>(() => sheet.GetCellValue("23"));
     }
+
+
+
+
+    // --- STRESS TESTING ---
+    [TestMethod]
+    [Timeout(3000, CooperativeCancellation = true)]
+    public void HeavyEvaluateStressTest() {
+        const int TRAIL_SIZE = 300;
+
+        Random random = new();
+        const string OPERATORS = "+-*/";
+        string CreateRandomDependentFormula() {
+            StringBuilder builder = new();
+            builder.Append('=');
+
+            builder.Append(random.Next(1, 50));
+
+
+
+            return "";
+        }
+
+
+        Spreadsheet sheet = new();
+
+        for (int i = TRAIL_SIZE; i >= 1; i--) {
+            
+        }
+    }
 }
