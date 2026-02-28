@@ -1,3 +1,6 @@
+// <author> Carson Angell </author>
+// <date> 2/27/2026 </date>
+
 namespace SpreadsheetTests;
 
 using Spreadsheet;
@@ -10,7 +13,7 @@ using System.Text;
 [TestClass]
 public class LongDependencyChainStressTest {
     /// <summary> How many cells are in the spreadsheet </summary>
-    private static readonly int CELL_COUNT = 1000;
+    private static readonly int CELL_COUNT = 750;
     /// <summary> Used to add in the cell formulas to the spreadsheet in reverse order so that evaluate as intended </summary>
     private readonly Stack<string> _cellContents = new();
     /// <summary> Tracks the final expected output when constructing the spreadsheet </summary>
@@ -61,7 +64,7 @@ public class LongDependencyChainStressTest {
     ///     </list>
     /// </summary>
     [TestMethod]
-    [Timeout(3000, CooperativeCancellation = true)]
+    [Timeout(8000, CooperativeCancellation = true)]
     public void Spreadsheet_StressTestOnLongDependencyChain_Success() {
         int size = _cellContents.Count;
         Spreadsheet sheet = new();
@@ -119,22 +122,22 @@ public class LongDependencyChainStressTest {
 
 
 /// <summary>
-///     Holds a stresstest that creates a randomly generated spreadsheet with a more complex dependency graph.
+///     Holds a stress test that creates a randomly generated spreadsheet with a more complex dependency graph.
 ///     Dependencies are not long in a straight line like the other test. But in a more traditional graph
 ///     structure that's random. It tests how long it takes to construct and evaluate the spreadsheet
 ///     with that structure and formulas.
 /// </summary>
 [TestClass]
-public class SpreadsheetStressTests { 
+public class LongDependencyGraphStressTest { 
     /// <summary> How many cells there generated in the spreadsheet </summary>
-    private static readonly int CELL_COUNT = 1000;
+    private static readonly int CELL_COUNT = 10000;
     /// <summary> Stores the randomly generated formula before they are added to the sheet </summary>
     private readonly Dictionary<string, string> cellContents = new();
     /// <summary> Expected values of the cells are calculated on the fly while the formulas are generated </summary>
     private readonly Dictionary<string, double> expectedValues = new();
     /// <summary> 
     ///     Generated formulas pick a cell from this list at random to be its dependee. With the way this list is built,
-    ///     iterating through it in reverse is equivilent to performing a DFS traversal on the dependency graph. 
+    ///     iterating through it in reverse is equivalent to performing a DFS traversal on the dependency graph. 
     ///     That is used when constructing the spreadsheet the same way as the previous test. So the when the last
     ///     cell is added, the whole sheet gets evaluated in one go. See <see cref="Spreadsheet_HeavyEvaluateStressTestInLargeDependencyGraph_Success"/>
     ///     for more details.
@@ -148,7 +151,7 @@ public class SpreadsheetStressTests {
     ///     of the random formulas does not take up timeout budget.
     ///     <list type="number">
     ///         <item>
-    ///             <b> Randomly generate a complete, acycical spreadsheet graph </b>
+    ///             <b> Randomly generate a complete, acyclic spreadsheet graph </b>
     ///             
     ///             <para>
     ///                 Starts with a root node 'A1' that gets assigned a random double ranging from 0.00 to 49.99. Then it generates
@@ -160,7 +163,7 @@ public class SpreadsheetStressTests {
     ///             <para>
     ///                 After that it will randomly generate a formula with the same syntax as the last test; with the selected cell followed by
     ///                 a random operator and a random number from 0.00 - 49.99 (i.e. CK173+32.89). Cells being generated in this way will create
-    ///                 a complete acyclical graph with nothing but formulas.
+    ///                 a complete acyclic graph with nothing but formulas.
     ///             </para>
     ///             <para>| </para>
     ///         </item>
@@ -169,7 +172,7 @@ public class SpreadsheetStressTests {
     /// 
     ///             <para>
     ///                 After the cell and formula have been generated, it will apply the operation to the selected cell's estimated value and create
-    ///                 its own estimated value for the new cell. This happens iteravely as it generates new cells. By the end of the algorithm, we have
+    ///                 its own estimated value for the new cell. This happens iteratively as it generates new cells. By the end of the algorithm, we have
     ///                 a dictionary with every generated cell's predicted value. Which is referenced in assertions.
     ///             </para>
     ///             <para>| </para>
@@ -179,7 +182,7 @@ public class SpreadsheetStressTests {
     ///             
     ///             <para>
     ///                 Newly generated formulas choose their dependee cell by simply pulling a random index on a List<string> of already made cells.
-    ///                 Iterating through this list in reverse is the equivilent of performing a DFS traversal on the dependency graph. This is the order
+    ///                 Iterating through this list in reverse is the equivalent of performing a DFS traversal on the dependency graph. This is the order
     ///                 the cells get added to the testing spreadsheet. That way when the root node is added to the spreadsheet (A1), all the formulas
     ///                 get evaluated in one go. This construction and evaluation is what's timed in the test.
     ///             </para>

@@ -1,11 +1,13 @@
+// <author> Carson Angell </author>
+// <date> 2/24/2026 </date>
+
 namespace SpreadsheetTests;
 
 using Spreadsheet;
+using Spreadsheet.Model;
 using Formula;
 
 using System.IO;
-using Spreadsheet.Model;
-
 using System.Text.Json;
 
 [TestClass]
@@ -21,7 +23,7 @@ public class SpreadsheetSaveTests {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "56");
 
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet.Save("./path/to/missing/folder"));
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet.Save("/path/to/missing/folder"));
     }
 
 
@@ -110,7 +112,7 @@ public class SpreadsheetSaveTests {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "56");
 
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet.Save("./path/to/missing/folder/file.json"));
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet.Save("/path/to/missing/folder/file.json"));
     }
 
 
@@ -201,6 +203,6 @@ public class SpreadsheetSaveTests {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "56");
 
-        Assert.Throws<SpreadsheetReadWriteException>(() => sheet.Save("./path/to/missing/folder/file.txt"));
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet.Save("/path/to/missing/folder/file.txt"));
     }
 }

@@ -47,7 +47,7 @@ public class InvalidNameException : Exception {
 /// </para>
 /// <para>
 ///    Cell names are case insensitive, so "x1" and "X1" are the same cell name.
-///    Your code should normalize (uppercased) any stored name but accept either.
+///    Your code should normalize (uppercase) any stored name but accept either.
 /// </para>
 /// <para>
 ///     A spreadsheet represents a cell corresponding to every possible cell name.  (This
@@ -97,7 +97,7 @@ public class Spreadsheet {
     private readonly Dictionary<string, Cell> _cells;
     /// <summary> Dependency graph to manage formula dependencies in the spreadsheet </summary>
     private readonly DependencyGraph _dependencyGraph;
-    /// <summary> Variable Regex pattern that matches to strings with only one cannonical variable (ie. "A1", "BC23", etc.) </summary>
+    /// <summary> Variable Regex pattern that matches to strings with only one canonical variable (ie. "A1", "BC23", etc.) </summary>
     private const string VariableRegExPattern = @"^[A-Z]+\d+$";
     /// <summary> Regex object that corresponds to the regex pattern above. </summary>
     private readonly Regex _variableRegex;
@@ -144,7 +144,7 @@ public class Spreadsheet {
     }
 
     /// <summary>
-    ///     Constructs a spreadsheet using the saved data in the file referred to bythe given filename. <see cref="Save(string)"/>
+    ///     Constructs a spreadsheet using the saved data in the file referred to by the given filename. <see cref="Save(string)"/>
     /// </summary>
     /// <exception cref="SpreadsheetReadWriteException">
     ///     Thrown if the file can not be loaded into a spreadsheet for any reason
@@ -206,6 +206,8 @@ public class Spreadsheet {
         catch (UnauthorizedAccessException) { throw new SpreadsheetReadWriteException($"The spreadsheet does not have sufficient access to write to this file. '{filename}'"); }
 
         catch (Exception err) { throw new SpreadsheetReadWriteException($"An unexpected error occurred: {err.Message}"); }
+
+        Changed = false;
     }
 
     /// <summary>
@@ -299,6 +301,7 @@ public class Spreadsheet {
             else cell.Value = ((Formula) cell.Contents).Evaluate(_lookup);
         }
 
+        Changed = true;
         return cellDependents;
     }
 
@@ -455,7 +458,7 @@ public class Spreadsheet {
 
     /// <summary>
     ///     A helper for the GetCellsToRecalculate method and SetCellContents method. Visits all the cells that are dependents of the cell specified in the 'name' parameter and 
-    ///     puts them in the 'changed' linked list paremeter. Some other thing to node:
+    ///     puts them in the 'changed' linked list parameter. Some other thing to node:
     ///     <list type="bullet">
     ///         <item> Items in the 'changed' linked list are in order of what ones would need to be updated first if the root cell was changed </item>
     ///         <item> Performs a breath-first-search (BFS) traversal in order to get the correct ordering of cells. </item>
@@ -474,12 +477,7 @@ public class Spreadsheet {
 
         // Performs a BFS traversal starting from the cell provided in the params
         foreach (string n in GetDirectDependents(name)) {
-            if (n.Equals(start)) { //!
-                throw new CircularException();
-            }
-            else if (!visited.Contains(n)) {
-                Visit(start, n, visited, changed);
-            }
+            if (!n.Equals(start)) Visit(start, n, visited, changed);
         }
 
         changed.AddFirst(name);

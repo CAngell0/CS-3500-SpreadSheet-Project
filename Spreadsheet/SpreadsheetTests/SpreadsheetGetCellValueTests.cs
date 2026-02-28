@@ -1,9 +1,10 @@
+// <author> Carson Angell </author>
+// <date> 2/24/2026 </date>
+
 namespace SpreadsheetTests;
 
 using Formula;
 using Spreadsheet;
-
-using System.Text;
 
 //TODO - Add stress test or two (if this method involves evaluating)
 // - Remember: A formula error can be cause by a divide by zero or *when the sheet does not have data for that cell*
@@ -122,6 +123,35 @@ public class SpreadsheetGetCellValueTests {
         Assert.AreEqual(2000, (double) sheet.GetCellValue("A1"));
     }
 
+    // --- TESTS WITH CELLS THAT HAVE STATIC DOUBLE VALUES WITH ARRAY ACCESSOR ---
+    [TestMethod]
+    public void SpreadsheetArrayAccessor_CellWithDoubleIntegerValue_StringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "93");
+        Assert.AreEqual(93, (double) sheet["A1"]);
+    }
+
+    [TestMethod]
+    public void SpreadsheetArrayAccessor_CellWithDoubleValue_StringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "5.3");
+        Assert.AreEqual(5.3, (double) sheet["A1"]);
+    }
+
+    [TestMethod]
+    public void SpreadsheetArrayAccessor_CellWithDoubleValueThatHasLongDecimal_StringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "5.3567687931");
+        Assert.AreEqual(5.3567687931, (double) sheet["A1"]);
+    }
+
+    [TestMethod]
+    public void SpreadsheetArrayAccessor_CellWithScientificDoubleValue_StringReturned() {
+        Spreadsheet sheet = new();
+        sheet.SetContentsOfCell("A1", "2e3");
+        Assert.AreEqual(2000, (double) sheet["A1"]);
+    }
+
 
 
     // --- TESTS WITH CELLS THAT HAVE STRING VALUES ---
@@ -138,14 +168,14 @@ public class SpreadsheetGetCellValueTests {
 
     // --- TESTS WITH CELLS THAT HAVE FORMULAERROR VALUES ---
     [TestMethod]
-    public void SpreadsheetGetCellValue_DivideByZeroValue_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_DivideByZeroValue_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "=56 / 0");
         Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("A1"));
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellValue_DivideByZeroValueInDependencyChain_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_DivideByZeroValueInDependencyChain_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "=20 * 3");
         sheet.SetContentsOfCell("B2", "=A1 + 5 - 10");
@@ -155,14 +185,14 @@ public class SpreadsheetGetCellValueTests {
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellValue_FormulaDependsOnNonExistentCell_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_FormulaDependsOnNonExistentCell_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "=B6 + 7");
         Assert.IsInstanceOfType<FormulaError>(sheet.GetCellValue("A1"));
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellValue_FormulaDependsOnNonExistentCellOnLongDependencyChain_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_FormulaDependsOnNonExistentCellOnLongDependencyChain_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "=12 + 7");
         sheet.SetContentsOfCell("B2", "=A1*6 / C9");
@@ -204,20 +234,20 @@ public class SpreadsheetGetCellValueTests {
     // --- TESTS WITH CELLS THAT THROW EXCEPTIONS ---
 
     [TestMethod]
-    public void SpreadsheetGetCellValue_InvalidNameOnEmptySheet_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_InvalidNameOnEmptySheet_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         Assert.Throws<InvalidNameException>(() => sheet.GetCellValue("1"));
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellValue_InvalidNameOnSingleCellSheet_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_InvalidNameOnSingleCellSheet_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "56");
         Assert.Throws<InvalidNameException>(() => sheet.GetCellValue("ab"));
     }
 
     [TestMethod]
-    public void SpreadsheetGetCellValue_InvalidNameOnMultiCellSheet_FormualaErrorReturned() {
+    public void SpreadsheetGetCellValue_InvalidNameOnMultiCellSheet_FormulaErrorReturned() {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell("A1", "56");
         sheet.SetContentsOfCell("B6", "=48-1");

@@ -370,7 +370,7 @@ public class DependencyGraphTests {
         Assert.IsEmpty(expectedDependees.Except(graph.GetDependees("A1")));
     }
 
-    // --- Tests with multiple dependees and one depenent ---
+    // --- Tests with multiple dependees and one dependent ---
     [TestMethod]
     public void DependencyGraphReplaceDependees_ReplaceMultipleDependeesWithEmptyDependees_EmptyGraph() {
         DependencyGraph graph = CreateDependencyGraph([ ["B2", "A1"], ["C3", "A1"], ["D4", "A1"] ]);

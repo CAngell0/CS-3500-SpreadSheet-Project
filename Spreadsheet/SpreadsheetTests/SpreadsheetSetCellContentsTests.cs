@@ -10,7 +10,7 @@ using Formula;
 public class SpreadsheetSetCellContentsTests {
     /// <summary> Helper method that creates a spreadsheet with only one cell. </summary>
     /// <returns> 
-    ///     Newly initialized spreadshet with the following cells:
+    ///     Newly initialized spreadsheet with the following cells:
     ///     <list type="bullet">
     ///         <item>Name: "B7"  |  Value: (double) 20</item>
     ///     </list> 
@@ -28,7 +28,7 @@ public class SpreadsheetSetCellContentsTests {
     /// </summary>
     /// <param name="cellName"> The name of the cell </param>
     /// <param name="contents"> The contents of the cell </param>
-    /// <returns> Newly initialized spreadshet with the provided cell </returns>
+    /// <returns> Newly initialized spreadsheet with the provided cell </returns>
     private static Spreadsheet CreateSingleCellSheet(string cellName, string contents) {
         Spreadsheet sheet = new();
         sheet.SetContentsOfCell(cellName, contents);
@@ -37,7 +37,7 @@ public class SpreadsheetSetCellContentsTests {
 
     /// <summary> Helper method that creates a spreadsheet with multiple cells inside it. </summary>
     /// <returns>
-    ///     Newly initialized spreadshet with the following cells:
+    ///     Newly initialized spreadsheet with the following cells:
     ///     <list type="bullet">
     ///         <item>Name: "B7"  |  Value: (double) 20</item>
     ///         <item>Name: "C5"  |  Value: (string) "Hello World"</item>
@@ -59,7 +59,7 @@ public class SpreadsheetSetCellContentsTests {
     /// <param name="additionalCellName"> Name of the additional cell that's added to the sheet </param>
     /// <param name="contents"> Contents of the cell </param>
     /// <returns>
-    ///     Newly initialized spreadshet with the following cells:
+    ///     Newly initialized spreadsheet with the following cells:
     ///     <list type="bullet">
     ///         <item>Name: "B7"  |  Value: (double) 20</item>
     ///         <item>Name: "C5"  |  Value: (string) "Hello World"</item>
@@ -347,7 +347,7 @@ public class SpreadsheetSetCellContentsTests {
 
     // - Tests on deleting existing cell -
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingDoubleCellOnSingleCellSheet_OverwritesToEmptyString() {
+    public void SpreadsheetSetCellContents_DeletingExistingDoubleCellOnSingleCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = CreateSingleCellSheet("A5", "5");
         spreadsheet.SetContentsOfCell("A5", ""); // Should remove the cell from the backend data structure...
 
@@ -359,7 +359,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingStringCellOnSingleCellSheet_OverwritesToEmptyString() {
+    public void SpreadsheetSetCellContents_DeletingExistingStringCellOnSingleCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = CreateSingleCellSheet("A5", "Tester");
         spreadsheet.SetContentsOfCell("A5", ""); // Should remove the cell from the backend data structure...
 
@@ -371,7 +371,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingFormulaCellOnSingleCellSheet_OverwritesToEmptyString() {
+    public void SpreadsheetSetCellContents_DeletingExistingFormulaCellOnSingleCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = CreateSingleCellSheet("A5", "=2+2");
         spreadsheet.SetContentsOfCell("A5", ""); // Should remove the cell from the backend data structure...
 
@@ -604,7 +604,7 @@ public class SpreadsheetSetCellContentsTests {
 
     // - Tests on deleting existing cell -
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingDoubleCellOnMultiCellSheet_OverwritesToEmptyString() {
+    public void SpreadsheetSetCellContents_DeletingExistingDoubleCellOnMultiCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = CreateMultiCellSheet("A5", "5");
         spreadsheet.SetContentsOfCell("A5", ""); // Should remove the cell from the backend data structure...
 
@@ -616,7 +616,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingStringCellOnMultiCellSheet_OverwritesToEmptyString() {
+    public void SpreadsheetSetCellContents_DeletingExistingStringCellOnMultiCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = CreateMultiCellSheet("A5", "Tester");
         spreadsheet.SetContentsOfCell("A5", ""); // Should remove the cell from the backend data structure...
 
@@ -628,7 +628,7 @@ public class SpreadsheetSetCellContentsTests {
     }
 
     [TestMethod]
-    public void SpreadhseetSetCellContents_DeletingExistingFormulaCellOnMultiCellSheet_OverwritesToEmptyString() {
+    public void SpreadsheetSetCellContents_DeletingExistingFormulaCellOnMultiCellSheet_OverwritesToEmptyString() {
         Spreadsheet spreadsheet = CreateMultiCellSheet("A5", "=2+2");
         spreadsheet.SetContentsOfCell("A5", ""); // Should remove the cell from the backend data structure...
 

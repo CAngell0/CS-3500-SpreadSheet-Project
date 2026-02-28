@@ -1,15 +1,18 @@
+// <author> Carson Angell </author>
+// <date> 2/24/2026 </date>
+
 namespace SpreadsheetTests;
 
 using Spreadsheet;
 using Formula;
-
-//TODO - Add stress test or two
 
 [TestClass]
 public class SpreadsheetConstructorTests {
     private static readonly string CorrectSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"}}}";
     private static readonly string CyclicalSheetJSON = "{\"Cells\":{\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"=B2 * 2 + G7\"},\"F6\":{\"StringForm\":\"=E5 - 2\"},\"G7\":{\"StringForm\":\"=F6 / 10\"}}}";
     private static readonly string InvalidNameSheetJSON = "{\"Cells\":{\"8\":{\"StringForm\":\"=5 * 8\"},\"A1\":{\"StringForm\":\"5\"},\"B2\":{\"StringForm\":\"=A1+2\"},\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"},\"G\":{\"StringForm\":\"62\"}}}";
+    private static readonly string InvalidSyntaxSheetJSON = "{\"Cells\":\"8\":{\"StringForm\":\"=5 * 8\"},\"A1\":{\"Stri{\"StringForm\":\"=A1+2\"}\"C3\":{\"StringForm\":\"hello\"},\"D4\":{\"StringForm\":\"56.23\"},\"E5\":{\"StringForm\":\"5e2\"},\"G\":{\"StringForm\":\"62\"}}}";
+    private static readonly string CellsAsNullSheetJSON = "{\"Cells\":null}";
     private static readonly string TestingFileName = "testSheet.json";
 
     [TestMethod]
@@ -59,8 +62,32 @@ public class SpreadsheetConstructorTests {
     }
 
     [TestMethod]
+    [DoNotParallelize]
+    public void SpreadsheetFileConstructor_ReadingInvalidSyntaxFile_SpreadsheetReadWriteException() {
+        Spreadsheet sheet;
+        File.Delete(TestingFileName);
+        File.WriteAllText(TestingFileName, InvalidSyntaxSheetJSON);
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(TestingFileName));
+    }
+
+    [TestMethod]
+    [DoNotParallelize]
+    public void SpreadsheetFileConstructor_ReadingSheetWithCellsAsNull_SpreadsheetReadWriteException() {
+        Spreadsheet sheet;
+        File.Delete(TestingFileName);
+        File.WriteAllText(TestingFileName, CellsAsNullSheetJSON);
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new(TestingFileName));
+    }
+
+    [TestMethod]
     public void SpreadsheetFileConstructor_ReadingNonExistentFile_SpreadsheetReadWriteException() {
         Spreadsheet sheet;
         Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("/this/file/does/not/exist.json"));
+    }
+
+    [TestMethod]
+    public void SpreadsheetFileConstructor_ReadingFilePathWithInvalidChars_SpreadsheetReadWriteException() {
+        Spreadsheet sheet;
+        Assert.Throws<SpreadsheetReadWriteException>(() => sheet = new("/invalid>>/**path/:to\\file.json\""));
     }
 }
