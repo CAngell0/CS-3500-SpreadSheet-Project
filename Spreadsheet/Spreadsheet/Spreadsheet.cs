@@ -518,7 +518,7 @@ public class Spreadsheet {
     /// <exception cref="InvalidNameException">
     ///   If the provided name is invalid, throws an InvalidNameException.
     /// </exception>
-    public object GetCellValue(string name) { //TODO - Ask what the default value ofa  cell should be if its empty
+    public object GetCellValue(string name) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
         if (_cells.TryGetValue(name, out Cell? cell)) return cell.Value;
         else return "";
