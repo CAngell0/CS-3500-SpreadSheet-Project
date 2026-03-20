@@ -98,7 +98,7 @@ public class Spreadsheet {
     /// <summary> Dependency graph to manage formula dependencies in the spreadsheet </summary>
     private readonly DependencyGraph _dependencyGraph;
     /// <summary> Variable Regex pattern that matches to strings with only one canonical variable (ie. "A1", "BC23", etc.) </summary>
-    private const string VariableRegExPattern = @"^[A-Z]+\d+$";
+    private const string VariableRegExPattern = @"^[A-Za-z]+\d+$";
     /// <summary> Regex object that corresponds to the regex pattern above. </summary>
     private readonly Regex _variableRegex;
     /// <summary> 
@@ -285,12 +285,13 @@ public class Spreadsheet {
     /// </exception>
     public IList<string> SetContentsOfCell(string name, string content) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
+        name = name.ToUpper();
 
         List<string> cellDependents;
 
         // Sets the cell' contents based on what kind of content it is
         if (Double.TryParse(content, out double contentAsDouble)) cellDependents = (List<string>) SetCellContents(name, contentAsDouble);
-        else if (!content.Equals("") && content.First() == '=') cellDependents = (List<string>) SetCellContents(name, new Formula(content[1..]));
+        else if (!content.Equals("") && content.First() == '=') cellDependents = (List<string>) SetCellContents(name, new Formula(content.Substring(1)));
         else cellDependents = (List<string>) SetCellContents(name, content);
 
         // Re-evaluates dependent cells.
@@ -499,7 +500,7 @@ public class Spreadsheet {
     public object GetCellContents(string name) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
 
-        if (_cells.TryGetValue(name, out Cell? cell)) return cell.Contents;
+        if (_cells.TryGetValue(name.ToUpper(), out Cell? cell)) return cell.Contents;
         else return "";
     }
 
@@ -518,7 +519,7 @@ public class Spreadsheet {
     /// </exception>
     public object GetCellValue(string name) {
         if (!_variableRegex.IsMatch(name)) throw new InvalidNameException();
-        if (_cells.TryGetValue(name, out Cell? cell)) return cell.Value;
+        if (_cells.TryGetValue(name.ToUpper(), out Cell? cell)) return cell.Value;
         else return "";
     }
 

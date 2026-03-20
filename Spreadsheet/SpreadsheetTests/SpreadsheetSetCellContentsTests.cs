@@ -398,7 +398,6 @@ public class SpreadsheetSetCellContentsTests {
         Spreadsheet spreadsheet = CreateMultiCellSheet();
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetContentsOfCell("H", "5"));
         Assert.Throws<InvalidNameException>(() => spreadsheet.SetContentsOfCell("8", "Test"));
-        Assert.Throws<InvalidNameException>(() => spreadsheet.SetContentsOfCell("h5", "=2+2"));
     }
 
 
