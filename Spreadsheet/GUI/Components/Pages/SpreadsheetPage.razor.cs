@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 namespace GUI.Components.Pages;
+
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
@@ -23,8 +24,7 @@ using Spreadsheet;
 /// <summary>
 /// TODO: Fill in
 /// </summary>
-public partial class SpreadsheetPage
-{
+public partial class SpreadsheetPage {
     /// <summary>
     /// Based on your computer, you could shrink/grow this value based on performance.
     /// </summary>
@@ -50,16 +50,28 @@ public partial class SpreadsheetPage
     ///   <remarks>Backing Store for HTML</remarks>
     /// </summary>
     private string[,] CellsBackingStore { get; set; } = new string[ROWS, COLS];
-    
+
     /// <summary>
     /// The spreadsheet object
     /// </summary>
     private Spreadsheet spreadsheet = new();
-    
+
     /// <summary>
     /// This field is responsible for hiding/showing the chat for the AI agent
     /// </summary>
     private bool _isCollapsed;
+
+    /// <summary>
+    ///     Stores what row the selected cell is on. This is changed by the
+    ///     <see cref="CellClicked"/> method.
+    /// </summary>
+    private int _selectedRow = 0;
+
+    /// <summary>
+    ///     Stores what column the selected cell is on. This is changed by the
+    ///     <see cref="CellClicked"/> method.
+    /// </summary>
+    private int _selectedCol = 0;
 
     /// <summary>
     /// Gets or sets the AI service responsible for processing natural language
@@ -86,19 +98,18 @@ public partial class SpreadsheetPage
     /// </summary>
     /// <param name="row">The row component of the cell's coordinates</param>
     /// <param name="col">The column component of the cell's coordinates</param>
-    private void CellClicked( int row, int col )
-    {
-
+    private void CellClicked(int row, int col) {
+        _selectedCol = col;
+        _selectedRow = row;
     }
-    
+
     /// <summary>
     /// Saves the current spreadsheet, by providing a download of a file
     /// containing the json representation of the spreadsheet.
     /// </summary>
-    private async void SaveFile()
-    {
-        await JSRuntime.InvokeVoidAsync( "downloadFile", FileSaveName, 
-            "replace this with the json representation of the current spreadsheet" );
+    private async void SaveFile() {
+        await JSRuntime.InvokeVoidAsync("downloadFile", FileSaveName,
+            "replace this with the json representation of the current spreadsheet");
     }
 
     /// <summary>
@@ -107,18 +118,14 @@ public partial class SpreadsheetPage
     /// replaces the current sheet with the loaded one.
     /// </summary>
     /// <param name="args">The event arguments, which contains the selected file name</param>
-    private async void HandleFileChooser( EventArgs args )
-    {
-        try
-        {
+    private async void HandleFileChooser(EventArgs args) {
+        try {
             string fileContent = string.Empty;
 
             InputFileChangeEventArgs eventArgs = args as InputFileChangeEventArgs ?? throw new Exception("unable to get file name");
-            if ( eventArgs.FileCount == 1 )
-            {
+            if (eventArgs.FileCount == 1) {
                 var file = eventArgs.File;
-                if ( file is null )
-                {
+                if (file is null) {
                     return;
                 }
 
@@ -133,18 +140,16 @@ public partial class SpreadsheetPage
                 StateHasChanged();
             }
         }
-        catch ( Exception e )
-        {
-            Debug.WriteLine( "An error occurred while loading the file..." + e );
+        catch (Exception e) {
+            Debug.WriteLine("An error occurred while loading the file..." + e);
         }
     }
-    
-    
+
+
     /// <summary>
     /// Processes the user's input through the AI service and updates the UI state.
     /// </summary>
-    private async Task SubmitChat()
-    {
+    private async Task SubmitChat() {
         // We pass the work to the service; it handles the boolean and the history
         await AIService.ProcessQueryAsync(UserInput, spreadsheet);
         SyncUIWithSpreadsheet();
@@ -155,10 +160,9 @@ public partial class SpreadsheetPage
     /// Synchronizes the entire UI grid by polling the latest calculated values from the spreadsheet and filling CellsBackingStore .
     /// It will need to call StateHasChanged to make sure that everything is being display on the page.
     /// </summary>
-    private void SyncUIWithSpreadsheet()
-    {
+    private void SyncUIWithSpreadsheet() {
         // TODO: fill the code the sync the cells with new spreadsheet content.
-        
+
         // Now tell Blazor the data in the array has changed
         StateHasChanged();
     }
