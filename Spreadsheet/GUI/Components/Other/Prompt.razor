@@ -1,7 +1,35 @@
 ﻿@namespace GUI.Components.Other
 
-<h3>Prompt</h3>
+<div class = "prompt-container @(GetColorClass())">
+    <div class = "prompt-spacer-box"/>
+        @* @if (DescriptionText != null && DescriptionText != ""){
+            <button>Test</button>
+        } *@
+    <div class = "prompt-header">
+        <span>@HeaderText</span>
+        @ChildContent
+    </div>
+    @* <span> @DescriptionText </span> *@
+</div>
 
 @code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public PromptColor Color { get; set; }
+    [Parameter] public string? HeaderText { get; set; }
+    @* [Parameter] public string? DescriptionText { get; set; } *@
 
+    public enum PromptColor {
+        Red,
+        Blue,
+        White
+    }
+
+    private string GetColorClass(){
+        return Color switch {
+            PromptColor.Red => "red",
+            PromptColor.Blue => "blue",
+            PromptColor.White => "white",
+            _ => "white"
+        };
+    }
 }

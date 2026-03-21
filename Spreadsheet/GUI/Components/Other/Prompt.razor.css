@@ -1,0 +1,50 @@
+/* Red prompt color scheme */
+.red { border-color: rgb(250, 125, 125); }
+.red > .prompt-spacer-box { background-color: rgb(255, 111, 111); }
+.red > .prompt-header { background-color: rgb(252, 154, 154); }
+
+/* Blue prompt color scheme */
+.blue { border-color: rgb(125, 171, 250); }
+.blue > .prompt-spacer-box { background-color: rgb(117, 161, 255); }
+.blue > .prompt-header { background-color: rgb(169, 196, 254); }
+
+/* White prompt color scheme */
+.white { border-color: rgb(201, 201, 201); }
+.white > .prompt-spacer-box { background-color: rgb(187, 187, 187); }
+.white > .prompt-header { background-color: rgb(224, 224, 224); }
+
+.prompt-container {
+    width: 30vw;
+    height: fit-content;
+    padding: 0.25rem;
+    
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 6px;
+
+    display: flex;
+}
+
+.prompt-header {
+    width: 100%;
+    padding: 0.2rem 1rem;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    border-radius: 0 2px 2px 0;
+}
+.prompt-spacer-box {
+    width: fit-content;
+    min-width: 0.8vh;
+    align-self: stretch;
+    border-radius: 2px 0 0 2px;
+}
+.prompt-header > span {
+    margin-right: auto;
+
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1.1em;
+}

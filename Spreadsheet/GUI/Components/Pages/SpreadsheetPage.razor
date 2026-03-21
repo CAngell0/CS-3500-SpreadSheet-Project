@@ -1,6 +1,7 @@
 ﻿@namespace GUI.Components.Pages
 @page "/sheets"
 @using System.Diagnostics
+@using GUI.Components.Other
 @using Microsoft.Extensions.AI
 @using Microsoft.JSInterop
 @rendermode InteractiveServer
@@ -140,6 +141,14 @@
             </tbody>
         </table>
     </section>
+</div>
+
+
+<div id = "prompt-container">
+    <Prompt HeaderText="Are you sure?" Color="@Prompt.PromptColor.Red">
+        <PromptButton>Yes</PromptButton>
+        <PromptButton>No</PromptButton>
+    </Prompt>
 </div>
 
 
