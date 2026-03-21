@@ -1,8 +1,8 @@
-﻿<button class = "prompt-button" onclick=@OnClickHandler>
+﻿@namespace GUI.Components.Other
+
+<button class = "prompt-button" @onclick = "OnClickHandler">
     @ChildContent
 </button>
-
-@* TODO - Add onclick parameter *@
 
 <style>
     .prompt-button {
@@ -33,11 +33,11 @@
     [Parameter] public Action? OnClick { get; set; }
 
     /// <summary>
-    ///     Calls the OnClickm function parameter along any other future functionality
+    ///     Calls the OnClick function parameter along any other future functionality
     ///     the buttons may need.
     /// </summary>
     private void OnClickHandler(){
-        if (OnClick != null) OnClick.Invoke();
+        OnClick?.Invoke();
         // TODO - Add programming to remove prompt when button is pressed. 
     }
 }

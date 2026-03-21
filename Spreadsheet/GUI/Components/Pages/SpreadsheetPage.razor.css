@@ -97,8 +97,8 @@
     margin-left: -0.1rem;
     padding: 0.05rem;
     
-    fill: rgb(74, 128, 229);
-    stroke: rgb(74, 128, 229);
+    fill: var(--bs-light-blue);
+    stroke: var(--bs-light-blue);
     border: transparent;
     border-radius: 5px;
 
@@ -258,7 +258,7 @@
     border-radius: 10px;
 }
 #chatbot-user-send > svg {
-    fill: rgb(43, 155, 253);
+    fill: var(--bs-light-blue);
 }
 
 

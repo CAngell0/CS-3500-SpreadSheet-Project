@@ -1,0 +1,38 @@
+.blue { fill: var(--bs-light-blue); }
+.red { fill: var(--bs-light-red); }
+.white { fill: var(--bs-gray-400); }
+.gray { fill: var(--bs-gray); }
+
+.collapse-button {
+    padding: 0 0.1rem;
+    border-radius: 8px;
+
+    border-width: 0;
+    background-color: transparent;
+
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+.collapse-button:hover {
+    background-color: rgba(0, 0, 0, 0.095);
+}
+.collapse-button:active {
+    background-color: rgba(0, 0, 0, 0.059);
+}
+
+.collapse-button > svg {
+    transition: transform 0.2s;
+}
+.pointing-up > svg {
+    transform: rotate(0deg);
+}
+.pointing-left > svg {
+    transform: rotate(-90deg);
+}
+.pointing-down > svg {
+    transform: rotate(180deg);
+}
+.pointing-right > svg {
+    transform: rotate(90deg);
+}

@@ -1,0 +1,52 @@
+﻿@using GUI.Model
+
+@code {
+    protected override void OnParametersSet(){
+        _currentDirection = DefaultDirection;
+    }
+}
+
+<button class = "collapse-button @(Color.GetColorClass()) @(GetDirectionClass(_currentDirection))" @onclick = "OnClickHandler">
+    <svg viewBox = "0 0 512 512" style = "@($"width: {Width}; height: {Height}")">
+        <use href = "images/collapse-arrow.svg"/>
+    </svg>
+</button>
+
+@code {
+    [Parameter] public BasicColorOption Color { get; set; }
+    [Parameter] public Direction DefaultDirection { get; set; }
+    [Parameter] public Action? OnClick { get; set; }
+    [Parameter] public string? Width { get; set; }
+    [Parameter] public string? Height { get; set; }
+    private Direction _currentDirection;
+
+    /// <summary>
+    ///     Calls the OnClick function parameter along any other future functionality
+    ///     the buttons may need.
+    /// </summary>
+    private void OnClickHandler(){
+        _currentDirection = _currentDirection switch {
+            Direction.Up => Direction.Down,
+            Direction.Down => Direction.Up,
+            Direction.Right => Direction.Left,
+            Direction.Left => Direction.Right,
+            _ => Direction.Up
+        };
+
+        OnClick?.Invoke();
+    }
+
+    public enum Direction {
+        Up, Down, Left, Right
+    }
+
+    public string GetDirectionClass(Direction direction){
+        return direction switch {
+            Direction.Up => "pointing-up",
+            Direction.Down => "pointing-down",
+            Direction.Left => "pointing-left",
+            Direction.Right => "pointing-right",
+            _ => "pointing-up"
+        };
+    }
+}

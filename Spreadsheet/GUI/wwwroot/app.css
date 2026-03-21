@@ -1,3 +1,8 @@
+:root {
+    --bs-light-blue: rgb(43, 155, 253);
+    --bs-light-red: rgb(253, 101, 101);
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

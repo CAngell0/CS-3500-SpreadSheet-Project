@@ -1,17 +1,19 @@
 /* Red prompt color scheme */
-.red { border-color: rgb(250, 125, 125); }
-.red > .prompt-spacer-box { background-color: rgb(255, 111, 111); }
+.red { border-color: var(--bs-light-red); }
+.red > .prompt-spacer-box { background-color: var(--bs-light-red); }
 .red > .prompt-header { background-color: rgb(252, 154, 154); }
 
 /* Blue prompt color scheme */
-.blue { border-color: rgb(125, 171, 250); }
-.blue > .prompt-spacer-box { background-color: rgb(117, 161, 255); }
+.blue { border-color: var(--bs-light-blue); }
+.blue > .prompt-spacer-box { background-color: var(--bs-light-blue); }
 .blue > .prompt-header { background-color: rgb(169, 196, 254); }
 
 /* White prompt color scheme */
-.white { border-color: rgb(201, 201, 201); }
-.white > .prompt-spacer-box { background-color: rgb(187, 187, 187); }
-.white > .prompt-header { background-color: rgb(224, 224, 224); }
+.white, .gray { border-color: var(--bs-gray-500); }
+.white > .prompt-spacer-box,
+    .gray > .prompt-spacer-box { background-color: var(--bs-gray-500); }
+.white > .prompt-header,
+    .gray > .prompt-header { background-color: rgb(224, 224, 224); }
 
 .prompt-container {
     width: 30vw;

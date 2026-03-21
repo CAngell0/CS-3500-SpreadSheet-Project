@@ -7,6 +7,7 @@ namespace GUI.Model;
 /// </summary>
 public enum BasicColorOption {
     White,
+    Gray,
     Red,
     Blue
 }
@@ -29,6 +30,7 @@ public static class BasicColorOptionExtension {
             BasicColorOption.Red => "red",
             BasicColorOption.Blue => "blue",
             BasicColorOption.White => "white",
+            BasicColorOption.Gray => "gray",
             _ => "white"
         };
     }

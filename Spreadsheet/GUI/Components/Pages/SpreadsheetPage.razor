@@ -1,13 +1,14 @@
 ﻿@namespace GUI.Components.Pages
 @page "/sheets"
+@rendermode InteractiveServer
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+
 @using GUI.Components.Other
 @using GUI.Model
 @using System.Diagnostics
 @using Microsoft.Extensions.AI
 @using Microsoft.JSInterop
-@rendermode InteractiveServer
-@inherits LayoutComponentBase
-@inject IJSRuntime JSRuntime
 
 @code {
     // Select cell A1 when page loads
@@ -145,7 +146,7 @@
 
 
 <div id = "prompt-container">
-    <Prompt HeaderText="Are you sure?">
+    <Prompt HeaderText="Are you sure?" Color=BasicColorOption.White>
         <PromptButton>Yes</PromptButton>
         <PromptButton>No</PromptButton>
     </Prompt>
