@@ -8,18 +8,15 @@
 // Update by Prof Alsaleem and Hung Phan, Spring 2026
 //     - Updated the assignment to include the AI Agent component for Spring 2026.
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
 namespace GUI.Components.Pages;
 
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Diagnostics;
 using Services;
 using Spreadsheet;
+using System.Text;
 
 /// <summary>
 /// TODO: Fill in
@@ -28,17 +25,17 @@ public partial class SpreadsheetPage {
     /// <summary>
     /// Based on your computer, you could shrink/grow this value based on performance.
     /// </summary>
-    private const int ROWS = 50;
+    private const int ROWS = 100;
 
     /// <summary>
     /// Number of columns, which will be labeled A-Z.
     /// </summary>
-    private const int COLS = 26;
+    private const int COLS = 26*2;
 
     /// <summary>
     /// Provides an easy way to convert from an index to a letter (0 -> A)
     /// </summary>
-    private char[] Alphabet { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+    private static char[] Alphabet { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
     /// <summary>
     /// Gets or sets the name of the file to be saved
@@ -92,6 +89,8 @@ public partial class SpreadsheetPage {
     /// </summary>
     private int _selectedCol = 0;
 
+    private string _selectedCellName = "A1";
+
     /// <summary>
     /// Gets or sets the AI service responsible for processing natural language
     /// queries and applying the resulting changes to the spreadsheet model.
@@ -118,6 +117,7 @@ public partial class SpreadsheetPage {
     /// <param name="row">The row component of the cell's coordinates</param>
     /// <param name="col">The column component of the cell's coordinates</param>
     private void CellClicked(int row, int col) {
+        _selectedCellName = IntToColumnPrefix(col) + (row + 1);
         _selectedCol = col;
         _selectedRow = row;
     }
@@ -202,5 +202,33 @@ public partial class SpreadsheetPage {
 
         // Now tell Blazor the data in the array has changed
         StateHasChanged();
+    }
+
+    /// <summary>
+    ///     Takes a column number and converts it into its corresponding character prefix. For example, if we use the normal alphabet,
+    ///     0 -> A, 1 -> B, 25 -> Z and so on. It also supports values beyind 25. It essentially acts as a radix converter, but for cell
+    ///     names. Here are some examples:
+    ///     <list type="bullet">
+    ///         <item> 26 -> AA </item>
+    ///         <item> 51 -> AZ </item>
+    ///         <item> 3678 -> EKM </item>
+    ///     </list>
+    /// </summary>
+    /// <param name="value"> Column number to convert into column name prefix </param>
+    /// <returns> The complete column prefix </returns>
+    public static string IntToColumnPrefix(int value) {
+        int radix = Alphabet.Length;
+
+        StringBuilder builder = new();
+        
+        while (value >= 0) {
+            int remainder = value % radix;
+            builder.Append(Alphabet[remainder]);
+            value = (value / radix) - 1;
+        }
+
+        char[] charArray = builder.ToString().ToCharArray();
+        Array.Reverse(charArray);
+        return new string(charArray);
     }
 }

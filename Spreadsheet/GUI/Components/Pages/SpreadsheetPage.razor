@@ -66,11 +66,11 @@
     <br/>
 
     <!-- Save button -->
-    <span>
+    @* <span>
         <button class="btn btn-primary" @onclick="SaveFile">Save</button>
         <label>Load</label>
         <InputFile type="file" OnChange="HandleFileChooser" />
-    </span>
+    </span> *@
 
     <!-- Spreadsheet Table container -->
     <section class="table-container scrollable">
@@ -78,17 +78,17 @@
         <table class="table table-bordered">
 
             <!-- Table header -->
-            <thead>
+            <thead style = "border-top: transparent; border-left: transparent;">
                 <tr class="fixed-header">
                     <th scope="col">&nbsp;</th>
                     @for (int col = 0; col < COLS; col++) {
-                        <th scope="col">@Alphabet[col]</th>
+                        <th scope="col">@IntToColumnPrefix(col)</th>
                     }
                 </tr>
             </thead>
 
             <!-- Table body (the array of cells) -->
-            <tbody>
+            <tbody style = "border-left: transparent;">
                 <!-- Constructing the spreadsheet cells based on internal ROWS and COLS constants -->
                 @for (int row = 0; row < ROWS; row++) {
                     <tr style="padding:0 !important;">

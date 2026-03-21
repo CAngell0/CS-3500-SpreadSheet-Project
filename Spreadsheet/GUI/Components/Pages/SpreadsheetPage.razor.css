@@ -10,6 +10,9 @@
     background-color: rgba(0, 0, 0, 0.187);
 }
 
+
+
+
 /* --- Spreadsheet table styling --- */
 
 
@@ -36,7 +39,7 @@
 .scrollable {
     white-space: nowrap;
     /* Ensures no line breaks within cells */
-    margin: -1px;
+    border: none;
 }
 
 /*  Spreadsheet cell styling */
