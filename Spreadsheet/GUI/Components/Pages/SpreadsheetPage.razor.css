@@ -1,0 +1,220 @@
+.main-button-style {
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s, fill 0.2s, stroke 0.2s;
+}
+.main-button-style:hover {
+    background-color: rgba(0, 0, 0, 0.133);
+}
+.main-button-style:active {
+    background-color: rgba(0, 0, 0, 0.187);
+}
+
+/* --- Spreadsheet table styling --- */
+
+
+/* Table container/overall styling */
+.table-container {
+    width: 88vw;
+    overflow-x: auto;
+}
+
+.fixed-header {
+    position: sticky;
+    top: 0;
+    z-index: 5 !important;
+    background-color: #ffffff !important;
+}
+
+.fixed-column {
+    position: sticky;
+    left: 0;
+    z-index: 6 !important;
+    background-color: #ffffff !important;
+}
+
+.scrollable {
+    white-space: nowrap;
+    /* Ensures no line breaks within cells */
+    margin: -1px;
+}
+
+/*  Spreadsheet cell styling */
+.spreadcell {
+    width: 150px;
+    height: 100%;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 3px;
+
+    border-color: rgba(0, 0, 0, 0);
+    transition: border-color 0.15s;
+}
+
+.spreadcell-selected {
+    border-color: rgb(39, 129, 208);
+}
+
+.table-cell {
+    padding: 0px !important;
+    width: fit-content;
+    height: 60px;
+}
+
+
+
+/* --- AI chatbot UI styling ---*/
+
+#chatbot-container {
+    width: 100%;
+    box-sizing: border-box;
+    transition: margin-top 0.2s;
+}
+
+/* Collapse tab */
+#chatbot-collapse-tab {
+    border: 2px solid rgb(129, 129, 129);
+    border-top: transparent;
+    font-size: 1.25rem;
+    color: rgb(76, 76, 76);
+
+    width: fit-content;
+    display: flex;
+    align-items: center;
+
+    padding: 0.3rem 1rem 0.3rem 1.3rem;
+    border-radius: 0 0 10px 10px;
+    margin-left: 2rem;
+}
+
+#chatbot-collapse-tab > button {
+    --color: rgb(186, 186, 186);
+
+    width: 1.9rem;
+    height: 1.9rem;
+    margin-left: 0.6rem;
+    padding: 2%;
+
+    fill: var(--color);
+    stroke: var(--color);
+    stroke-width: 8px;
+    border-radius: 4px;
+    border-color: transparent;
+    
+    display: flex;
+    align-items: center;
+}
+#chatbot-collapse-tab > button:hover {
+    --color: rgb(129, 146, 166);
+}
+
+#chatbot-collapse-tab > button > svg {
+    transition: transform 0.3s;
+    /* transform: rotate(180deg); */
+}
+
+
+/* User input and history container styling */
+#chatbot-interface {
+    border: 2px solid rgb(129, 129, 129);
+    border-top: transparent;
+    border-radius: 0 0 10px 10px;
+}
+#chatbot-interface > div {
+    padding: 0.6rem;
+    
+    display: flex;
+    align-items: center;
+    
+    background-color: rgb(219, 219, 219);
+    border-top: 1px solid rgb(137, 137, 137);
+}
+
+
+/* Chatbot history display styling */
+#chatbot-history {
+    min-height: 12rem;
+    max-height: 80rem;
+    height: 10rem;
+    padding-top: 0.3rem;
+    padding-left: 0.5rem;
+    margin-bottom: 0;
+    display: block;
+    
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: rgb(77, 76, 76);
+    
+    list-style-position: inside;
+    resize: vertical;
+    overflow: auto;
+}
+#chatbot-history > li {
+    border-left-width: 2px;
+    border-left-style: solid;
+    padding-left: 0.4rem;
+    margin-top: 0.35rem;
+}
+/* Styling for messages sent by the user */
+#chatbot-history > li.chatbot-history-usermsg {
+    list-style-type: "User ➜ ";
+    border-color: rgb(92, 149, 255);
+    background-color: rgba(92, 149, 255, 0.207);
+}
+#chatbot-history > li.chatbot-history-usermsg::marker {
+    font-weight: 600;
+    color: rgb(92, 149, 255);
+}
+/* Styling for messages recieved by the AI */
+#chatbot-history > li.chatbot-history-aimsg {
+    list-style-type: "AI ➜ ";
+    border-color: rgb(255, 92, 92);
+    background-color: rgba(255, 92, 92, 0.207);
+}
+#chatbot-history > li.chatbot-history-aimsg::marker {
+    font-weight: 600;
+    color: rgb(255, 92, 92);
+}
+/* Styling for messages recieved by the AI */
+#chatbot-history > li.chatbot-history-thinking {
+    border: 2px solid rgb(115, 115, 115);
+    border-radius: 6px;
+
+    width: fit-content;
+    padding: 0.3rem 0.7rem;
+
+    list-style-type: none;
+    animation: chatbot-thinking-animation 2s ease-in-out infinite;
+}
+
+@keyframes chatbot-thinking-animation {
+    0% { border-color: transparent; }
+    50% { border-color:  rgb(115, 115, 115); }
+    100% { border-color: transparent; }
+}
+
+
+
+/* Input and button fields for chatbot */
+#chatbot-user-input {
+    height: 2.5rem;
+    width: 100%;
+    text-indent: 0.5rem;
+    
+    font-weight: 500;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: rgb(69, 69, 69);
+}
+#chatbot-user-send {
+    width: 3rem;
+    height: 3rem;
+    padding: 0.3rem;
+    margin-left: 0.5rem;
+
+    border: transparent;
+    border-radius: 10px;
+}
+#chatbot-user-send > svg {
+    fill: rgb(43, 155, 253);
+}
+
+

@@ -59,7 +59,26 @@ public partial class SpreadsheetPage {
     /// <summary>
     /// This field is responsible for hiding/showing the chat for the AI agent
     /// </summary>
-    private bool _isCollapsed;
+    private bool _isCollapsed = true;
+
+    /// <summary>
+    ///     Reference to one of the HTML children of the AI agent panel.
+    ///     Its height is grabbed from this reference and used to calculate
+    ///     the panel collapsing.
+    /// </summary>
+    private ElementReference _chatPanelReference;
+
+    /// <summary>
+    ///     The AI agent container element uses this value as its style attribute.
+    ///     This gets overwritten when the panel is collapsed.
+    /// </summary>
+    private string _currentChatContainerStyle = "margin-top: calc(-260px - 1.2vh)";
+
+    /// <summary>
+    ///     The collapse button svg element uses this value as its style attribute.
+    ///     This gets overwritten when the panel is collapsed.
+    /// </summary>
+    private string _currentCollapseIconStyle = "transform: rotate(180deg);";
 
     /// <summary>
     ///     Stores what row the selected cell is on. This is changed by the
@@ -101,6 +120,24 @@ public partial class SpreadsheetPage {
     private void CellClicked(int row, int col) {
         _selectedCol = col;
         _selectedRow = row;
+    }
+    
+    /// <summary>
+    ///     Changes styles for the collapse icon and chatbot panel position to make it
+    ///     appear hidden. Used by the collapse button on its click event.
+    /// </summary>
+    /// <returns> A task that calculates where the panel needs to collapse to and applies it </returns>
+    private async Task CollapseAIChat() {
+        if (_isCollapsed) {
+            _currentChatContainerStyle = "margin-top: -1.2vh;";
+            _currentCollapseIconStyle = "transform: rotate(0deg);";
+        }
+        else {
+            var h = await JSRuntime.InvokeAsync<decimal>("getElementHeight", _chatPanelReference);
+            _currentChatContainerStyle = $"margin-top: calc(-{h}px - 1.2vh);";
+            _currentCollapseIconStyle = "transform: rotate(180deg);";
+        }
+        _isCollapsed = !_isCollapsed;
     }
 
     /// <summary>
