@@ -11,7 +11,9 @@
     // Select cell A1 when page loads
     protected override void OnInitialized() {
         CellClicked(0, 0);
+        CellsBackingStore[0,0] = "Hello!";
     }
+
 }
 
 <PageTitle>Spreadsheet</PageTitle>
@@ -64,6 +66,35 @@
         </div>
     </section>
     <br/>
+
+    <!-- Toolbar -->
+    <section id = "toolbar">
+        <!-- Selected cell display -->
+        <div class = "toolbar-labelled-field">
+            <span>Selected Cell</span>
+            <input readonly value = "@(IntToColumnPrefix(_selectedCol) + (_selectedRow + 1))" style = "text-align: center; width: 7rem;"/>
+        </div>
+
+        <!-- Cell value display -->
+        <div class = "toolbar-labelled-field">
+            <span>Cell Value</span>
+            <input readonly value = "@(CellsBackingStore[_selectedRow, _selectedCol])" style = "text-align: center; width: 7rem;"/>
+        </div>
+
+        <!-- Cell contents editing display -->
+        <div class = "toolbar-labelled-field" style = "margin-left: auto;">
+            <span>Cell Content</span>
+            <input @bind="_userContentInput" style = "text-align: center; width: 14rem;"/>
+        </div>
+
+        <!-- Button to apply changed contents display -->
+        @* TODO - Add event to this button to update changes *@
+        <button id = "toolbar-apply-contents-button" class = "main-button-style">
+            <svg viewBox = "0 0 300 300">
+                <use href = "images/edit-icon.svg"/>
+            </svg>
+        </button>
+    </section>
 
     <!-- Save button -->
     @* <span>

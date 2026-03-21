@@ -66,6 +66,48 @@
 
 
 
+/* --- Toolbar styling --- */
+
+/* Overall toolbar styling */
+#toolbar {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+
+/* Labelled fields for cell values, contents and selections */
+.toolbar-labelled-field {
+    width: fit-content;
+    margin: 0 0.5rem;
+
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.toolbar-labelled-field > label, span {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+/* Apply changed contents button */
+#toolbar-apply-contents-button {
+    width: 2rem;
+    height: 2rem;
+    margin-top: 1.4rem;
+    margin-left: -0.1rem;
+    padding: 0.05rem;
+    
+    fill: rgb(74, 128, 229);
+    stroke: rgb(74, 128, 229);
+    border: transparent;
+    border-radius: 5px;
+
+    display: flex;
+    align-items: center;
+}
+
+
+
 /* --- AI chatbot UI styling ---*/
 
 #chatbot-container {

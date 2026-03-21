@@ -89,7 +89,7 @@ public partial class SpreadsheetPage {
     /// </summary>
     private int _selectedCol = 0;
 
-    private string _selectedCellName = "A1";
+    private string _userContentInput = "";
 
     /// <summary>
     /// Gets or sets the AI service responsible for processing natural language
@@ -117,7 +117,6 @@ public partial class SpreadsheetPage {
     /// <param name="row">The row component of the cell's coordinates</param>
     /// <param name="col">The column component of the cell's coordinates</param>
     private void CellClicked(int row, int col) {
-        _selectedCellName = IntToColumnPrefix(col) + (row + 1);
         _selectedCol = col;
         _selectedRow = row;
     }
