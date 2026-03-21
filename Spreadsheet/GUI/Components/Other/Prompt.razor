@@ -1,6 +1,7 @@
 ﻿@namespace GUI.Components.Other
+@using GUI.Model
 
-<div class = "prompt-container @(GetColorClass())">
+<div class = "prompt-container @(Color.GetColorClass())">
     <div class = "prompt-spacer-box"/>
         @* @if (DescriptionText != null && DescriptionText != ""){
             <button>Test</button>
@@ -13,23 +14,21 @@
 </div>
 
 @code {
+    /// <summary>
+    ///     Inner contents of the prompt. Should only contain PromptButtons but you can also
+    ///     add other content if need be.
+    /// </summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public PromptColor Color { get; set; }
+
+    /// <summary>
+    ///     What color scheme the prompt should use. Everything is styled according to this.
+    /// </summary>
+    [Parameter] public BasicColorOption Color { get; set; }
+
+    /// <summary>
+    ///     What the header should say in the prompt. For example a confirmation prompt would have
+    ///     a header that says something like "Are you sure?".
+    /// </summary>
     [Parameter] public string? HeaderText { get; set; }
     @* [Parameter] public string? DescriptionText { get; set; } *@
-
-    public enum PromptColor {
-        Red,
-        Blue,
-        White
-    }
-
-    private string GetColorClass(){
-        return Color switch {
-            PromptColor.Red => "red",
-            PromptColor.Blue => "blue",
-            PromptColor.White => "white",
-            _ => "white"
-        };
-    }
 }

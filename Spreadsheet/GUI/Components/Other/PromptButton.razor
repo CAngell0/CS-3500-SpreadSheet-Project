@@ -1,6 +1,8 @@
-﻿<button class = "prompt-button">
+﻿<button class = "prompt-button" onclick=@OnClickHandler>
     @ChildContent
 </button>
+
+@* TODO - Add onclick parameter *@
 
 <style>
     .prompt-button {
@@ -23,5 +25,19 @@
 </style>
 
 @code {
+    /// <summary>
+    ///     The text or icon that the button should contain. Or whatever elements you
+    ///     want the inside of the button to have.
+    /// </summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public Action? OnClick { get; set; }
+
+    /// <summary>
+    ///     Calls the OnClickm function parameter along any other future functionality
+    ///     the buttons may need.
+    /// </summary>
+    private void OnClickHandler(){
+        if (OnClick != null) OnClick.Invoke();
+        // TODO - Add programming to remove prompt when button is pressed. 
+    }
 }
