@@ -1,6 +1,12 @@
-﻿@using GUI.Model
+﻿@* 
+Author: Carson Angell
+Date: 3/21/2026
+.*@
+
+@using GUI.Model
 
 @code {
+    // Sets the current direction to the default direction when the component loads
     protected override void OnParametersSet(){
         _currentDirection = DefaultDirection;
     }
@@ -13,18 +19,34 @@
 </button>
 
 @code {
+    /// <summary> Color scheme of the button. Uses its class value and isolated CSS to show it. </summary>
     [Parameter] public BasicColorOption Color { get; set; }
+    /// <summary> Default direction that the collapse arrow should be facing. It will switch to its opposite direction when clicked. </summary>
     [Parameter] public Direction DefaultDirection { get; set; }
+    /// <summary> Parameter to allow the caller of this component to add further onclick functionality </summary>
     [Parameter] public Action? OnClick { get; set; }
+    /// <summary> Parameter to allow the caller of this component to add further onclick functionality. But allows asynchronous code instead </summary>
+    [Parameter] public Func<Task>? OnClickAsync { get; set; }
+    /// <summary> The value of this parameter is put into the button's style attribute. </summary>
     [Parameter] public string? Width { get; set; }
+    /// <summary> The value of this parameter is put into the button's style attribute. </summary>
     [Parameter] public string? Height { get; set; }
+    /// <summary> Keeps track of the current direction that the collapse arrow is pointing. This is updated when the button is clicked. </summary>
     private Direction _currentDirection;
 
     /// <summary>
     ///     Calls the OnClick function parameter along any other future functionality
     ///     the buttons may need.
     /// </summary>
-    private void OnClickHandler(){
+    private async Task OnClickHandler(){
+        // Call inputted onclick methods
+        OnClick?.Invoke();
+        if (OnClickAsync != null){
+            var task = OnClickAsync.Invoke();
+            await task;
+        }
+
+        // Update the direction
         _currentDirection = _currentDirection switch {
             Direction.Up => Direction.Down,
             Direction.Down => Direction.Up,
@@ -32,14 +54,21 @@
             Direction.Left => Direction.Right,
             _ => Direction.Up
         };
-
-        OnClick?.Invoke();
+        StateHasChanged();
     }
 
+    /// <summary>
+    ///     Enum used to model the direction options for default direction and current direction.
+    /// </summary>
     public enum Direction {
         Up, Down, Left, Right
     }
 
+    /// <summary>
+    ///     Helper method that takes a direction and returns its class form that's used for CSS.
+    /// </summary>
+    /// <param name="direction"> Direction to convert </param>
+    /// <returns> The string version of the direction in the format "pointing-{direction}" </returns>
     public string GetDirectionClass(Direction direction){
         return direction switch {
             Direction.Up => "pointing-up",

@@ -110,12 +110,6 @@
 
 /* --- AI chatbot UI styling ---*/
 
-#chatbot-container {
-    width: 100%;
-    box-sizing: border-box;
-    transition: margin-top 0.2s;
-}
-
 /* Collapse tab */
 #chatbot-collapse-tab {
     border: 2px solid rgb(129, 129, 129);
@@ -127,34 +121,9 @@
     display: flex;
     align-items: center;
 
-    padding: 0.3rem 1rem 0.3rem 1.3rem;
+    padding: 0.3rem .5rem 0.3rem 1rem;
     border-radius: 0 0 10px 10px;
     margin-left: 2rem;
-}
-
-#chatbot-collapse-tab > button {
-    --color: rgb(186, 186, 186);
-
-    width: 1.9rem;
-    height: 1.9rem;
-    margin-left: 0.6rem;
-    padding: 2%;
-
-    fill: var(--color);
-    stroke: var(--color);
-    stroke-width: 8px;
-    border-radius: 4px;
-    border-color: transparent;
-    
-    display: flex;
-    align-items: center;
-}
-#chatbot-collapse-tab > button:hover {
-    --color: rgb(129, 146, 166);
-}
-
-#chatbot-collapse-tab > button > svg {
-    transition: transform 0.3s;
 }
 
 
@@ -172,6 +141,7 @@
     
     background-color: rgb(219, 219, 219);
     border-top: 1px solid rgb(137, 137, 137);
+    border-radius: 0 0 9px 9px;
 }
 
 

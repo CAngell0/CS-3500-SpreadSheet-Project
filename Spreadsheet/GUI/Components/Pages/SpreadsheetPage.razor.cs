@@ -69,7 +69,7 @@ public partial class SpreadsheetPage {
     ///     The AI agent container element uses this value as its style attribute.
     ///     This gets overwritten when the panel is collapsed.
     /// </summary>
-    private string _currentChatContainerStyle = "margin-top: calc(-260px - 1.2vh)";
+    private string _chatContainerTopMargin = "calc(-260px - 1.9vh)";
 
     /// <summary>
     ///     The collapse button svg element uses this value as its style attribute.
@@ -127,16 +127,14 @@ public partial class SpreadsheetPage {
     /// </summary>
     /// <returns> A task that calculates where the panel needs to collapse to and applies it </returns>
     private async Task CollapseAIChat() {
-        if (_isCollapsed) {
-            _currentChatContainerStyle = "margin-top: -1.2vh;";
-            _currentCollapseIconStyle = "transform: rotate(0deg);";
-        }
+        _isCollapsed = !_isCollapsed;
+        if (!_isCollapsed) _chatContainerTopMargin = "-1.9vh";
         else {
             var h = await JSRuntime.InvokeAsync<decimal>("getElementHeight", _chatPanelReference);
-            _currentChatContainerStyle = $"margin-top: calc(-{h}px - 1.2vh);";
-            _currentCollapseIconStyle = "transform: rotate(180deg);";
+            _chatContainerTopMargin = $"calc(-{h}px - 1.9vh)";
         }
-        _isCollapsed = !_isCollapsed;
+
+        StateHasChanged();
     }
 
     /// <summary>

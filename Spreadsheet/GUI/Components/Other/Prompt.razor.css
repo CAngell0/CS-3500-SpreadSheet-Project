@@ -1,3 +1,9 @@
+/* 
+Author: Carson Angell
+Date: 3/21/2026
+*/
+
+
 /* Red prompt color scheme */
 .red { border-color: var(--bs-light-red); }
 .red > .prompt-spacer-box { background-color: var(--bs-light-red); }
@@ -11,7 +17,7 @@
 /* White prompt color scheme */
 .white, .gray { border-color: var(--bs-gray-500); }
 .white > .prompt-spacer-box,
-    .gray > .prompt-spacer-box { background-color: var(--bs-gray-500); }
+    .gray > .prompt-spacer-box { background-color: rgb(189, 189, 189); }
 .white > .prompt-header,
     .gray > .prompt-header { background-color: rgb(224, 224, 224); }
 
@@ -25,28 +31,57 @@
     border-radius: 6px;
 
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .prompt-header {
-    width: 100%;
-    padding: 0.2rem 1rem;
+    padding: 0.2rem 1rem 0.2rem 0.5rem;
 
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
     align-items: center;
     justify-content: flex-end;
 
     border-radius: 0 2px 2px 0;
 }
+
 .prompt-spacer-box {
+    display: flex;
+    align-self: stretch;
     width: fit-content;
     min-width: 0.8vh;
-    align-self: stretch;
+    
     border-radius: 2px 0 0 2px;
 }
+
 .prompt-header > span {
     margin-right: auto;
 
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 1.1rem;
+}
+
+.prompt-description {
+    background-color: rgb(238, 238, 238);
+    flex-grow: 1;
+    padding: .5rem .8rem;
+    margin-top: .5rem;
+    height: fit-content;
+
+    border: 2px solid var(--bs-gray-400);
+    border-radius: 5px;
+
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: .85rem;
+    color: var(--bs-gray-800);
+
+    transition: height 0.2s, padding 0.2s, margin 0.2s, border 0.2s;
+}
+.prompt-description.collapsed {
+    padding: 0;
+    margin: 0;
+    border: transparent;
+    overflow: hidden;
 }

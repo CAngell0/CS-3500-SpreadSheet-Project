@@ -1,16 +1,59 @@
-﻿@namespace GUI.Components.Other
+﻿@* 
+Author: Carson Angell
+Date: 3/21/2026
+.*@
+
+@namespace GUI.Components.Other
+@inject IJSRuntime JSRuntime
 @using GUI.Model
 
+@code {
+    // I added this render event because I needed to calculate the rendered description height so that the collapse
+    // funcionality knows what to return the element height to when it has been expanded.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && DescriptionText != null && DescriptionText != ""){
+            // Gets the calculated height of the description element
+            _expectedDescriptionHeight = $"{await JSRuntime.InvokeAsync<decimal>("getElementHeight", _descriptionReference)}px";
+
+            // Updates the styling to be collpased
+            _currentDescriptionStyle = $"height: 0px;";
+            _isCollapsed = true;
+            StateHasChanged();
+        }
+    }
+}
+
 <div class = "prompt-container @(Color.GetColorClass())">
-    <div class = "prompt-spacer-box"/>
-        @* @if (DescriptionText != null && DescriptionText != ""){
-            <button>Test</button>
-        } *@
+    <!-- A small style box at the beginning of the prompt header. Also holds the collapse button if needed -->
+    <div class = "prompt-spacer-box">
+        @if (DescriptionText != null && DescriptionText != ""){
+            <CollapseButton
+                Width = "1rem"
+                Height = "1rem"
+                Color = "@Color"
+                DefaultDirection = "@CollapseButton.Direction.Up"
+                OnClick = "ToggleDescriptionCollapse"
+            />
+        }
+    </div>
+
+    <!-- Holds the prompt header text -->
     <div class = "prompt-header">
         <span>@HeaderText</span>
         @ChildContent
     </div>
-    @* <span> @DescriptionText </span> *@
+
+    <!-- If there is a description, create and add the text in a collapsed element -->
+    @if (DescriptionText != null && DescriptionText != ""){
+        <span 
+            class = "prompt-description @(_isCollapsed ? "collapsed" : "expanded")" 
+            style = "@_currentDescriptionStyle"
+            @ref="_descriptionReference"
+        > 
+            @DescriptionText 
+        </span> 
+    }
 </div>
 
 @code {
@@ -25,10 +68,51 @@
     /// </summary>
     [Parameter] public BasicColorOption Color { get; set; }
 
+
     /// <summary>
     ///     What the header should say in the prompt. For example a confirmation prompt would have
     ///     a header that says something like "Are you sure?".
     /// </summary>
     [Parameter] public string? HeaderText { get; set; }
-    @* [Parameter] public string? DescriptionText { get; set; } *@
+    [Parameter] public string? DescriptionText { get; set; }
+
+    /// <summary>
+    ///     Denotes whether or not the prompt description is collapsed. This value does nothing
+    ///     if a description is not provided.
+    /// </summary>
+    private bool _isCollapsed = false;
+
+    /// <summary>
+    ///     References the container for the description text. Used to calculate the rendered height
+    ///     of the element so it can animation its collapse and expanding.
+    /// </summary>
+    private ElementReference _descriptionReference;
+
+    /// <summary>
+    ///     Style attribute string used to change how the description looks to make it collapse properly.
+    /// </summary>
+    private string _currentDescriptionStyle = "visibility: hidden; position: absolute;";
+
+    /// <summary>
+    ///     Gets interpolated into the style attribute. When the description is expanded this gets set to
+    ///     the rendered height of the description element. I did this because in order to animate the collapsing,
+    ///     the height attribute needs a static value.
+    /// </summary>
+    private string _expectedDescriptionHeight = "0px";
+
+    /// <summary>
+    ///     Updates the style attribute and _isCollapsed boolean to make the descripton collapse/expand.
+    /// </summary>
+    private void ToggleDescriptionCollapse() {
+        _isCollapsed = !_isCollapsed;
+        if (_isCollapsed) _currentDescriptionStyle = "height: 0px;";
+        else _currentDescriptionStyle = $"height: {_expectedDescriptionHeight};";
+        StateHasChanged();
+    }
 }
+
+<style>
+    .prompt-spacer-box > button {
+        filter: brightness(150%);
+    }
+</style>

@@ -22,7 +22,7 @@
 
 <div>
     <!-- AI Chatbot -->
-    <section id = "chatbot-container" style = "@_currentChatContainerStyle">
+    <section style = "transition: margin-top 0.2s; margin-top: @(_chatContainerTopMargin);">
         <div id = "chatbot-interface" @ref="_chatPanelReference">
             <!-- AI History -->
             <ul id = "chatbot-history">
@@ -60,14 +60,16 @@
         <div id = "chatbot-collapse-tab"> 
             AI Assistant 
 
-            <button class = "main-button-style" @onclick="CollapseAIChat">
-                <svg viewBox = "0 0 512 512" style = "@_currentCollapseIconStyle">
-                    <use href = "images/collapse-arrow.svg"/>
-                </svg>
-            </button>
+            <CollapseButton 
+                Color=@BasicColorOption.Blue 
+                DefaultDirection=@CollapseButton.Direction.Down
+                OnClickAsync = "CollapseAIChat"
+            />
         </div>
     </section>
     <br/>
+
+    @* <button @onclick = "CollapseAIChat">Test</button> *@
 
     <!-- Toolbar -->
     <section id = "toolbar">
@@ -146,7 +148,7 @@
 
 
 <div id = "prompt-container">
-    <Prompt HeaderText="Are you sure?" Color=BasicColorOption.White>
+    <Prompt HeaderText="Are you sure?" DescriptionText="This is a test description!" Color=BasicColorOption.White>
         <PromptButton>Yes</PromptButton>
         <PromptButton>No</PromptButton>
     </Prompt>
@@ -199,5 +201,16 @@
         // Remove the anchor element from the DOM
         document.body.removeChild(a);
     }
-
 </script>
+
+ <style>
+    #chatbot-collapse-tab > button {
+        width: 1.9rem;
+        height: 1.9rem;
+        padding: 2% 4%;
+        margin-left: 0.2rem;
+        
+        display: flex;
+        align-items: center;
+    }
+</style>
