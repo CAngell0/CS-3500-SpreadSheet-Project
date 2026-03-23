@@ -6,20 +6,41 @@ Date: 3/21/2026
 
 /* Red prompt color scheme */
 .red { border-color: var(--bs-light-red); }
-.red > .prompt-spacer-box { background-color: var(--bs-light-red); }
-.red > .prompt-header { background-color: rgb(252, 154, 154); }
+
+.red > .prompt-description { background-color: rgb(255, 212, 212); }
+.red > .prompt-description { border-color: rgb(252, 154, 154); }
+
+.red > .prompt-header > .prompt-spacer-box { background-color: var(--bs-light-red); }
+.red > .prompt-header > .prompt-header-text { background-color: rgb(252, 154, 154); }
+
 
 /* Blue prompt color scheme */
 .blue { border-color: var(--bs-light-blue); }
-.blue > .prompt-spacer-box { background-color: var(--bs-light-blue); }
-.blue > .prompt-header { background-color: rgb(169, 196, 254); }
+
+.blue > .prompt-description { background-color: rgb(219, 230, 255); }
+.blue > .prompt-description { border-color: rgb(169, 196, 254); }
+
+.blue > .prompt-header > .prompt-spacer-box { background-color: var(--bs-light-blue); }
+.blue > .prompt-header > .prompt-header-text { background-color: rgb(169, 196, 254); }
+
 
 /* White prompt color scheme */
 .white, .gray { border-color: var(--bs-gray-500); }
-.white > .prompt-spacer-box,
-    .gray > .prompt-spacer-box { background-color: rgb(189, 189, 189); }
-.white > .prompt-header,
-    .gray > .prompt-header { background-color: rgb(224, 224, 224); }
+
+.white > .prompt-description,
+.gray > .prompt-description { background-color: rgb(238, 238, 238) }
+
+.white > .prompt-description,
+.gray > .prompt-description { border-color: var(--bs-gray-400); }
+
+.white > .prompt-header > .prompt-spacer-box,
+.gray > .prompt-header > .prompt-spacer-box { background-color: rgb(189, 189, 189); }
+
+.white > .prompt-header > .prompt-header-text,
+.gray > .prompt-header > .prompt-header-text { background-color: rgb(224, 224, 224); }
+
+
+
 
 .prompt-container {
     width: 30vw;
@@ -31,11 +52,15 @@ Date: 3/21/2026
     border-radius: 6px;
 
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .prompt-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.prompt-header-text {
     padding: 0.2rem 1rem 0.2rem 0.5rem;
 
     display: flex;
@@ -56,7 +81,7 @@ Date: 3/21/2026
     border-radius: 2px 0 0 2px;
 }
 
-.prompt-header > span {
+.prompt-header-text > span {
     margin-right: auto;
 
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -64,13 +89,13 @@ Date: 3/21/2026
 }
 
 .prompt-description {
-    background-color: rgb(238, 238, 238);
     flex-grow: 1;
     padding: .5rem .8rem;
     margin-top: .5rem;
     height: fit-content;
 
-    border: 2px solid var(--bs-gray-400);
+    border-width: 2px;
+    border-style: solid;
     border-radius: 5px;
 
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;

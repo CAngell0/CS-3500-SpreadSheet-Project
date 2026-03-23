@@ -1,4 +1,4 @@
-﻿// <copyright file="Spreadsheet.cs" company="UofU-CS3500">
+// <copyright file="Spreadsheet.cs" company="UofU-CS3500">
 // Copyright (c) 2026 UofU-CS3500. All rights reserved.
 // </copyright>
 // Written by Joe Zachary for CS 3500, September 2013
@@ -17,6 +17,7 @@ using System.Diagnostics;
 using Services;
 using Spreadsheet;
 using System.Text;
+using GUI.Components.Other.Prompt;
 
 /// <summary>
 /// TODO: Fill in
@@ -70,12 +71,6 @@ public partial class SpreadsheetPage {
     ///     This gets overwritten when the panel is collapsed.
     /// </summary>
     private string _chatContainerTopMargin = "calc(-260px - 1.9vh)";
-
-    /// <summary>
-    ///     The collapse button svg element uses this value as its style attribute.
-    ///     This gets overwritten when the panel is collapsed.
-    /// </summary>
-    private string _currentCollapseIconStyle = "transform: rotate(180deg);";
 
     /// <summary>
     ///     Stores what row the selected cell is on. This is changed by the
@@ -227,5 +222,11 @@ public partial class SpreadsheetPage {
         char[] charArray = builder.ToString().ToCharArray();
         Array.Reverse(charArray);
         return new string(charArray);
+    }
+
+
+    public void Test() {
+        PromptManager.AddPrompt("Hello");
+        StateHasChanged();
     }
 }

@@ -3,8 +3,10 @@ Author: Carson Angell
 Date: 3/21/2026
 .*@
 
-@namespace GUI.Components.Other
+@namespace GUI.Components.Other.Prompt
 @inject IJSRuntime JSRuntime
+@inject SpreadsheetPromptManager PromptManager
+@using GUI.Components.Services
 @using GUI.Model
 
 @code {
@@ -24,24 +26,26 @@ Date: 3/21/2026
     }
 }
 
-<div class = "prompt-container @(Color.GetColorClass())">
-    <!-- A small style box at the beginning of the prompt header. Also holds the collapse button if needed -->
-    <div class = "prompt-spacer-box">
-        @if (DescriptionText != null && DescriptionText != ""){
-            <CollapseButton
-                Width = "1rem"
-                Height = "1rem"
-                Color = "@Color"
-                DefaultDirection = "@CollapseButton.Direction.Up"
-                OnClick = "ToggleDescriptionCollapse"
-            />
-        }
-    </div>
-
-    <!-- Holds the prompt header text -->
+<div class = "prompt-container @((Color ?? SpreadsheetPromptManager.DEFAULT_PROMPT_COLOR).GetColorClass())">
     <div class = "prompt-header">
-        <span>@HeaderText</span>
-        @ChildContent
+        <!-- A small style box at the beginning of the prompt header. Also holds the collapse button if needed -->
+        <div class = "prompt-spacer-box">
+            @if (DescriptionText != null && DescriptionText != ""){
+                <CollapseButton
+                    Width = "1rem"
+                    Height = "1rem"
+                    Color = "@(Color ?? SpreadsheetPromptManager.DEFAULT_PROMPT_COLOR)"
+                    DefaultDirection = "@CollapseButton.Direction.Up"
+                    OnClick = "ToggleDescriptionCollapse"
+                />
+            }
+        </div>
+
+        <!-- Holds the prompt header text -->
+        <div class = "prompt-header-text">
+            <span>@HeaderText</span>
+            @ChildContent
+        </div>
     </div>
 
     <!-- If there is a description, create and add the text in a collapsed element -->
@@ -66,7 +70,7 @@ Date: 3/21/2026
     /// <summary>
     ///     What color scheme the prompt should use. Everything is styled according to this.
     /// </summary>
-    [Parameter] public BasicColorOption Color { get; set; }
+    [Parameter] public BasicColorOption? Color { get; set; }
 
 
     /// <summary>
@@ -75,6 +79,8 @@ Date: 3/21/2026
     /// </summary>
     [Parameter] public string? HeaderText { get; set; }
     [Parameter] public string? DescriptionText { get; set; }
+
+    public Guid UUID { get; private set; }
 
     /// <summary>
     ///     Denotes whether or not the prompt description is collapsed. This value does nothing

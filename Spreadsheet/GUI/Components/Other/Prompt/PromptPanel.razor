@@ -1,0 +1,46 @@
+﻿@namespace GUI.Components.Other.Prompt
+@inject SpreadsheetPromptManager PromptManager
+
+@using GUI.Components.Services
+@using GUI.Model
+
+@code {
+    // Add the state changed event to the manager shared state handler
+    protected override void OnInitialized() {
+        PromptManager.SharedState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose() {
+        PromptManager.SharedState.OnChange -= StateHasChanged;
+    }
+}
+
+<section class = "prompt-panel">
+    <!-- Create all the prompts elements that are inside the prompt manager  -->
+    @foreach (SpreadsheetPromptManager.PromptInfo promptInfo in PromptManager.Prompts){
+        <Prompt
+            HeaderText = "@(promptInfo.HeaderText)"
+            DescriptionText = "@(promptInfo.DescriptionText)"
+            Color = "@(promptInfo.Color)"
+        >
+            @if (promptInfo.Buttons != null) @foreach (SpreadsheetPromptManager.PromptButtonInfo buttonInfo in promptInfo.Buttons){
+                <!-- Add all the buttons to each prompt -->
+                <PromptButton OnClick = "buttonInfo.OnClick">
+                    @buttonInfo.ButtonText
+                </PromptButton>
+            }
+        </Prompt>
+    }
+</section>
+
+ <style>
+    .prompt-panel {
+        width: fit-content;
+        height: fit-content;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+
+        padding: .5rem;
+    }
+</style>

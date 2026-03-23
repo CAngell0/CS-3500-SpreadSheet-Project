@@ -230,16 +230,3 @@
 #chatbot-user-send > svg {
     fill: var(--bs-light-blue);
 }
-
-
-
-/* Container box to show prompts on the screen */
-#prompt-container {
-    width: fit-content;
-    height: fit-content;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-
-    padding: .5rem;
-}

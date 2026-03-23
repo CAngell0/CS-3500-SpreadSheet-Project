@@ -1,10 +1,6 @@
-using System;
 using GUI.Components;
 using GUI.Components.Services;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.AI;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace GUI
 {
@@ -24,6 +20,7 @@ namespace GUI
                 .AddInteractiveServerComponents();
             builder.Services.AddChatClient(new OllamaChatClient(new Uri("http://localhost:11434"), "qwen3:0.6B"));
             builder.Services.AddScoped<SpreadsheetAIService>();
+            builder.Services.AddScoped<SpreadsheetPromptManager>();
 
             var app = builder.Build();
 

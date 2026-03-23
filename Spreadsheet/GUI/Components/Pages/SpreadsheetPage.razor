@@ -3,8 +3,11 @@
 @rendermode InteractiveServer
 @inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
+@inject SpreadsheetPromptManager PromptManager
 
 @using GUI.Components.Other
+@using GUI.Components.Other.Prompt
+@using GUI.Components.Services
 @using GUI.Model
 @using System.Diagnostics
 @using Microsoft.Extensions.AI
@@ -75,7 +78,7 @@
     <section id = "toolbar">
         <!-- Selected cell display -->
         <div class = "toolbar-labelled-field">
-            <span>Selected Cell</span>
+            <span @onclick = "Test">Selected Cell</span>
             <input readonly value = "@(IntToColumnPrefix(_selectedCol) + (_selectedRow + 1))" style = "text-align: center; width: 7rem;"/>
         </div>
 
@@ -147,12 +150,7 @@
 </div>
 
 
-<div id = "prompt-container">
-    <Prompt HeaderText="Are you sure?" DescriptionText="This is a test description!" Color=BasicColorOption.White>
-        <PromptButton>Yes</PromptButton>
-        <PromptButton>No</PromptButton>
-    </Prompt>
-</div>
+<PromptPanel/>
 
 
  <script type="text/javascript">
