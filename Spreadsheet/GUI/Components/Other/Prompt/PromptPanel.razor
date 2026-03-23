@@ -1,8 +1,10 @@
 ﻿@namespace GUI.Components.Other.Prompt
 @inject SpreadsheetPromptManager PromptManager
+@inject IJSRuntime JSRuntime
 
 @using GUI.Components.Services
 @using GUI.Model
+@using GUI.Utils
 
 @code {
     // Add the state changed event to the manager shared state handler
@@ -10,28 +12,59 @@
         PromptManager.SharedState.OnChange += StateHasChanged;
     }
 
-    public void Dispose() {
-        PromptManager.SharedState.OnChange -= StateHasChanged;
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if (firstRender){
+            await JSRuntime.InvokeVoidAsync("createAnimationEvent");
+        }
     }
 }
 
 <section class = "prompt-panel">
     <!-- Create all the prompts elements that are inside the prompt manager  -->
     @foreach (SpreadsheetPromptManager.PromptInfo promptInfo in PromptManager.Prompts){
+        SpreadsheetPromptManager.PromptInfo info = promptInfo;
+        _disappearingMap.TryAdd(info.UUID, false);
+
         <Prompt
-            HeaderText = "@(promptInfo.HeaderText)"
-            DescriptionText = "@(promptInfo.DescriptionText)"
-            Color = "@(promptInfo.Color)"
+            HeaderText = "@(info.HeaderText)"
+            DescriptionText = "@(info.DescriptionText)"
+            Color = "@(info.Color)"
+            UUID = "@(info.UUID)"
+
+            @onmouseover = "() => OnPromptMouseOver(info.UUID)"
+            @onmouseout = "() => OnPromptMouseOut(info.UUID)"
+            @onanimationend = "Test"
+            style = "@(_disappearingMap.GetValueOrDefault(info.UUID, false) 
+                ? "animation: prompt-disappear 0.5s cubic-bezier(0, 0, 0.39, 1.05);"
+                : "animation: prompt-appear 0.5s ease-in-out;"
+            )"
         >
-            @if (promptInfo.Buttons != null) @foreach (SpreadsheetPromptManager.PromptButtonInfo buttonInfo in promptInfo.Buttons){
+            @if (info.Buttons != null) @foreach (SpreadsheetPromptManager.PromptButtonInfo buttonInfo in info.Buttons){
                 <!-- Add all the buttons to each prompt -->
                 <PromptButton OnClick = "buttonInfo.OnClick">
                     @buttonInfo.ButtonText
                 </PromptButton>
             }
         </Prompt>
+
+        PromptManager.RegisterTimeRunoutEvent(info.UUID, async () => {
+            _disappearingMap[info.UUID] = true; 
+            await InvokeAsync(StateHasChanged);
+        });
     }
 </section>
+
+ <script type = "text/javascript">
+
+    function createAnimationEvent() {
+        console.log("Test");
+        Blazor.registerCustomEventType('onanimationend', {
+            browserEventName: 'onclick',
+            createEventArgs: event => {}
+        });
+    }
+    
+</script>
 
  <style>
     .prompt-panel {
@@ -41,6 +74,35 @@
         bottom: 0;
         right: 0;
 
-        padding: .5rem;
+        padding: .5rem;afterWebStarted
+    }
+
+    @@keyframes prompt-appear {
+        0% { transform: translateX(110%); }
+        100% { transform: translateX(0%); }
+    }
+
+    @@keyframes prompt-disappear {
+        0% { transform: translateX(0%); }
+        100% { transform: translateX(110%); }
     }
 </style>
+
+@code {
+    private Dictionary<Guid, bool> _disappearingMap = new();
+    public void OnPromptMouseOver(Guid uuid) => PromptManager.PausePrompt(uuid);
+    public void OnPromptMouseOut(Guid uuid) => PromptManager.UnpausePrompt(uuid);
+    public void OnPromptAnimationEnd(Guid uuid){
+        if (_disappearingMap.GetValueOrDefault(uuid, false)){
+            PromptManager.DeletePrompt(uuid);
+        }
+    }
+
+    public void Dispose() {
+        PromptManager.SharedState.OnChange -= StateHasChanged;
+    }
+
+    public void Test(){
+        Console.WriteLine("Hello World!");
+    }
+}

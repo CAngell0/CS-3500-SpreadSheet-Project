@@ -1,38 +1,54 @@
+using System.Collections.Concurrent;
 using GUI.Components.Other.Prompt;
 using GUI.Model;
 
 namespace GUI.Components.Services;
 
-public class SpreadsheetPromptManager {
+public class SpreadsheetPromptManager : IDisposable {
     /// <summary> Constant for the default color of the prompts. Prompts get set to this color if one is not specified </summary>
     public static readonly BasicColorOption DEFAULT_PROMPT_COLOR = BasicColorOption.Blue;
     /// <summary> Duration in seconds that a prompt should last before its timer event is trigged. </summary>
-    public static readonly int PROMPT_DURATION = 4;
+    public static readonly int PROMPT_DURATION = 7;
     /// <summary> List of prompts that are currently active on the manager. </summary>
-    public IReadOnlyList<PromptInfo> Prompts { get { return _prompts; } }
+    public IReadOnlyCollection<PromptInfo> Prompts { get { return _prompts; } }
     /// <summary> Internal list of prompts that the public auto property references. This is to protect the data of the prompts. </summary>
-    private List<PromptInfo> _prompts;
+    private LinkedList<PromptInfo> _prompts;
     /// <summary> Holds the metadata for each prompt associated with its UUID </summary>
-    private Dictionary<Guid, PromptMetadata> _metadata;
-
-    // private Thread _timerThread;
-    
+    private ConcurrentDictionary<Guid, PromptMetadata> _metadata;
     /// <summary> Shared state object that updates the prompt panel when there has been a change to the prompts list. </summary>
     public PromptSharedState SharedState { get; private set; }
 
+    private Timer _timer;
+
     public SpreadsheetPromptManager() {
         SharedState = new PromptSharedState();
-        _prompts = new List<PromptInfo>();
-        _metadata = new Dictionary<Guid, PromptMetadata>();
+        _prompts = new LinkedList<PromptInfo>();
+        _metadata = new ConcurrentDictionary<Guid, PromptMetadata>();
+
+        _timer = new Timer(UpdateTimers, null, 0, 1000);
     }
 
-    // private void UpdateTimers() {
-    //     foreach (PromptInfo prompt in Prompts) {
-    //         if (!_pausedTimers.Contains(prompt) && _promptPositions.TryGetValue(prompt, out int position)) {
-    //             _promptTimers[position] = _promptTimers[position] - 1;
-    //         }
-    //     }
-    // }
+    private void UpdateTimers(object? _) {
+        foreach (PromptMetadata metadata in _metadata.Values) {
+            metadata.Timer--;
+            if (!metadata.Paused && metadata.Timer <= 0) {
+                metadata.OnTimerRunout?.Invoke();
+                Console.WriteLine("Invoked!");
+            }
+            Console.WriteLine(metadata.Timer);
+        }
+    }
+
+    public void RegisterTimeRunoutEvent(Guid uuid, Action onTimeRunout) {
+        if (_metadata.TryGetValue(uuid, out PromptMetadata? metadata)) {
+            metadata.OnTimerRunout = onTimeRunout;            
+        }
+    }
+
+    public void Dispose() {
+        _timer.Dispose();
+    }
+
 
     /// <summary>
     ///     Adds a prompt to the manager. Does the same as <see cref="AddPrompt(string, string?, PromptButtonInfo[]?, BasicColorOption?)"/> but doesn't
@@ -62,8 +78,8 @@ public class SpreadsheetPromptManager {
     /// <param name="color"> What color the prompt should be </param>
     public void AddPrompt(string headerText, string? descriptionText, PromptButtonInfo[]? buttons, BasicColorOption? color) {
         Guid uuid = Guid.NewGuid();
-        _prompts.Add(new PromptInfo(headerText, descriptionText, buttons, color, uuid));
-        _metadata.Add(uuid, new PromptMetadata(
+        _prompts.AddLast(new PromptInfo(headerText, descriptionText, buttons, color, uuid));
+        _metadata.TryAdd(uuid, new PromptMetadata(
             Prompts.Count - 1, 
             PROMPT_DURATION, 
             false,
@@ -71,6 +87,8 @@ public class SpreadsheetPromptManager {
         ));
 
         SharedState.NotifyStateChanged();
+
+        Console.WriteLine("Added " + uuid.ToString());
     }
 
     
@@ -95,17 +113,40 @@ public class SpreadsheetPromptManager {
     /// <param name="uuid"> Unqiue ID of the prompt that was given to it when the prompt was added </param>
     public void DeletePrompt(Guid uuid) {
         if (_metadata.TryGetValue(uuid, out PromptMetadata? metadata)) {
-            _prompts.RemoveAt(metadata.ListPosition);
-            _metadata.Remove(uuid);
-        }
+            
+            // If the selected prompt is the first prompt in the list, delete it
+            if (uuid.Equals(_prompts.First().UUID)) _prompts.RemoveFirst();
+            // If the selected prompt is the last prompt in the list, delete it
+            else if (uuid.Equals(_prompts.Last().UUID)) _prompts.RemoveLast();
+            // Otherwise traverse the prompts linked list in reverse to find and delete it.
+            else for (var node = _prompts.Last; node != null; node = node.Previous) {
+                if (uuid.Equals(node.Value.UUID)) {
+                    _prompts.Remove(node);
+                    break;
+                }
+            }
 
-        SharedState.NotifyStateChanged();
+            _metadata.TryRemove(uuid, out _);
+            SharedState.NotifyStateChanged();
+
+            Console.WriteLine("Deleted " + uuid.ToString());
+        }
     }
 
 
+    public void PausePrompt(Guid uuid) {
+        if (_metadata.TryGetValue(uuid, out PromptMetadata? metadata)) {
+            metadata.Paused = true;
+        }
+    }
 
-    public void RegisterPromptComponent(Prompt prompt){}
-    
+    public void UnpausePrompt(Guid uuid) {
+        if (_metadata.TryGetValue(uuid, out PromptMetadata? metadata)) {
+            metadata.Paused = false;
+        }
+    }
+
+
     /// <summary>
     ///     A model class that's used to keep track of a prompt's lifetime, its position in the backing
     ///     list, whether its timer is paused and the action it needs to run when the timer runs out for
@@ -115,7 +156,12 @@ public class SpreadsheetPromptManager {
     /// <param name="Timer"> Keeps track of how much time the prompt has before the OnTimerRunout event is fired </param>
     /// <param name="Paused"> Whether or not the prompt timer is paused for this instance </param>
     /// <param name="OnTimerRunout"> Event to call when the timer runs out. This is usally set after the prompt has been created </param>
-    private record PromptMetadata(int ListPosition, int Timer, bool Paused, Action? OnTimerRunout){}
+    private class PromptMetadata(int ListPosition, int Timer, bool Paused, Action? OnTimerRunout) {
+        public int ListPosition { get; set; } = ListPosition;
+        public int Timer { get; set; } = Timer;
+        public bool Paused { get; set; } = Paused;
+        public Action? OnTimerRunout { get; set; } = OnTimerRunout;
+    }
 
     /// <summary>
     ///     A model class that stores the information relating to a prompt. This is used by the PromptPanel
@@ -128,6 +174,13 @@ public class SpreadsheetPromptManager {
     /// <param name="Color"> What color the prompt should be </param>
     /// <param name="UUID"> A unique ID to identify the prompt so it can have associated metadata in the manager </param>
     public record PromptInfo(string HeaderText, string? DescriptionText, PromptButtonInfo[]? Buttons, BasicColorOption? Color, Guid UUID) {
+        public virtual bool Equals(PromptInfo? other) {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            if (UUID.ToString().Equals(other.UUID.ToString())) return true;
+            return false;
+        }
+
         public override int GetHashCode() {
             return UUID.GetHashCode();
         }
@@ -148,5 +201,13 @@ public class SpreadsheetPromptManager {
     public class PromptSharedState {
         public event Action? OnChange;
         public void NotifyStateChanged() => OnChange?.Invoke();
+    }
+}
+
+public static class LinkedListExtension {
+    public static IEnumerable<T> ReverseIterator<T>(this LinkedList<T> list) {
+        for (var node = list.Last; node != null; node = node.Previous){
+            yield return node.Value;
+        }
     }
 }

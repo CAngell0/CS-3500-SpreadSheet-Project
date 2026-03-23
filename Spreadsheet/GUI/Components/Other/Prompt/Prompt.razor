@@ -26,7 +26,7 @@ Date: 3/21/2026
     }
 }
 
-<div class = "prompt-container @((Color ?? SpreadsheetPromptManager.DEFAULT_PROMPT_COLOR).GetColorClass())">
+<div class = "prompt-container @((Color ?? SpreadsheetPromptManager.DEFAULT_PROMPT_COLOR).GetColorClass())" @attributes="AdditionalAttributes">
     <div class = "prompt-header">
         <!-- A small style box at the beginning of the prompt header. Also holds the collapse button if needed -->
         <div class = "prompt-spacer-box">
@@ -78,9 +78,22 @@ Date: 3/21/2026
     ///     a header that says something like "Are you sure?".
     /// </summary>
     [Parameter] public string? HeaderText { get; set; }
+
+    /// <summary>
+    ///     Extra information that is put below the header of the prompt and collapsed when the user
+    ///     doesn't want to see it. This should be set when the header is not clear enough for the reason
+    ///     behind the prompt.
+    /// </summary>
     [Parameter] public string? DescriptionText { get; set; }
 
-    public Guid UUID { get; private set; }
+    /// <summary>
+    ///     Unique ID for the prompt that's given by the PromptManager. This is used internally to
+    ///     keep track of prompts and their lifecycle.
+    /// </summary>
+    [Parameter] required public Guid UUID { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <summary>
     ///     Denotes whether or not the prompt description is collapsed. This value does nothing

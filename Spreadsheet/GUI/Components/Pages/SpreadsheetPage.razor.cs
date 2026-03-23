@@ -227,6 +227,9 @@ public partial class SpreadsheetPage {
 
     public void Test() {
         PromptManager.AddPrompt("Hello");
-        StateHasChanged();
+    }
+
+    public void Test2() {
+        PromptManager.DeletePrompt(Guid.Parse(_userContentInput));
     }
 }
